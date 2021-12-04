@@ -6,6 +6,7 @@ import sys
 from card_downloader import CardDownloader
 from card_organizer import CardOrganizer
 
+import json_utils
 import config
 
 def main():
@@ -25,7 +26,7 @@ def main():
 
 def card_searcher(path, args):
     card_downloader = CardDownloader(path)
-    card_downloader.load_cards()
+    json_utils.load_cards(card_downloader.path, card_downloader.cards)
     if args.update:
         card_downloader.update_cards()
     if args.download:

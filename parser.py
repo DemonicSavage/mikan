@@ -9,18 +9,21 @@ from abc import ABC, abstractmethod
 
 
 class Parser(ABC):
+    bs: BeautifulSoup()
+    num: int
+
     def get_html(self, url):
         return requests.get(url).content
 
     @abstractmethod
     def get_url(self, num):
         pass
-
-class ListParser(Parser):
-    def __init__(self, num):
-        self.bs = BeautifulSoup(super().get_html(self.get_url(num)), features="lxml")
+    
+    def parse(self, num):
+        self.bs = BeautifulSoup(self.get_html(self.get_url(num)), features="lxml")
         self.num = num
 
+class ListParser(Parser):
     def get_url(self, num):
         return f"{config.CARDS_LIST_URL_TEMPLATE}{num}"
 
@@ -37,26 +40,25 @@ class ListParser(Parser):
 
 
 class CardParser(Parser):
-
-    def __init__(self, num):
-        self.bs = BeautifulSoup(super().get_html(self.get_url(num)), features="lxml")
-        self.num = num
-
     def get_url(self, num):
         return f"{config.CARD_URL_TEMPLATE}{num}"
 
-    def create_card(self) -> Card:
-        return Card(
-            self.num,
+    def create_card(self) -> (int, Card):
+        new_card = Card(
             self.get_card_info("idol"),
             self.get_card_info("rarity"),
             self.get_card_info("attribute"),
             self.get_card_info("i_unit"),
             self.get_card_info("i_subunit"),
             self.get_card_info("i_year"),
-            self.get_card_info("urls")[0],
-            self.get_card_info("urls")[1]
+            self.get_card_image_urls()[0],
+            self.get_card_image_urls()[1]
         )
+        new_card.needs_update = not new_card.is_double_sized() and new_card.rarity != "Rare"
+        return self.num, new_card
+
+    def update_card(self, card):
+        card.normal_url, card.idolized_url = self.get_card_image_urls()
 
     def get_card_image_urls(self):
         top_item = self.bs.find(class_="top-item")
@@ -74,12 +76,12 @@ class CardParser(Parser):
         if info == "idol":
             data = self.get_data_field("idol").find("span").get_text()
             data = data.partition("Open idol")[0].strip()
-            return data
-        elif info == "urls":
-            return self.get_card_image_urls()       
+            return data    
         else:
             data = self.get_data_field(info)
             if data:
                 return data.get_text().strip()
             else:
                 return ""
+
+        
