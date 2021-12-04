@@ -27,12 +27,11 @@ class CardDownloader:
             print(f"Downloaded card with the id {key}, {'idolized' if idolized else 'normal'}.")
 
     def update_card_if_needed(self, key, card):
-        if card.needs_update:
+        if not card.is_double_sized() and card.rarity != "Rare":
+            old_url = card.normal_url
             self.card_parser.parse(key)
             self.card_parser.update_card(card)
-            card.needs_update = not card.is_double_sized() and card.rarity != "Rare"
-            if not card.needs_update:
-                print(f"Updated card with the id {key}.")
+            return (old_url != card.normal_url)
 
     def download_card(self, key, card):
         file_name = f"{key}_{card.unit}_{card.idol}"
@@ -40,9 +39,12 @@ class CardDownloader:
         normal_path = base_path.joinpath(f"{file_name}_Normal{Path(card.normal_url).suffix}")
         idolized_path = base_path.joinpath(f"{file_name}_Idolized{Path(card.idolized_url).suffix}")
 
-        if not normal_path.exists() or card.needs_update:
-            self.update_card_if_needed(key, card)
+        updateable_card = self.update_card_if_needed(key, card)
+        if updateable_card:
             self.update_json_file()
+            print(f"Updated card {key}.")
+
+        if not normal_path.exists() or updateable_card:
             self.download_image(key, card, normal_path, idolized=False)
             self.download_image(key, card, idolized_path, idolized=True)
 
@@ -76,7 +78,8 @@ class CardDownloader:
             self.list_parser.parse(num)
 
         for num, card in self.cards.items():
-            self.update_card_if_needed(num, card)
+            if self.update_card_if_needed(num, card):
+                print(f"Updated card {num}.")
 
         self.update_json_file()
 

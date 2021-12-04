@@ -54,7 +54,6 @@ class CardParser(Parser):
             self.get_card_image_urls()[0],
             self.get_card_image_urls()[1]
         )
-        new_card.needs_update = not new_card.is_double_sized() and new_card.rarity != "Rare"
         return self.num, new_card
 
     def update_card(self, card):

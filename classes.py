@@ -24,8 +24,7 @@ class Card:
     year: str
     normal_url: str
     idolized_url: str
-    needs_update: bool = False
-
+    
     def is_double_sized(self):
         p = re.compile(r"/2x/")
         return p.search(self.normal_url) != None
