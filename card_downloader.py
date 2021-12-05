@@ -52,36 +52,34 @@ class CardDownloader:
         for key, card in self.cards.items():
             self.download_card(key, card)
 
-    def update_cards(self):
+    def get_new_cards(self):
         num = 1
-        already_exists = False
         self.list_parser.parse(num)
 
         while (page_items := self.list_parser.get_page()):
             page_items = sorted(page_items, reverse=True)
 
             for i in range(len(page_items)):
-                self.card_parser.parse(page_items[i])
-                n, card = self.card_parser.create_card()  
-
-                if n not in self.cards:
+                if page_items[i] not in self.cards:
+                    self.card_parser.parse(page_items[i])
+                    n, card = self.card_parser.create_card()  
                     self.cards[n] = card
                     print(f"Getting card {n}.")
-                else:
-                    already_exists = True
-                    break
-
-            if already_exists:
-                break
 
             num += 1
             self.list_parser.parse(num)
 
-        for num, card in self.cards.items():
-            if self.update_card_if_needed(num, card):
-                print(f"Updated card {num}.")
+    def update_cards(self):
+        print("Searching for new or missing cards...")
+        self.get_new_cards()
+
+        print("Finding and updating non-double-sized SRs and URs to double-sized, if available...")
+        for n, card in self.cards.items():
+            if self.update_card_if_needed(n, card):
+                print(f"Updated card {n}.")
 
         self.update_json_file()
+        print("Updated cards.json file.")
 
     def update_json_file(self):
         self.cards = dict(sorted(self.cards.items(), reverse=True))
