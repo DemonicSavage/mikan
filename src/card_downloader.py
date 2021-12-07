@@ -6,7 +6,7 @@ import operator
 
 import utils
 import json_utils
-import config
+import consts
 from parser import CardParser, ListParser
 from classes import Card
 
@@ -14,7 +14,7 @@ class CardDownloader:
 
     def __init__(self, path):
         self.path= utils.init_path(Path(path))
-        utils.init_path(Path(self.path).joinpath(config.CARD_RESULTS_DIR))
+        utils.init_path(Path(self.path).joinpath(consts.CARD_RESULTS_DIR))
         self.cards = {}
 
         self.list_parser = ListParser()
@@ -35,7 +35,7 @@ class CardDownloader:
 
     def download_card(self, key, card):
         file_name = f"{key}_{card.unit}_{card.idol}"
-        base_path = Path(self.path).joinpath(config.CARD_RESULTS_DIR)
+        base_path = Path(self.path).joinpath(consts.CARD_RESULTS_DIR)
         normal_path = base_path.joinpath(f"{file_name}_Normal{Path(card.normal_url).suffix}")
         idolized_path = base_path.joinpath(f"{file_name}_Idolized{Path(card.idolized_url).suffix}")
 

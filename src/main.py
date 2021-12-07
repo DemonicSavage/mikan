@@ -22,6 +22,7 @@ def main():
     argparser.add_argument('--subunit', action='store', help="search cards with provided subunit name")
     argparser.add_argument('--year', action='store', help="search cards with provided school year")'''
     args = argparser.parse_args(args=None if sys.argv[1:] else ['--help'])
+    print(config.CARDS_DIR)
     card_searcher(config.CARDS_DIR, args)
 
 def card_searcher(path, args):

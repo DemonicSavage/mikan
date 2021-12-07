@@ -3,7 +3,7 @@ import re
 import requests
 
 import utils
-import config
+import consts
 from classes import Card
 from abc import ABC, abstractmethod
 
@@ -25,7 +25,7 @@ class Parser(ABC):
 
 class ListParser(Parser):
     def get_url(self, num):
-        return f"{config.CARDS_LIST_URL_TEMPLATE}{num}"
+        return f"{consts.CARDS_LIST_URL_TEMPLATE}{num}"
 
     def get_page(self):
         nums = []
@@ -41,7 +41,7 @@ class ListParser(Parser):
 
 class CardParser(Parser):
     def get_url(self, num):
-        return f"{config.CARD_URL_TEMPLATE}{num}"
+        return f"{consts.CARD_URL_TEMPLATE}{num}"
 
     def create_card(self) -> (int, Card):
         new_card = Card(

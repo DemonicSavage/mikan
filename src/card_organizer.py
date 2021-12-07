@@ -1,7 +1,7 @@
 from pathlib import Path
 import utils
 
-import config
+import consts
 
 class CardOrganizer:
     def __init__(self, path):
@@ -13,7 +13,7 @@ class CardOrganizer:
         return filename.split("_")
 
     def get_card_names(self):
-        dir = [x for x in self.path.joinpath(config.CARD_RESULTS_DIR).iterdir() if x.is_file()]
+        dir = [x for x in self.path.joinpath(consts.CARD_RESULTS_DIR).iterdir() if x.is_file()]
         return list(dir)
 
     def create_symlink(self, path):
