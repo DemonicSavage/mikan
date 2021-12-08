@@ -3,8 +3,8 @@
 import argparse
 import sys
 
-from card_downloader import CardDownloader
-from card_organizer import CardOrganizer
+from downloader import CardDownloader
+from organizer import CardOrganizer
 
 import json_utils
 import config
