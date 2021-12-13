@@ -28,8 +28,8 @@ class CardOrganizer:
             
             print(f"Symlinked to {name[1]}/{name[2]}/{file_name}.")
         except FileExistsError:
-            print(f"File already symlinked: {file_name}.")
-    
+            pass
+
     def organize_cards(self):
         cards = self.get_card_names()
         for card in cards:
