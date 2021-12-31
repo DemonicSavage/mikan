@@ -24,7 +24,7 @@ class CardDownloader:
         with open(card_path, 'wb') as f:
             response = requests.get(f"https:{card.idolized_url if idolized else card.normal_url}")
             f.write(response.content)
-            print(f"Downloaded card with the id {key}, {'idolized' if idolized else 'normal'}.")
+            print(f"Downloaded card {key}, {'idolized' if idolized else 'normal'}.")
 
     def update_card_if_needed(self, key, card):
         if not card.is_double_sized() and card.rarity != "Rare":
@@ -73,13 +73,13 @@ class CardDownloader:
         print("Searching for new or missing cards...")
         self.get_new_cards()
 
-        print("Finding and updating non-double-sized SRs and URs to double-sized, if available...")
+        print("Checking if cards can be updated to better resolution...")
         for n, card in self.cards.items():
             if self.update_card_if_needed(n, card):
                 print(f"Updated card {n}.")
 
         self.update_json_file()
-        print("Updated cards.json file.")
+        print("Updated cards database.")
 
     def update_json_file(self):
         self.cards = dict(sorted(self.cards.items(), reverse=True))
