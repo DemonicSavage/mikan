@@ -1,11 +1,28 @@
-usage: sifas_card_downloader [-h] [--organize] [--update] [--download]
+SYNOPSIS:
+    ./sifas_card_downloader [OPTIONS...]
 
-searches and downloads SIFAS cards
 
-optional arguments:
-  -h, --help  show this help message and exit
-  --update    update the json file containing card data to reflect the current
-              available cards in idol.st
-  --download  download the cards
-  --organize  organize downloaded cards in a directory per unit, then a
-              subdirectory per idol
+DESCRIPTION:
+    The program automatically downloads and categorizes cards from the game Love Live! School Idol Festival ALL STARS.
+    Images are downloaded from https://idol.st/.
+
+
+USAGE:
+    Current version accepts one argument per execution, so the user is expected to manually run
+    --update, --download, and --organize.
+
+
+OPTIONS:
+    -h, --help
+            Outputs a usage message and exits.
+
+    --update
+            Updates cards.json containing the information
+           on available cards.
+
+    --download
+            Downloads cards.
+
+    --organize
+            Organizes downloaded cards. Creates a directory for each group and idol
+            and symlinks the pictures inside.
