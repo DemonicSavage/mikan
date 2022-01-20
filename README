@@ -9,12 +9,15 @@ DESCRIPTION:
 
 USAGE:
     Current version accepts one argument per execution, so the user is expected to manually run
-    --update, --download, and --organize.
+    either --all or --update, --download, and --organize.
 
 
 OPTIONS:
     -h, --help
             Outputs a usage message and exits.
+
+    --ALL
+            Updates, downloads, and organizes cards
 
     --update
             Updates cards.json containing the information
