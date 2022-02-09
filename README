@@ -9,7 +9,8 @@ DESCRIPTION:
 
 USAGE:
     Current version accepts one argument per execution, so the user is expected to manually run
-    either --all or --update, --download, and --organize.
+    either --all or --update, --download, and --organize. Optionally you can use --stills to
+    download stills instead of cards.
 
 
 OPTIONS:
@@ -29,3 +30,6 @@ OPTIONS:
     --organize
             Organizes downloaded cards. Creates a directory for each group and idol
             and symlinks the pictures inside.
+
+    --stills
+            Works with stills instead of cards (won't organize)
