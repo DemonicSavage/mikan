@@ -4,7 +4,7 @@ import requests
 
 import utils
 import consts
-from classes import Card
+from classes import Card, Still
 from abc import ABC, abstractmethod
 
 
@@ -14,18 +14,14 @@ class Parser(ABC):
 
     def get_html(self, url):
         return requests.get(url).content
-
-    @abstractmethod
-    def get_url(self, num):
-        pass
     
-    def parse(self, num):
-        self.bs = BeautifulSoup(self.get_html(self.get_url(num)), features="lxml")
+    def parse(self, num, still=False):
+        self.bs = BeautifulSoup(self.get_html(self.get_url(num, still)), features="lxml")
         self.num = num
 
 class ListParser(Parser):
-    def get_url(self, num):
-        return f"{consts.CARDS_LIST_URL_TEMPLATE}{num}"
+    def get_url(self, num, still=False):
+        return f"{consts.CARDS_LIST_URL_TEMPLATE}{num}" if not still else f"{consts.STILLS_LIST_URL_TEMPLATE}{num}"
 
     def get_page(self):
         nums = []
@@ -40,7 +36,7 @@ class ListParser(Parser):
 
 
 class CardParser(Parser):
-    def get_url(self, num):
+    def get_url(self, num, still):
         return f"{consts.CARD_URL_TEMPLATE}{num}"
 
     def create_card(self) -> (int, Card):
@@ -64,6 +60,11 @@ class CardParser(Parser):
         links = top_item.find_all("a")
         return (links[0].get("href"), links[1].get("href"))
 
+    def get_still_image_url(self):
+        top_item = self.bs.find(class_="top-item")
+        links = top_item.find_all("a")
+        return links[0].get("href")
+
     def get_data_field(self, field):
         data = self.bs.find(attrs={"data-field":field})
         if data:
@@ -83,4 +84,20 @@ class CardParser(Parser):
             else:
                 return ""
 
-        
+class StillParser(Parser):
+    def get_url(self, num, still):
+        return f"{consts.STILL_URL_TEMPLATE}{num}"
+
+    def create_still(self) -> (int, Still):
+        new_still = Still(
+            self.get_still_image_url()
+        )
+        return self.num, new_still
+
+    def update_still(self, still):
+        still.url = self.get_still_image_url()
+
+    def get_still_image_url(self):
+        top_item = self.bs.find(class_="top-item")
+        links = top_item.find_all("a")
+        return links[0].get("href")

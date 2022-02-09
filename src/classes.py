@@ -28,3 +28,11 @@ class Card:
     def is_double_sized(self):
         p = re.compile(r"/2x/")
         return p.search(self.normal_url) != None
+
+@dataclass
+class Still:
+    url: str
+
+    def is_double_sized(self):
+        p = re.compile(r"/2x/")
+        return p.search(self.url) != None
