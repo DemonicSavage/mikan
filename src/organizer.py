@@ -3,9 +3,10 @@ import utils
 
 import consts
 
+
 class CardOrganizer:
     def __init__(self, path):
-        self.path= utils.init_path(path)
+        self.path = utils.init_path(path)
         self.data = []
         self.list = []
 
@@ -13,7 +14,8 @@ class CardOrganizer:
         return filename.split("_")
 
     def get_card_names(self):
-        dir = [x for x in self.path.joinpath(consts.CARD_RESULTS_DIR).iterdir() if x.is_file()]
+        dir = [x for x in self.path.joinpath(
+            consts.CARD_RESULTS_DIR).iterdir() if x.is_file() and x.suffix in [".jpg", ".png"]]
         return list(dir)
 
     def create_symlink(self, path):
@@ -25,7 +27,7 @@ class CardOrganizer:
         utils.init_path(new_path)
         try:
             new_card.symlink_to(path)
-            
+
             print(f"Symlinked to {name[1]}/{name[2]}/{file_name}.")
         except FileExistsError:
             pass

@@ -12,12 +12,16 @@ class Parser(ABC):
     bs: BeautifulSoup()
     num: int
 
+    session = requests.Session()
+
     def get_html(self, url):
-        return requests.get(url).content
-    
+        return self.session.get(url).content
+
     def parse(self, num, still=False):
-        self.bs = BeautifulSoup(self.get_html(self.get_url(num, still)), features="lxml")
+        self.bs = BeautifulSoup(self.get_html(
+            self.get_url(num, still)), features="lxml")
         self.num = num
+
 
 class ListParser(Parser):
     def get_url(self, num, still=False):
@@ -66,23 +70,24 @@ class CardParser(Parser):
         return links[0].get("href")
 
     def get_data_field(self, field):
-        data = self.bs.find(attrs={"data-field":field})
+        data = self.bs.find(attrs={"data-field": field})
         if data:
             return data.find_all("td")[1]
         else:
             return None
-    
+
     def get_card_info(self, info):
         if info == "idol":
             data = self.get_data_field("idol").find("span").get_text()
             data = data.partition("Open idol")[0].strip()
-            return data    
+            return data
         else:
             data = self.get_data_field(info)
             if data:
                 return data.get_text().strip()
             else:
                 return ""
+
 
 class StillParser(Parser):
     def get_url(self, num, still):
