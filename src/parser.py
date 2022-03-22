@@ -12,10 +12,8 @@ class Parser(ABC):
     bs: BeautifulSoup()
     num: int
 
-    session = requests.Session()
-
     def get_html(self, url):
-        return self.session.get(url).content
+        return requests.get(url).content
 
     def parse(self, num, still=False):
         self.bs = BeautifulSoup(self.get_html(

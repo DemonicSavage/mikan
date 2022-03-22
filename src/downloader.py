@@ -58,6 +58,7 @@ class CardDownloader:
     def download_multi(self):
         for key, card in self.objs.items():
             self.download(key, card)
+        self.session.close()
 
     def get_new(self):
         num = 1
@@ -134,6 +135,7 @@ class StillDownloader:
     def download_multi(self):
         for key, still in self.objs.items():
             self.download(key, still)
+        self.session.close()
 
     def get_new(self):
         num = 1
