@@ -5,13 +5,9 @@ import requests
 import utils
 import consts
 from classes import Card, Still
-from abc import ABC, abstractmethod
 
 
-class Parser(ABC):
-    bs: BeautifulSoup()
-    num: int
-
+class Parser():
     def get_html(self, url):
         return requests.get(url).content
 

@@ -1,7 +1,7 @@
 import re
 
 from dataclasses import dataclass
-from typing import List
+
 
 @dataclass
 class Idol:
@@ -9,10 +9,12 @@ class Idol:
     last_name: str
     alt_spelling: str = None
 
+
 @dataclass
 class Group:
     name: str
-    idols: List[Idol]
+    idols: list[Idol]
+
 
 @dataclass
 class Card:
@@ -24,10 +26,11 @@ class Card:
     year: str
     normal_url: str
     idolized_url: str
-    
+
     def is_double_sized(self):
         p = re.compile(r"/2x/")
         return p.search(self.normal_url) != None
+
 
 @dataclass
 class Still:
