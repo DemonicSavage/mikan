@@ -41,31 +41,26 @@ class CardParser(Parser):
     def get_url(self, num, still):
         return f"{consts.CARD_URL_TEMPLATE}{num}"
 
-    def create_card(self) -> (int, Card):
+    def create_item(self) -> (int, Card):
         new_card = Card(
-            self.get_card_info("idol"),
-            self.get_card_info("rarity"),
-            self.get_card_info("attribute"),
-            self.get_card_info("i_unit"),
-            self.get_card_info("i_subunit"),
-            self.get_card_info("i_year"),
-            self.get_card_image_urls()[0],
-            self.get_card_image_urls()[1]
+            self.get_item_info("idol"),
+            self.get_item_info("rarity"),
+            self.get_item_info("attribute"),
+            self.get_item_info("i_unit"),
+            self.get_item_info("i_subunit"),
+            self.get_item_info("i_year"),
+            self.get_item_image_urls()[0],
+            self.get_item_image_urls()[1]
         )
         return self.num, new_card
 
-    def update_card(self, card):
-        card.normal_url, card.idolized_url = self.get_card_image_urls()
+    def update_item(self, card):
+        card.normal_url, card.idolized_url = self.get_item_image_urls()
 
-    def get_card_image_urls(self):
+    def get_item_image_urls(self):
         top_item = self.bs.find(class_="top-item")
         links = top_item.find_all("a")
         return (links[0].get("href"), links[1].get("href"))
-
-    def get_still_image_url(self):
-        top_item = self.bs.find(class_="top-item")
-        links = top_item.find_all("a")
-        return links[0].get("href")
 
     def get_data_field(self, field):
         data = self.bs.find(attrs={"data-field": field})
@@ -74,7 +69,7 @@ class CardParser(Parser):
         else:
             return None
 
-    def get_card_info(self, info):
+    def get_item_info(self, info):
         if info == "idol":
             data = self.get_data_field("idol").find("span").get_text()
             data = data.partition("Open idol")[0].strip()
@@ -91,16 +86,16 @@ class StillParser(Parser):
     def get_url(self, num, still):
         return f"{consts.STILL_URL_TEMPLATE}{num}"
 
-    def create_still(self) -> (int, Still):
-        new_still = Still(
-            self.get_still_image_url()
+    def create_item(self) -> (int, Still):
+        new_item = Still(
+            self.get_item_image_url()
         )
-        return self.num, new_still
+        return self.num, new_item
 
-    def update_still(self, still):
-        still.url = self.get_still_image_url()
+    def update_item(self, item):
+        item.url = self.get_item_image_url()
 
-    def get_still_image_url(self):
+    def get_item_image_url(self):
         top_item = self.bs.find(class_="top-item")
         links = top_item.find_all("a")
         return links[0].get("href")
