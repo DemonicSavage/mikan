@@ -2,7 +2,6 @@ from pathlib import Path
 import os
 
 import utils
-
 import consts
 
 
