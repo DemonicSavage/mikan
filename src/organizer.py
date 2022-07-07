@@ -29,12 +29,12 @@ class CardOrganizer(Organizer):
         self.results_dir = consts.CARD_RESULTS_DIR
 
     def remove_duplicates(self):
-        paths = self.get_filenames([".jpg", ".png"])
+        paths = self.get_filenames([".jpeg", ".png"])
         prefixes = [str(prefix).split(".")[0] for prefix in paths]
 
         for path in prefixes:
             if prefixes.count(path) > 1:
-                jpg = Path(f"{path}.jpg")
+                jpg = Path(f"{path}.jpeg")
                 try:
                     os.remove(jpg)
 
@@ -64,7 +64,7 @@ class CardOrganizer(Organizer):
     def organize(self):
         self.remove_duplicates()
 
-        cards = self.get_filenames([".jpg", ".png"])
+        cards = self.get_filenames([".jpeg", ".png"])
         for card in cards:
             self.create_symlink(card)
 
@@ -77,12 +77,12 @@ class StillOrganizer(Organizer):
         self.results_dir = consts.STILL_RESULTS_DIR
 
     def remove_duplicates(self):
-        paths = self.get_filenames([".jpg", ".png"])
+        paths = self.get_filenames([".jpeg", ".png"])
         prefixes = [str(prefix).split(".")[0] for prefix in paths]
 
         for path in prefixes:
             if prefixes.count(path) > 1:
-                jpg = Path(f"{path}.jpg")
+                jpg = Path(f"{path}.jpeg")
                 try:
                     os.remove(jpg)
                 except FileNotFoundError:

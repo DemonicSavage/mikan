@@ -17,7 +17,6 @@ class Downloader:
         self.objs = {}
 
         self.session = requests.Session()
-        self.list_parser = ListParser()
         self.still = False
 
     def download_image(self, dest, url):
@@ -28,9 +27,12 @@ class Downloader:
     def update_if_needed(self, key, item):
         if self.needs_update(item):
             old_url = self.get_url(item)
-            self.item_parser.parse(key)
-            self.item_parser.update_item(item)
-            new_url = self.get_url(item)
+
+            _, updated_item = self.item_parser.get_item(key)
+            self.item_parser.update_item(updated_item)
+
+            new_url = self.get_url(updated_item)
+
             return (old_url != new_url)
 
     def download(self, path, key, item):
@@ -43,21 +45,17 @@ class Downloader:
             self.get_image(key, item)
 
     def get_new(self):
-        num = 1
-        self.list_parser.parse(num, self.still)
+        page_num = 1
 
-        while (page_items := self.list_parser.get_page()):
-            page_items = sorted(page_items, reverse=True)
+        while (page_items := self.list_parser.get_page(page_num)):
 
-            for i in range(len(page_items)):
-                if page_items[i] not in self.objs:
-                    self.item_parser.parse(page_items[i])
-                    n, item = self.item_parser.create_item()
-                    self.objs[n] = item
+            for item in page_items:
+                if item not in self.objs:
+                    n, obj = self.item_parser.get_item(item)
+                    self.objs[n] = obj
                     print(f"Getting item {n}.")
 
-            num += 1
-            self.list_parser.parse(num, self.still)
+            page_num += 1
 
     def download_multi(self):
         for key, item in self.objs.items():
@@ -78,7 +76,7 @@ class Downloader:
         print("Updated items database.")
 
     def update_json_file(self):
-        self.stills = dict(sorted(self.objs.items(), reverse=True))
+        self.objs = dict(sorted(self.objs.items(), reverse=True))
         json_utils.dump_to_file(json_utils.to_json(
             self.objs), self.path, self.still)
 
@@ -87,6 +85,7 @@ class CardDownloader(Downloader):
     def __init__(self, path):
         super().__init__(path)
         utils.init_path(Path(self.path).joinpath(consts.CARD_RESULTS_DIR))
+        self.list_parser = ListParser()
         self.item_parser = CardParser()
 
     def needs_update(self, item):
@@ -119,6 +118,8 @@ class StillDownloader(Downloader):
     def __init__(self, path):
         super().__init__(path)
         utils.init_path(Path(self.path).joinpath(consts.STILL_RESULTS_DIR))
+
+        self.list_parser = ListParser(still=True)
         self.item_parser = StillParser()
         self.still = True
 

@@ -8,33 +8,41 @@ from classes import Card, Still
 
 
 class Parser():
+
     def get_html(self, url):
         return requests.get(url).content
 
-    def parse(self, num, still=False):
-        self.bs = BeautifulSoup(self.get_html(
-            self.get_url(num, still)), features="lxml")
+    def soup_page(self, num):
+        return BeautifulSoup(self.get_html(
+            self.get_url(num)), features="lxml")
+
+    def get_item(self, num):
         self.num = num
+        self.bs = self.soup_page(self.num)
+        return self.create_item()
 
 
 class ListParser(Parser):
-    def get_url(self, num, still=False):
-        return f"{consts.CARDS_LIST_URL_TEMPLATE}{num}" if not still else f"{consts.STILLS_LIST_URL_TEMPLATE}{num}"
+    def __init__(self, still=False):
+        self.url = consts.CARDS_LIST_URL_TEMPLATE if not still else consts.STILLS_LIST_URL_TEMPLATE
 
-    def get_page(self):
+    def get_url(self, num):
+        return f"{self.url}{num}"
+
+    def get_page(self, num):
         nums = []
         p = re.compile(r"/([0-9]+)/")
-        items = self.bs.find_all(class_="top-item")
+        items = self.soup_page(num).find_all(class_="top-item")
         for item in items:
             string = item.find("a").get("href")
             m = p.search(string)
             g = m.group(1)
             nums.append(int(g))
-        return nums
+        return sorted(nums, reverse=True)
 
 
 class CardParser(Parser):
-    def get_url(self, num, still):
+    def get_url(self, num):
         return f"{consts.CARD_URL_TEMPLATE}{num}"
 
     def create_item(self) -> (int, Card):
@@ -79,7 +87,7 @@ class CardParser(Parser):
 
 
 class StillParser(Parser):
-    def get_url(self, num, still):
+    def get_url(self, num):
         return f"{consts.STILL_URL_TEMPLATE}{num}"
 
     def create_item(self) -> (int, Still):
