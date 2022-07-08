@@ -8,28 +8,12 @@ DESCRIPTION:
 
 
 USAGE:
-    Current version accepts one argument per execution, so the user is expected to manually run
-    either --all or --update, --download, and --organize. Optionally you can use --stills to
-    download stills instead of cards.
+    Just run ./sifas_card_downloader. Use "--stills" to download stills instead of cards.
 
 
 OPTIONS:
     -h, --help
-            Outputs a usage message and exits.
-
-    --all
-            Updates, downloads, and organizes cards
-
-    --update
-            Updates cards.json containing the information
-           on available cards.
-
-    --download
-            Downloads cards.
-
-    --organize
-            Organizes downloaded cards. Creates a directory for each group and idol
-            and symlinks the pictures inside.
+            Outputs a usage message and exits
 
     --stills
-            Works with stills instead of cards (won't organize)
+            Works with stills instead of cards (won't organize the stills)
