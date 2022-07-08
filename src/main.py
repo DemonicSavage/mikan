@@ -16,7 +16,7 @@ def main():
     argparser.add_argument('--stills', action='store_true',
                            help='work with stills instead of cards (won\'t organize)')
 
-    args = argparser.parse_args(args=None if sys.argv[1:] else ['--help'])
+    args = argparser.parse_args()
     card_searcher(config.CARDS_DIR, args)
 
 

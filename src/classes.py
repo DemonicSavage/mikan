@@ -18,6 +18,7 @@ class Group:
 
 @dataclass
 class Card:
+    key: int
     idol: str
     rarity: str
     attribute: str
@@ -30,12 +31,6 @@ class Card:
     def is_double_sized(self):
         p = re.compile(r"/2x/")
         return p.search(self.normal_url) != None
-
-    def key(self):
-        p = re.compile(r"/([0-9]+)[A-Z]")
-        m = p.search(self.normal_url)
-        g = m.group(1)
-        return int(g)
 
     def get_urls(self):
         return [self.normal_url, self.idolized_url]
@@ -52,17 +47,12 @@ class Card:
 
 @dataclass
 class Still:
+    key: int
     url: str
 
     def is_double_sized(self):
         p = re.compile(r"/2x/")
         return p.search(self.url) != None
-
-    def key(self):
-        p = re.compile(r"/([0-9]+)[A-Z]")
-        m = p.search(self.url)
-        g = m.group(1)
-        return int(g)
 
     def get_urls(self):
         return [self.url]

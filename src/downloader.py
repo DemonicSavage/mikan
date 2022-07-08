@@ -31,13 +31,13 @@ class Downloader:
         try:
             self.download_images(paths, item)
         except Exception as e:
-            print(f"Couldn't download card {item.key()}: {e}.")
+            print(f"Couldn't download card {item.key}: {e}.")
 
     def create_image_file(self, path, item, i):
-        if not Path(path).exists() or item.key() in self.updateables:
+        if not Path(path).exists() or item.key in self.updateables:
             self.write_to_file(Path(path), item.get_urls()[i])
 
-            message = f"Downloaded item {item.key()}"
+            message = f"Downloaded item {item.key}"
             if type(item) is Card:
                 message += f", {'idolized' if i == 1 else 'normal'}"
             message += "."
@@ -50,10 +50,10 @@ class Downloader:
 
     def update_if_needed(self, item):
         if item.needs_update():
-            n, updated_item = self.item_parser.get_item(item.key())
+            n, updated_item = self.item_parser.get_item(item.key)
 
             if item.get_urls()[0] != updated_item.get_urls()[0]:
-                self.updateables.append(item.key())
+                self.updateables.append(item.key)
 
             for i in range(len(item.get_urls())):
                 item.set_url(i, updated_item.get_urls()[i])
@@ -101,7 +101,7 @@ class CardDownloader(Downloader):
         self.item_parser = CardParser()
 
     def get_paths(self, item):
-        file_name = f"{item.key()}_{item.unit}_{item.idol}"
+        file_name = f"{item.key}_{item.unit}_{item.idol}"
         base_path = Path(self.path).joinpath(consts.CARD_RESULTS_DIR)
 
         normal_path = f"{file_name}_Normal{Path(item.normal_url).suffix}"
@@ -120,7 +120,7 @@ class StillDownloader(Downloader):
         self.still = True
 
     def get_paths(self, item):
-        file_name = f"{item.key()}_Still"
+        file_name = f"{item.key}_Still"
         base_path = Path(self.path).joinpath(consts.STILL_RESULTS_DIR)
 
         return [base_path.joinpath(f"{file_name}{Path(item.url).suffix}")]

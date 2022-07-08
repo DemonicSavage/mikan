@@ -47,6 +47,7 @@ class CardParser(Parser):
 
     def create_item(self) -> (int, Card):
         new_card = Card(
+            self.num,
             self.get_item_info("idol"),
             self.get_item_info("rarity"),
             self.get_item_info("attribute"),
@@ -92,6 +93,7 @@ class StillParser(Parser):
 
     def create_item(self) -> (int, Still):
         new_item = Still(
+            self.num,
             self.get_item_image_url()
         )
         return self.num, new_item
