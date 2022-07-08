@@ -19,7 +19,7 @@ class Downloader:
         self.session = requests.Session()
         self.still = False
 
-    def download_image(self, dest, url):
+    def write_to_file(self, dest, url):
         with open(dest, 'wb') as f:
             response = self.session.get(f"https:{url}")
             f.write(response.content)
@@ -35,7 +35,7 @@ class Downloader:
 
             return (old_url != new_url)
 
-    def download(self, path, key, item):
+    def download_image(self, path, key, item):
         updateable_item = self.update_if_needed(key, item)
         if updateable_item:
             self.update_json_file()
@@ -44,7 +44,7 @@ class Downloader:
         if not path.exists() or updateable_item:
             self.get_image(key, item)
 
-    def get_new(self):
+    def get_cards_from_parser(self):
         page_num = 1
 
         while (page_items := self.list_parser.get_page(page_num)):
@@ -57,15 +57,15 @@ class Downloader:
 
             page_num += 1
 
-    def download_multi(self):
+    def download(self):
         for key, item in self.objs.items():
             path = self.get_path(key, item)
-            self.download(path, key, item)
+            self.download_image(path, key, item)
         self.session.close()
 
     def update(self):
         print("Searching for new or missing items...")
-        self.get_new()
+        self.get_cards_from_parser()
 
         print("Checking if items can be updated to better resolution...")
         for n, item in self.objs.items():
@@ -104,10 +104,10 @@ class CardDownloader(Downloader):
         normal_path = str(self.get_path(key, item))
         idolized_path = normal_path.replace("Normal", "Idolized")
         try:
-            self.download_image(normal_path, item.normal_url)
+            self.write_to_file(normal_path, item.normal_url)
             print(
                 f"Downloaded card {key}, normal.")
-            self.download_image(idolized_path, item.idolized_url)
+            self.write_to_file(idolized_path, item.idolized_url)
             print(
                 f"Downloaded card {key}, idolized.")
         except Exception as e:
@@ -138,7 +138,7 @@ class StillDownloader(Downloader):
     def get_image(self, key, item):
         path = str(self.get_path(key, item))
         try:
-            self.download_image(path, item.url)
+            self.write_to_file(path, item.url)
             print(
                 f"Downloaded still {key}.")
         except Exception as e:

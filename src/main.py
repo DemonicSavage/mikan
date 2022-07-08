@@ -35,7 +35,7 @@ def card_searcher(path, args):
     if args.update or args.all:
         downloader.update()
     if args.download or args.all:
-        downloader.download_multi()
+        downloader.download()
     if args.organize or args.all:
         organizer = CardOrganizer(
             path) if not args.stills else StillOrganizer(path)
