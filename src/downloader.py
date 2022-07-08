@@ -19,30 +19,44 @@ class Downloader:
         self.session = requests.Session()
         self.still = False
 
+        self.updateables = []
+
     def write_to_file(self, dest, url):
         with open(dest, 'wb') as f:
             response = self.session.get(f"https:{url}")
             f.write(response.content)
 
-    def update_if_needed(self, key, item):
-        if self.needs_update(item):
-            old_url = self.get_url(item)
+    def get_images(self, item):
+        paths = self.get_paths(item)
+        try:
+            self.download_images(paths, item)
+        except Exception as e:
+            print(f"Couldn't download card {item.key()}: {e}.")
 
-            _, updated_item = self.item_parser.get_item(key)
-            self.item_parser.update_item(updated_item)
+    def create_image_file(self, path, item, i):
+        if not Path(path).exists() or item.key() in self.updateables:
+            self.write_to_file(Path(path), item.get_urls()[i])
 
-            new_url = self.get_url(updated_item)
+            message = f"Downloaded item {item.key()}"
+            if type(item) is Card:
+                message += f", {'idolized' if i == 1 else 'normal'}"
+            message += "."
 
-            return (old_url != new_url)
+            print(message)
 
-    def download_image(self, path, key, item):
-        updateable_item = self.update_if_needed(key, item)
-        if updateable_item:
-            self.update_json_file()
-            print(f"Updated item {key}.")
+    def download_images(self, paths, item):
+        for i, path in enumerate(paths):
+            self.create_image_file(path, item, i)
 
-        if not path.exists() or updateable_item:
-            self.get_image(key, item)
+    def update_if_needed(self, item):
+        if item.needs_update():
+            n, updated_item = self.item_parser.get_item(item.key())
+
+            if item.get_urls()[0] != updated_item.get_urls()[0]:
+                self.updateables.append(item.key())
+
+            for i in range(len(item.get_urls())):
+                item.set_url(i, updated_item.get_urls()[i])
 
     def get_cards_from_parser(self):
         page_num = 1
@@ -59,8 +73,7 @@ class Downloader:
 
     def download(self):
         for key, item in self.objs.items():
-            path = self.get_path(key, item)
-            self.download_image(path, key, item)
+            self.get_images(item)
         self.session.close()
 
     def update(self):
@@ -68,9 +81,8 @@ class Downloader:
         self.get_cards_from_parser()
 
         print("Checking if items can be updated to better resolution...")
-        for n, item in self.objs.items():
-            if self.update_if_needed(n, item):
-                print(f"Updated item {n}.")
+        for key, item in self.objs.items():
+            self.update_if_needed(item)
 
         self.update_json_file()
         print("Updated items database.")
@@ -88,30 +100,14 @@ class CardDownloader(Downloader):
         self.list_parser = ListParser()
         self.item_parser = CardParser()
 
-    def needs_update(self, item):
-        return not item.is_double_sized() and item.rarity != "Rare"
-
-    def get_url(self, item):
-        return item.normal_url
-
-    def get_path(self, key, item):
-        file_name = f"{key}_{item.unit}_{item.idol}"
+    def get_paths(self, item):
+        file_name = f"{item.key()}_{item.unit}_{item.idol}"
         base_path = Path(self.path).joinpath(consts.CARD_RESULTS_DIR)
 
-        return base_path.joinpath(f"{file_name}_Normal{Path(item.normal_url).suffix}")
-
-    def get_image(self, key, item):
-        normal_path = str(self.get_path(key, item))
+        normal_path = f"{file_name}_Normal{Path(item.normal_url).suffix}"
         idolized_path = normal_path.replace("Normal", "Idolized")
-        try:
-            self.write_to_file(normal_path, item.normal_url)
-            print(
-                f"Downloaded card {key}, normal.")
-            self.write_to_file(idolized_path, item.idolized_url)
-            print(
-                f"Downloaded card {key}, idolized.")
-        except Exception as e:
-            print(f"Couldn't download card {key}.")
+
+        return [base_path.joinpath(normal_path), base_path.joinpath(idolized_path)]
 
 
 class StillDownloader(Downloader):
@@ -123,23 +119,8 @@ class StillDownloader(Downloader):
         self.item_parser = StillParser()
         self.still = True
 
-    def needs_update(self, item):
-        return not item.is_double_sized()
-
-    def get_url(self, item):
-        return item.url
-
-    def get_path(self, key, item):
-        file_name = f"{key}_Still"
+    def get_paths(self, item):
+        file_name = f"{item.key()}_Still"
         base_path = Path(self.path).joinpath(consts.STILL_RESULTS_DIR)
 
-        return base_path.joinpath(f"{file_name}{Path(item.url).suffix}")
-
-    def get_image(self, key, item):
-        path = str(self.get_path(key, item))
-        try:
-            self.write_to_file(path, item.url)
-            print(
-                f"Downloaded still {key}.")
-        except Exception as e:
-            print(f"Couldn't download still {key}.")
+        return [base_path.joinpath(f"{file_name}{Path(item.url).suffix}")]
