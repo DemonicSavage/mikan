@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import argparse
 import sys
 
 from downloader import CardDownloader, StillDownloader
@@ -10,22 +9,28 @@ import json_utils
 import config
 
 
+class UnrecognizedArgumentException(Exception):
+    pass
+
+
 def main():
-    argparser = argparse.ArgumentParser(
-        prog="sifas_card_downloader", description="searches and downloads SIFAS cards")
-    argparser.add_argument('--stills', action='store_true',
-                           help='work with stills instead of cards (won\'t organize)')
+    work_with_stills = False
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "--stills":
+            work_with_stills = True
+        else:
+            raise UnrecognizedArgumentException(
+                "Only recognized argument is --stills.")
 
-    args = argparser.parse_args()
-    card_searcher(config.CARDS_DIR, args)
+    card_searcher(config.CARDS_DIR, work_with_stills)
 
 
-def card_searcher(path, args):
+def card_searcher(path, stills):
     downloader = CardDownloader(
-        path) if not args.stills else StillDownloader(path)
+        path) if not stills else StillDownloader(path)
     organizer = CardOrganizer(
-        path) if not args.stills else StillOrganizer(path)
-    json_utils.load_cards(downloader.path, downloader.objs, still=args.stills)
+        path) if not stills else StillOrganizer(path)
+    json_utils.load_cards(downloader.path, downloader.objs, still=stills)
 
     downloader.update()
     downloader.download()
