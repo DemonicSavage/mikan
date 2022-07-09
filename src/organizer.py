@@ -1,5 +1,4 @@
 from pathlib import Path
-import os
 
 import utils
 import consts
@@ -10,14 +9,14 @@ class Organizer:
         self.path = utils.init_path(path)
 
     def get_filenames(self, suffix_list):
-        dir = [x for x in self.path.joinpath(
-            self.results_dir).iterdir() if x.is_file() and x.suffix in suffix_list]
+        dir = [x for x in (self.path/self.results_dir).iterdir()
+               if x.is_file() and x.suffix in suffix_list]
         return list(dir)
 
     def remove_partially_downloaded(self):
         files = self.get_filenames([".part"])
         for file in files:
-            os.remove(file)
+            file.unlink()
 
 
 class CardOrganizer(Organizer):
@@ -36,13 +35,13 @@ class CardOrganizer(Organizer):
             if prefixes.count(path) > 1:
                 jpg = Path(f"{path}.jpeg")
                 try:
-                    os.remove(jpg)
+                    jpg.unlink()
 
                     jpg = jpg.name
                     split_jpg = jpg.split("_")
 
-                    os.unlink(Path.joinpath(
-                        self.path, split_jpg[1], split_jpg[2], jpg))
+                    (Path(self.path) /
+                     split_jpg[1] / split_jpg[2] / jpg).unlink()
 
                 except FileNotFoundError:
                     pass
@@ -50,8 +49,8 @@ class CardOrganizer(Organizer):
     def create_symlink(self, path):
         file_name = path.name
         name = file_name.split("_")
-        new_path = Path.joinpath(self.path, name[1], name[2])
-        new_card = new_path.joinpath(file_name)
+        new_path = Path(self.path) / name[1] / name[2]
+        new_card = new_path / file_name
 
         utils.init_path(new_path)
         try:
@@ -84,7 +83,7 @@ class StillOrganizer(Organizer):
             if prefixes.count(path) > 1:
                 jpg = Path(f"{path}.jpeg")
                 try:
-                    os.remove(jpg)
+                    jpg.unlink()
                 except FileNotFoundError:
                     pass
 

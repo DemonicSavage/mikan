@@ -96,24 +96,24 @@ class Downloader:
 class CardDownloader(Downloader):
     def __init__(self, path):
         super().__init__(path)
-        utils.init_path(Path(self.path).joinpath(consts.CARD_RESULTS_DIR))
+        utils.init_path(Path(self.path) / consts.CARD_RESULTS_DIR)
         self.list_parser = ListParser()
         self.item_parser = CardParser()
 
     def get_paths(self, item):
         file_name = f"{item.key}_{item.unit}_{item.idol}"
-        base_path = Path(self.path).joinpath(consts.CARD_RESULTS_DIR)
+        base_path = Path(self.path) / consts.CARD_RESULTS_DIR
 
         normal_path = f"{file_name}_Normal{Path(item.normal_url).suffix}"
         idolized_path = normal_path.replace("Normal", "Idolized")
 
-        return [base_path.joinpath(normal_path), base_path.joinpath(idolized_path)]
+        return [base_path / normal_path, base_path / idolized_path]
 
 
 class StillDownloader(Downloader):
     def __init__(self, path):
         super().__init__(path)
-        utils.init_path(Path(self.path).joinpath(consts.STILL_RESULTS_DIR))
+        utils.init_path(Path(self.path) / consts.STILL_RESULTS_DIR)
 
         self.list_parser = ListParser(still=True)
         self.item_parser = StillParser()
@@ -121,6 +121,6 @@ class StillDownloader(Downloader):
 
     def get_paths(self, item):
         file_name = f"{item.key}_Still"
-        base_path = Path(self.path).joinpath(consts.STILL_RESULTS_DIR)
+        base_path = Path(self.path) / consts.STILL_RESULTS_DIR
 
-        return [base_path.joinpath(f"{file_name}{Path(item.url).suffix}")]
+        return [base_path / f"{file_name}{Path(item.url).suffix}"]
