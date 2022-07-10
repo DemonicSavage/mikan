@@ -18,10 +18,10 @@ class Downloader:
         self.session = requests.Session()
         self.img_type = img_type
 
-        utils.init_path(Path(self.path) / img_type.get_folder())
+        utils.init_path(Path(self.path) / self.img_type.get_folder())
 
-        self.list_parser = img_type.get_list_parser()
-        self.item_parser = img_type.get_parser()
+        self.list_parser = self.img_type.get_list_parser()
+        self.item_parser = self.img_type.get_parser()
 
         self.updateables = []
 
