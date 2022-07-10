@@ -7,17 +7,21 @@ import operator
 import utils
 import json_utils
 import consts
-from parser import CardParser, ListParser, StillParser
 from classes import Card, Still
 
 
 class Downloader:
-    def __init__(self, path):
+    def __init__(self, path, img_type):
         self.path = utils.init_path(Path(path))
         self.objs = {}
 
         self.session = requests.Session()
-        self.still = False
+        self.img_type = img_type
+
+        utils.init_path(Path(self.path) / img_type.get_folder())
+
+        self.list_parser = img_type.get_list_parser()
+        self.item_parser = img_type.get_parser()
 
         self.updateables = []
 
@@ -27,7 +31,7 @@ class Downloader:
             f.write(response.content)
 
     def get_images(self, item):
-        paths = self.get_paths(item)
+        paths = item.get_paths(self.path)
         try:
             self.download_images(paths, item)
         except Exception as e:
@@ -90,37 +94,4 @@ class Downloader:
     def update_json_file(self):
         self.objs = dict(sorted(self.objs.items(), reverse=True))
         json_utils.dump_to_file(json_utils.to_json(
-            self.objs), self.path, self.still)
-
-
-class CardDownloader(Downloader):
-    def __init__(self, path):
-        super().__init__(path)
-        utils.init_path(Path(self.path) / consts.CARD_RESULTS_DIR)
-        self.list_parser = ListParser()
-        self.item_parser = CardParser()
-
-    def get_paths(self, item):
-        file_name = f"{item.key}_{item.unit}_{item.idol}"
-        base_path = Path(self.path) / consts.CARD_RESULTS_DIR
-
-        normal_path = f"{file_name}_Normal{Path(item.normal_url).suffix}"
-        idolized_path = normal_path.replace("Normal", "Idolized")
-
-        return [base_path / normal_path, base_path / idolized_path]
-
-
-class StillDownloader(Downloader):
-    def __init__(self, path):
-        super().__init__(path)
-        utils.init_path(Path(self.path) / consts.STILL_RESULTS_DIR)
-
-        self.list_parser = ListParser(still=True)
-        self.item_parser = StillParser()
-        self.still = True
-
-    def get_paths(self, item):
-        file_name = f"{item.key}_Still"
-        base_path = Path(self.path) / consts.STILL_RESULTS_DIR
-
-        return [base_path / f"{file_name}{Path(item.url).suffix}"]
+            self.objs), self.path, self.img_type)

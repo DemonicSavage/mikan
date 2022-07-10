@@ -2,8 +2,10 @@
 
 import sys
 
-from downloader import CardDownloader, StillDownloader
-from organizer import CardOrganizer, StillOrganizer
+from downloader import Downloader
+from organizer import Organizer
+
+from classes import Card, Still
 
 import json_utils
 import config
@@ -14,23 +16,21 @@ class UnrecognizedArgumentException(Exception):
 
 
 def main():
-    work_with_stills = False
+    img_type = Card
     if len(sys.argv) > 1:
         if sys.argv[1] == "--stills":
-            work_with_stills = True
+            img_type = Still
         else:
             raise UnrecognizedArgumentException(
                 "Only recognized argument is --stills.")
 
-    card_searcher(config.CARDS_DIR, work_with_stills)
+    card_searcher(config.CARDS_DIR, img_type)
 
 
-def card_searcher(path, stills):
-    downloader = CardDownloader(
-        path) if not stills else StillDownloader(path)
-    organizer = CardOrganizer(
-        path) if not stills else StillOrganizer(path)
-    json_utils.load_cards(downloader.path, downloader.objs, still=stills)
+def card_searcher(path, img_type):
+    downloader = Downloader(path, img_type)
+    organizer = Organizer(path, img_type)
+    json_utils.load_cards(downloader.path, downloader.objs, img_type)
 
     downloader.update()
     downloader.download()

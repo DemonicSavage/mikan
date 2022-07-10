@@ -1,6 +1,11 @@
 import re
 
 from dataclasses import dataclass
+from pathlib import Path
+
+import consts
+import parser
+import organizer
 
 
 @dataclass
@@ -44,6 +49,35 @@ class Card:
     def needs_update(self):
         return not self.is_double_sized() and self.rarity != "Rare"
 
+    def get_paths(self, path):
+        file_name = f"{self.key}_{self.unit}_{self.idol}"
+        base_path = Path(path) / consts.CARD_RESULTS_DIR
+
+        normal_path = f"{file_name}_Normal{Path(self.normal_url).suffix}"
+        idolized_path = normal_path.replace("Normal", "Idolized")
+
+        return [base_path / normal_path, base_path / idolized_path]
+
+    @staticmethod
+    def get_folder():
+        return consts.CARD_RESULTS_DIR
+
+    @staticmethod
+    def get_parser():
+        return parser.CardParser()
+
+    @staticmethod
+    def get_list_parser():
+        return parser.ListParser()
+
+    @staticmethod
+    def get_json_filename():
+        return "cards.json"
+
+    @staticmethod
+    def get_organizer(path):
+        return organizer.CardOrganizer(path)
+
 
 @dataclass
 class Still:
@@ -62,3 +96,29 @@ class Still:
 
     def needs_update(self):
         return not self.is_double_sized()
+
+    def get_paths(self, path):
+        file_name = f"{self.key}_Still"
+        base_path = Path(path) / consts.STILL_RESULTS_DIR
+
+        return [base_path / f"{file_name}{Path(self.url).suffix}"]
+
+    @staticmethod
+    def get_folder():
+        return consts.STILL_RESULTS_DIR
+
+    @staticmethod
+    def get_parser():
+        return parser.StillParser()
+
+    @staticmethod
+    def get_list_parser():
+        return parser.ListParser(still=True)
+
+    @staticmethod
+    def get_json_filename():
+        return "stills.json"
+
+    @staticmethod
+    def get_organizer(path):
+        return organizer.StillOrganizer(path)

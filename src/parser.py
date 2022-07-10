@@ -4,7 +4,6 @@ import requests
 
 import utils
 import consts
-from classes import Card, Still
 
 
 class Parser():
@@ -45,7 +44,8 @@ class CardParser(Parser):
     def get_url(self, num):
         return f"{consts.CARD_URL_TEMPLATE}{num}"
 
-    def create_item(self) -> (int, Card):
+    def create_item(self):
+        from classes import Card
         new_card = Card(
             self.num,
             self.get_item_info("idol"),
@@ -91,7 +91,8 @@ class StillParser(Parser):
     def get_url(self, num):
         return f"{consts.STILL_URL_TEMPLATE}{num}"
 
-    def create_item(self) -> (int, Still):
+    def create_item(self):
+        from classes import Still
         new_item = Still(
             self.num,
             self.get_item_image_url()
