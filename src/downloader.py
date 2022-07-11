@@ -28,9 +28,10 @@ class Downloader:
 
     async def write_to_file(self, session, dest, url):
         response = await session.get(f"https:{url}")
-        response_data = await response.read()
-        with open(dest, 'wb') as f:
-            f.write(response_data)
+        if response.status == 200:
+            response_data = await response.read()
+            with open(dest, 'wb') as f:
+                f.write(response_data)
 
     async def get_images(self, session, item):
         paths = item.get_paths(self.path)
