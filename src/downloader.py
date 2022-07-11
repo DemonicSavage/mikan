@@ -72,26 +72,25 @@ class Downloader:
         self.objs[n] = obj
         print(f"Getting item {n}.")
 
+    async def get_page(self, idx):
+        tasks = []
+        page = await self.list_parser.get_page(idx)
+        for item in page:
+            if item not in self.objs:
+                tasks.append(
+                    self.add_item_to_object_list(item))
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
     async def get_cards_from_parser(self):
-        page_num = 1
 
         async with aiohttp.ClientSession() as list_session:
             self.list_parser.set_session(list_session)
-            page_requests = [self.list_parser.get_page(
-                i) for i in range(1, await self.list_parser.get_num_pages()+1)]
 
-            pages = await asyncio.gather(*page_requests, return_exceptions=False)
+            async with aiohttp.ClientSession() as item_session:
+                self.item_parser.set_session(item_session)
+                page_requests = [self.get_page(i) for i in range(1, await self.list_parser.get_num_pages()+1)]
 
-        async with aiohttp.ClientSession() as item_session:
-            self.item_parser.set_session(item_session)
-
-            for page in pages:
-                tasks = []
-                for item in page:
-                    if item not in self.objs:
-                        tasks.append(self.add_item_to_object_list(item))
-                results = await asyncio.gather(*tasks, return_exceptions=False)
-                page_num += 1
+                await asyncio.gather(*page_requests, return_exceptions=True)
 
     async def download(self):
         async with aiohttp.ClientSession() as item_session:
