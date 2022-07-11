@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import asyncio
 
 from downloader import Downloader
 from organizer import Organizer
@@ -15,7 +16,7 @@ class UnrecognizedArgumentException(Exception):
     pass
 
 
-def main():
+async def main():
     img_type = Card
     if len(sys.argv) > 1:
         if sys.argv[1] == "--stills":
@@ -24,18 +25,18 @@ def main():
             raise UnrecognizedArgumentException(
                 "Only recognized argument is --stills.")
 
-    card_searcher(config.CARDS_DIR, img_type)
+    await card_searcher(config.CARDS_DIR, img_type)
 
 
-def card_searcher(path, img_type):
+async def card_searcher(path, img_type):
     downloader = Downloader(path, img_type)
     organizer = Organizer(path, img_type)
     json_utils.load_cards(downloader.path, downloader.objs, img_type)
 
-    downloader.update()
-    downloader.download()
+    await downloader.update()
+    await downloader.download()
     organizer.organize()
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

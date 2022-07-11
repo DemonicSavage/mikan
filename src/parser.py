@@ -1,24 +1,27 @@
 from bs4 import BeautifulSoup
 import re
-import requests
+import aiohttp
+import asyncio
 
 import utils
 import consts
 
 
 class Parser():
+    def set_session(self, session):
+        self.session = session
 
-    def get_html(self, url):
-        return requests.get(url).content
+    async def get_html(self, url):
+        html = await self.session.get(url)
+        return await html.text()
 
-    def soup_page(self, num):
-        return BeautifulSoup(self.get_html(
+    async def soup_page(self, num):
+        return BeautifulSoup(await self.get_html(
             self.get_url(num)), features="lxml")
 
-    def get_item(self, num):
-        self.num = num
-        self.bs = self.soup_page(self.num)
-        return self.create_item()
+    async def get_item(self, num):
+        self.bs = await self.soup_page(num)
+        return self.create_item(num)
 
 
 class ListParser(Parser):
@@ -28,10 +31,11 @@ class ListParser(Parser):
     def get_url(self, num):
         return f"{self.url}{num}"
 
-    def get_page(self, num):
+    async def get_page(self, num):
         nums = []
         p = re.compile(r"/([0-9]+)/")
-        items = self.soup_page(num).find_all(class_="top-item")
+        page = await self.soup_page(num)
+        items = page.find_all(class_="top-item")
         for item in items:
             string = item.find("a").get("href")
             m = p.search(string)
@@ -39,15 +43,26 @@ class ListParser(Parser):
             nums.append(int(g))
         return sorted(nums, reverse=True)
 
+    async def get_num_pages(self):
+        p = re.compile(r"=([0-9]+)")
+        page = await self.soup_page(1)
+        item = page.find(class_="pagination")
+        links = item.find_all("a")
+        string = links[-2].get("href")
+        m = p.search(string)
+        g = m.group(1)
+        return int(g)
+
 
 class CardParser(Parser):
+
     def get_url(self, num):
         return f"{consts.CARD_URL_TEMPLATE}{num}"
 
-    def create_item(self):
+    def create_item(self, num):
         from classes import Card
         new_card = Card(
-            self.num,
+            num,
             self.get_item_info("idol"),
             self.get_item_info("rarity"),
             self.get_item_info("attribute"),
@@ -57,7 +72,7 @@ class CardParser(Parser):
             self.get_item_image_urls()[0],
             self.get_item_image_urls()[1]
         )
-        return self.num, new_card
+        return num, new_card
 
     def update_item(self, card):
         card.normal_url, card.idolized_url = self.get_item_image_urls()
@@ -88,16 +103,17 @@ class CardParser(Parser):
 
 
 class StillParser(Parser):
+
     def get_url(self, num):
         return f"{consts.STILL_URL_TEMPLATE}{num}"
 
-    def create_item(self):
+    def create_item(self, num):
         from classes import Still
         new_item = Still(
-            self.num,
+            num,
             self.get_item_image_url()
         )
-        return self.num, new_item
+        return num, new_item
 
     def update_item(self, item):
         item.url = self.get_item_image_url()

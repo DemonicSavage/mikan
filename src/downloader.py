@@ -1,8 +1,10 @@
-import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
 import re
 import operator
+import asyncio
+import aiohttp
+
 
 import utils
 import json_utils
@@ -15,7 +17,6 @@ class Downloader:
         self.path = utils.init_path(Path(path))
         self.objs = {}
 
-        self.session = requests.Session()
         self.img_type = img_type
 
         utils.init_path(Path(self.path) / self.img_type.get_folder())
@@ -25,21 +26,21 @@ class Downloader:
 
         self.updateables = []
 
-    def write_to_file(self, dest, url):
+    async def write_to_file(self, session, dest, url):
         with open(dest, 'wb') as f:
-            response = self.session.get(f"https:{url}")
-            f.write(response.content)
+            response = await session.get(f"https:{url}")
+            f.write(await response.read())
 
-    def get_images(self, item):
+    async def get_images(self, session, item):
         paths = item.get_paths(self.path)
         try:
-            self.download_images(paths, item)
+            await self.download_images(session, paths, item)
         except Exception as e:
             print(f"Couldn't download card {item.key}: {e}.")
 
-    def create_image_file(self, path, item, i):
+    async def create_image_file(self, session, path, item, i):
         if not Path(path).exists() or item.key in self.updateables:
-            self.write_to_file(Path(path), item.get_urls()[i])
+            await self.write_to_file(session, Path(path), item.get_urls()[i])
 
             message = f"Downloaded item {item.key}"
             if type(item) is Card:
@@ -48,13 +49,15 @@ class Downloader:
 
             print(message)
 
-    def download_images(self, paths, item):
+    async def download_images(self, session, paths, item):
         for i, path in enumerate(paths):
-            self.create_image_file(path, item, i)
+            await self.create_image_file(session, path, item, i)
 
-    def update_if_needed(self, item):
+    async def update_if_needed(self, item):
         if item.needs_update():
-            n, updated_item = self.item_parser.get_item(item.key)
+            async with aiohttp.ClientSession() as item_session:
+                self.item_parser.set_session(item_session)
+                n, updated_item = await self.item_parser.get_item(item.key)
 
             if item.get_urls()[0] != updated_item.get_urls()[0]:
                 self.updateables.append(item.key)
@@ -62,31 +65,46 @@ class Downloader:
             for i in range(len(item.get_urls())):
                 item.set_url(i, updated_item.get_urls()[i])
 
-    def get_cards_from_parser(self):
+    async def add_item_to_object_list(self, item):
+        n, obj = await self.item_parser.get_item(item)
+        self.objs[n] = obj
+        print(f"Getting item {n}.")
+
+    async def get_cards_from_parser(self):
         page_num = 1
 
-        while (page_items := self.list_parser.get_page(page_num)):
+        async with aiohttp.ClientSession() as list_session:
+            self.list_parser.set_session(list_session)
+            page_requests = [self.list_parser.get_page(
+                i) for i in range(1, await self.list_parser.get_num_pages()+1)]
 
-            for item in page_items:
-                if item not in self.objs:
-                    n, obj = self.item_parser.get_item(item)
-                    self.objs[n] = obj
-                    print(f"Getting item {n}.")
+            pages = await asyncio.gather(*page_requests, return_exceptions=False)
 
-            page_num += 1
+        async with aiohttp.ClientSession() as item_session:
+            self.item_parser.set_session(item_session)
 
-    def download(self):
-        for key, item in self.objs.items():
-            self.get_images(item)
-        self.session.close()
+            for page in pages:
+                tasks = []
+                for item in page:
+                    if item not in self.objs:
+                        tasks.append(self.add_item_to_object_list(item))
+                results = await asyncio.gather(*tasks, return_exceptions=False)
+                page_num += 1
 
-    def update(self):
+    async def download(self):
+        async with aiohttp.ClientSession() as item_session:
+            tasks = []
+            for key, item in self.objs.items():
+                tasks.append(self.get_images(item_session, item))
+            results = await asyncio.gather(*tasks, return_exceptions=False)
+
+    async def update(self):
         print("Searching for new or missing items...")
-        self.get_cards_from_parser()
+        await self.get_cards_from_parser()
 
         print("Checking if items can be updated to better resolution...")
         for key, item in self.objs.items():
-            self.update_if_needed(item)
+            await self.update_if_needed(item)
 
         self.update_json_file()
         print("Updated items database.")
