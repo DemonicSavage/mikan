@@ -83,14 +83,12 @@ class Downloader:
 
     async def get_cards_from_parser(self):
 
-        async with aiohttp.ClientSession() as list_session:
+        async with aiohttp.ClientSession() as list_session, aiohttp.ClientSession() as item_session:
             self.list_parser.set_session(list_session)
+            self.item_parser.set_session(item_session)
 
-            async with aiohttp.ClientSession() as item_session:
-                self.item_parser.set_session(item_session)
-                page_requests = [self.get_page(i) for i in range(1, await self.list_parser.get_num_pages()+1)]
-
-                await asyncio.gather(*page_requests, return_exceptions=True)
+            page_requests = [self.get_page(i) for i in range(1, await self.list_parser.get_num_pages()+1)]
+            await asyncio.gather(*page_requests, return_exceptions=True)
 
     async def download(self):
         async with aiohttp.ClientSession() as item_session:
