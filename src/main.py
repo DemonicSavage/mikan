@@ -8,7 +8,6 @@ from organizer import Organizer
 
 from classes import Card, Still
 
-import json_utils
 import config
 
 
@@ -29,12 +28,12 @@ async def main():
 
 
 async def card_searcher(path, img_type):
-    downloader = Downloader(path, img_type)
     organizer = Organizer(path, img_type)
-    json_utils.load_cards(downloader.path, downloader.objs, img_type)
 
-    await downloader.update()
-    await downloader.download()
+    async with Downloader(path, img_type) as downloader:
+        await downloader.update()
+        await downloader.download()
+
     organizer.organize()
 
 
