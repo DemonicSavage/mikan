@@ -91,10 +91,16 @@ class Downloader:
                 tasks.append(
                     self.add_item_to_object_list(item))
         results = await asyncio.gather(*tasks, return_exceptions=True)
+        return results
 
     async def get_cards_from_parser(self):
-        page_requests = [self.get_page(i) for i in range(1, await self.list_parser.get_num_pages()+1)]
-        await asyncio.gather(*page_requests, return_exceptions=True)
+        num_pages = await self.list_parser.get_num_pages()+1
+        current_num = 1
+        for i in range(1, num_pages):
+            current_page = await self.get_page(current_num)
+            if not current_page:
+                break
+            current_num += 1
 
     async def download(self):
         tasks = []
