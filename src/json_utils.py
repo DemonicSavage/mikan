@@ -10,13 +10,13 @@ def to_json(cards):
 
 def dump_to_file(json_obj, path, img_type):
     card_path = Path(path) / img_type.get_json_filename()
-    with open(card_path, "w") as f:
+    with open(card_path, "w", encoding='utf-8') as f:
         f.write(json_obj)
 
 
 def read_json_file(path, cards, img_type):
     card_path = Path(path) / img_type.get_json_filename()
-    with open(card_path, "r") as f:
+    with open(card_path, "r", encoding='utf-8') as f:
         data = f.read()
     card_data = json.loads(data)
     for key, card in card_data.items():
