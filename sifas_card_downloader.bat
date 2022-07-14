@@ -1,0 +1,1 @@
+@py src/main.py %1
