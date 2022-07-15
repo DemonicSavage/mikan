@@ -1,4 +1,6 @@
-from bs4 import BeautifulSoup
+from __future__ import annotations
+
+import bs4
 import re
 import aiohttp
 import asyncio
@@ -6,119 +8,167 @@ import asyncio
 import utils
 import consts
 
+from abc import ABC, abstractmethod
+from typing import Optional, TYPE_CHECKING
 
-class Parser():
-    def set_session(self, session):
-        self.session = session
+if TYPE_CHECKING:
+    from classes import Card, Still, Item
 
-    async def get_html(self, url):
-        html = await self.session.get(url)
+
+class Parser(ABC):
+    def set_session(self, session: aiohttp.ClientSession) -> None:
+        self.session: aiohttp.ClientSession = session
+
+    async def get_html(self, url: str) -> str:
+        html: aiohttp.ClientResponse = await self.session.get(url)
         return await html.text()
 
-    async def soup_page(self, num):
-        return BeautifulSoup(await self.get_html(
+    async def soup_page(self, num: int) -> bs4.BeautifulSoup:
+        return bs4.BeautifulSoup(await self.get_html(
             self.get_url(num)), features="lxml")
 
-    async def get_item(self, num):
-        self.bs = await self.soup_page(num)
+    async def get_item(self, num: int) -> tuple[int, Item]:
+        self.bs: bs4.BeautifulSoup = await self.soup_page(num)
         return self.create_item(num)
+
+    @abstractmethod
+    def create_item(self, num: int) -> tuple[int, Item]:
+        ...
+
+    @abstractmethod
+    def get_url(self, num: int) -> str:
+        ...
 
 
 class ListParser(Parser):
-    def __init__(self, still=False):
-        self.url = consts.CARDS_LIST_URL_TEMPLATE if not still else consts.STILLS_LIST_URL_TEMPLATE
+    def __init__(self, still: bool = False):
+        self.url: str = consts.CARDS_LIST_URL_TEMPLATE if not still else consts.STILLS_LIST_URL_TEMPLATE
 
-    def get_url(self, num):
+    def get_url(self, num: int):
         return f"{self.url}{num}"
 
-    async def get_page(self, num):
-        nums = []
-        p = re.compile(r"/([0-9]+)/")
-        page = await self.soup_page(num)
-        items = page.find_all(class_="top-item")
+    async def get_page(self, num: int) -> list[int]:
+        nums: list[int] = []
+        p: re.Pattern = re.compile(r"/([0-9]+)/")
+
+        page: bs4.BeautifulSoup = await self.soup_page(num)
+        items: bs4.ResultSet = page.find_all(class_="top-item")
+
         for item in items:
-            string = item.find("a").get("href")
-            m = p.search(string)
-            g = m.group(1)
-            nums.append(int(g))
+
+            string: str = item.find("a").get("href")
+            m: Optional[re.Match] = p.search(string)
+
+            if m:
+                g = m.group(1)
+                nums.append(int(g))
+
         return sorted(nums, reverse=True)
 
-    async def get_num_pages(self):
+    async def get_num_pages(self) -> int:
         p = re.compile(r"=([0-9]+)")
+
         page = await self.soup_page(1)
-        item = page.find(class_="pagination")
-        links = item.find_all("a")
-        string = links[-2].get("href")
-        m = p.search(string)
-        g = m.group(1)
+        item: bs4.Tag | bs4.NavigableString | None = page.find(
+            class_="pagination")
+
+        if type(item) == bs4.Tag:
+
+            links: bs4.ResultSet = item.find_all("a")
+            string: str = links[-2].get("href")
+
+            m: Optional[re.Match] = p.search(string)
+
+            if m:
+                g = m.group(1)
         return int(g)
+
+    def create_item(self, num: int) -> tuple[int, Item]:
+        ...
 
 
 class CardParser(Parser):
 
-    def get_url(self, num):
+    def get_url(self, num: int) -> str:
         return f"{consts.CARD_URL_TEMPLATE}{num}"
 
-    def create_item(self, num):
+    def create_item(self, num: int) -> tuple[int, Card]:
         from classes import Card
-        new_card = Card(
-            num,
-            self.get_item_info("idol"),
-            self.get_item_info("rarity"),
-            self.get_item_info("attribute"),
-            self.get_item_info("i_unit"),
-            self.get_item_info("i_subunit"),
-            self.get_item_info("i_year"),
-            self.get_item_image_urls()[0],
-            self.get_item_image_urls()[1]
-        )
+        urls = self.get_item_image_urls()
+
+        idol = self.get_item_info("idol")
+        rarity = self.get_item_info("rarity")
+        attr = self.get_item_info("attribute")
+        unit = self.get_item_info("i_unit")
+        sub = self.get_item_info("i_subunit")
+        year = self.get_item_info("i_year")
+
+        new_card = Card(num, idol, rarity, attr, unit,
+                        sub, year, urls[0], urls[1])
         return num, new_card
 
-    def update_item(self, card):
+    def update_item(self, card: Card) -> None:
         card.normal_url, card.idolized_url = self.get_item_image_urls()
 
-    def get_item_image_urls(self):
-        top_item = self.bs.find(class_="top-item")
-        links = top_item.find_all("a")
+    def get_item_image_urls(self) -> tuple[str, str]:
+        top_item: bs4.Tag | bs4.NavigableString | None = self.bs.find(
+            class_="top-item")
+
+        if type(top_item) == bs4.Tag:
+            links: bs4.ResultSet = top_item.find_all("a")
+
         return (links[0].get("href"), links[1].get("href"))
 
-    def get_data_field(self, field):
-        data = self.bs.find(attrs={"data-field": field})
-        if data:
+    def get_data_field(self, field: str) -> Optional[bs4.Tag]:
+        data: bs4.Tag | bs4.NavigableString | None = self.bs.find(
+            attrs={"data-field": field})
+
+        if type(data) == bs4.Tag:
             return data.find_all("td")[1]
         else:
             return None
 
-    def get_item_info(self, info):
+    def get_item_info(self, info: str) -> str:
         if info == "idol":
-            data = self.get_data_field("idol").find("span").get_text()
-            data = data.partition("Open idol")[0].strip()
-            return data
+            data: Optional[bs4.Tag] = self.get_data_field("idol")
+
+            if type(data) == bs4.Tag:
+                found_data: bs4.Tag | bs4.NavigableString | None = data.find(
+                    "span")
+
+                if type(found_data) == bs4.Tag:
+                    text: str = found_data.get_text().partition("Open idol")[
+                        0].strip()
+
+            return text
         else:
-            data = self.get_data_field(info)
-            if data:
-                return data.get_text().strip()
+            other: Optional[bs4.Tag] = self.get_data_field(info)
+            if type(other) == bs4.Tag:
+                return other.get_text().strip()
             else:
                 return ""
 
 
 class StillParser(Parser):
 
-    def get_url(self, num):
+    def get_url(self, num: int) -> str:
         return f"{consts.STILL_URL_TEMPLATE}{num}"
 
-    def create_item(self, num):
+    def create_item(self, num: int) -> tuple[int, Still]:
         from classes import Still
+        url = self.get_item_image_url()
+
         new_item = Still(
-            num,
-            self.get_item_image_url()
+            num, url
         )
         return num, new_item
 
-    def update_item(self, item):
+    def update_item(self, item: Still) -> None:
         item.url = self.get_item_image_url()
 
-    def get_item_image_url(self):
-        top_item = self.bs.find(class_="top-item")
-        links = top_item.find_all("a")
+    def get_item_image_url(self) -> str:
+        top_item: bs4.Tag | bs4.NavigableString | None = self.bs.find(
+            class_="top-item")
+        if type(top_item) == bs4.Tag:
+            links = top_item.find_all("a")
         return links[0].get("href")

@@ -6,7 +6,8 @@ import asyncio
 from downloader import Downloader
 from organizer import Organizer
 
-from classes import Card, Still
+from pathlib import Path
+from classes import Card, Still, Item
 
 import config
 
@@ -15,8 +16,8 @@ class UnrecognizedArgumentException(Exception):
     pass
 
 
-async def main():
-    img_type = Card
+async def main() -> None:
+    img_type: type[Item] = Card
     if len(sys.argv) > 1:
         if sys.argv[1] == "--stills":
             img_type = Still
@@ -24,11 +25,11 @@ async def main():
             raise UnrecognizedArgumentException(
                 "Only recognized argument is --stills.")
 
-    await card_searcher(config.CARDS_DIR, img_type)
+    await card_searcher(Path(config.CARDS_DIR), img_type)
 
 
-async def card_searcher(path, img_type):
-    organizer = Organizer(path, img_type)
+async def card_searcher(path: Path, img_type: type[Item]):
+    organizer: Organizer = Organizer(path, img_type)
 
     async with Downloader(path, img_type) as downloader:
         await downloader.update()
