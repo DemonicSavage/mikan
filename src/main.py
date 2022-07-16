@@ -20,8 +20,7 @@ async def main() -> None:
         if sys.argv[1] == "--stills":
             img_type = Still
         else:
-            raise UnrecognizedArgumentException(
-                "Only recognized argument is --stills.")
+            raise UnrecognizedArgumentException("Only recognized argument is --stills.")
 
     await card_searcher(config.CARDS_DIR, img_type)
 
@@ -36,7 +35,7 @@ async def card_searcher(path: Path, img_type: type[Item]):
     organizer.organize()
 
 
-if __name__ == '__main__':
-    if sys.platform.startswith('win'):
+if __name__ == "__main__":
+    if sys.platform.startswith("win"):
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())

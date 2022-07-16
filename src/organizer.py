@@ -13,12 +13,16 @@ class Organizer:
     def __init__(self, path: Path, img_type: type[Item]):
         self.path: Path = utils.init_path(path)
         self.organizer: CardOrganizer | StillOrganizer = img_type.get_organizer(
-            self.path)
+            self.path
+        )
         self.results_dir: str = img_type.get_folder()
 
     def get_filenames(self, suffix_list: list[str]) -> list[Path]:
-        _dir: list[Path] = [x for x in (self.path/self.results_dir).iterdir()
-                            if x.is_file() and x.suffix in suffix_list]
+        _dir: list[Path] = [
+            x
+            for x in (self.path / self.results_dir).iterdir()
+            if x.is_file() and x.suffix in suffix_list
+        ]
         return _dir
 
     def remove_partially_downloaded(self) -> None:
@@ -34,13 +38,13 @@ class Organizer:
 
 
 class CardOrganizer:
-
     def __init__(self, path: Path):
         self.path: Path = path
 
     def remove_duplicates(self, paths: list[Path]) -> None:
-        prefixes: list[str] = [str(prefix).split(
-            ".", maxsplit=1)[0] for prefix in paths]
+        prefixes: list[str] = [
+            str(prefix).split(".", maxsplit=1)[0] for prefix in paths
+        ]
 
         for path in prefixes:
             if prefixes.count(path) > 1:
@@ -51,8 +55,7 @@ class CardOrganizer:
                     jpg_name: str = jpg.name
                     split_jpg: list[str] = jpg_name.split("_")
 
-                    (self.path /
-                     split_jpg[1] / split_jpg[2] / jpg_name).unlink()
+                    (self.path / split_jpg[1] / split_jpg[2] / jpg_name).unlink()
 
                 except FileNotFoundError:
                     pass
@@ -77,13 +80,13 @@ class CardOrganizer:
 
 
 class StillOrganizer:
-
     def __init__(self, path: Path):
         self.path: Path = path
 
     def remove_duplicates(self, paths: list[Path]) -> None:
-        prefixes: list[str] = [str(prefix).split(
-            ".", maxsplit=1)[0] for prefix in paths]
+        prefixes: list[str] = [
+            str(prefix).split(".", maxsplit=1)[0] for prefix in paths
+        ]
 
         for path in prefixes:
             if prefixes.count(path) > 1:

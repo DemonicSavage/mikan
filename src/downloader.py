@@ -42,7 +42,7 @@ class Downloader:
         res: aiohttp.ClientResponse = await self.session.get(f"https:{url}")
         if res.status == 200:
             res_data: bytes = await res.read()
-            with open(dest, 'wb') as f:
+            with open(dest, "wb") as f:
                 f.write(res_data)
 
     async def download_file(self, path: Path, item: Item, i: int) -> None:
@@ -77,13 +77,12 @@ class Downloader:
         for item in page:
             if item not in self.objs:
 
-                tasks.append(
-                    self.add_item_to_object_list(item))
+                tasks.append(self.add_item_to_object_list(item))
         res: list[None] = await asyncio.gather(*tasks, return_exceptions=True)
         return res
 
     async def get_cards_from_parser(self) -> None:
-        num_pages: int = await self.list_parser.get_num_pages()+1
+        num_pages: int = await self.list_parser.get_num_pages() + 1
         current_num: int = 1
         for _ in range(1, num_pages):
             current_page: list[None] = await self.get_page(current_num)
@@ -117,7 +116,5 @@ class Downloader:
         print("Updated items database.")
 
     def update_json_file(self) -> None:
-        self.objs = dict(
-            sorted(self.objs.items(), reverse=True))
-        json_utils.dump_to_file(json_utils.to_json(
-            self.objs), self.path, self.img_type)
+        self.objs = dict(sorted(self.objs.items(), reverse=True))
+        json_utils.dump_to_file(json_utils.to_json(self.objs), self.path, self.img_type)

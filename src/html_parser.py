@@ -22,8 +22,9 @@ class Parser(ABC):
         return await html.text()
 
     async def soup_page(self, num: int) -> bs4.BeautifulSoup:
-        return bs4.BeautifulSoup(await self.get_html(
-            self.get_url(num)), features="lxml")
+        return bs4.BeautifulSoup(
+            await self.get_html(self.get_url(num)), features="lxml"
+        )
 
     async def get_item(self, num: int) -> tuple[int, Item]:
         self.bs: bs4.BeautifulSoup = await self.soup_page(num)
@@ -67,8 +68,7 @@ class ListParser(Parser):
         p: re.Pattern = re.compile(r"=([0-9]+)")
 
         page: bs4.BeautifulSoup = await self.soup_page(1)
-        item: bs4.Tag | bs4.NavigableString | None = page.find(
-            class_="pagination")
+        item: bs4.Tag | bs4.NavigableString | None = page.find(class_="pagination")
 
         if isinstance(item, bs4.Tag):
 
@@ -86,12 +86,12 @@ class ListParser(Parser):
 
 
 class CardParser(Parser):
-
     def get_url(self, num: int) -> str:
         return f"{consts.CARD_URL_TEMPLATE}{num}"
 
     def create_item(self, num: int) -> tuple[int, Card]:
         from classes import Card
+
         urls: tuple[str, str] = self.get_item_image_urls()
 
         idol: str = self.get_item_info("idol")
@@ -101,16 +101,16 @@ class CardParser(Parser):
         sub: str = self.get_item_info("i_subunit")
         year: str = self.get_item_info("i_year")
 
-        new_card: Card = Card(num, idol, rarity, attr, unit,
-                              sub, year, urls[0], urls[1])
+        new_card: Card = Card(
+            num, idol, rarity, attr, unit, sub, year, urls[0], urls[1]
+        )
         return num, new_card
 
     def update_item(self, card: Card) -> None:
         card.normal_url, card.idolized_url = self.get_item_image_urls()
 
     def get_item_image_urls(self) -> tuple[str, str]:
-        top_item: bs4.Tag | bs4.NavigableString | None = self.bs.find(
-            class_="top-item")
+        top_item: bs4.Tag | bs4.NavigableString | None = self.bs.find(class_="top-item")
 
         if isinstance(top_item, bs4.Tag):
             links: bs4.ResultSet = top_item.find_all("a")
@@ -119,7 +119,8 @@ class CardParser(Parser):
 
     def get_data_field(self, field: str) -> Optional[bs4.Tag]:
         data: bs4.Tag | bs4.NavigableString | None = self.bs.find(
-            attrs={"data-field": field})
+            attrs={"data-field": field}
+        )
 
         if isinstance(data, bs4.Tag):
             return data.find_all("td")[1]
@@ -131,12 +132,10 @@ class CardParser(Parser):
             data: Optional[bs4.Tag] = self.get_data_field("idol")
 
             if isinstance(data, bs4.Tag):
-                found_data: bs4.Tag | bs4.NavigableString | None = data.find(
-                    "span")
+                found_data: bs4.Tag | bs4.NavigableString | None = data.find("span")
 
                 if isinstance(found_data, bs4.Tag):
-                    text: str = found_data.get_text().partition("Open idol")[
-                        0].strip()
+                    text: str = found_data.get_text().partition("Open idol")[0].strip()
 
             return text
         else:
@@ -148,25 +147,22 @@ class CardParser(Parser):
 
 
 class StillParser(Parser):
-
     def get_url(self, num: int) -> str:
         return f"{consts.STILL_URL_TEMPLATE}{num}"
 
     def create_item(self, num: int) -> tuple[int, Still]:
         from classes import Still
+
         url: str = self.get_item_image_url()
 
-        new_item: Still = Still(
-            num, url
-        )
+        new_item: Still = Still(num, url)
         return num, new_item
 
     def update_item(self, item: Still) -> None:
         item.url = self.get_item_image_url()
 
     def get_item_image_url(self) -> str:
-        top_item: bs4.Tag | bs4.NavigableString | None = self.bs.find(
-            class_="top-item")
+        top_item: bs4.Tag | bs4.NavigableString | None = self.bs.find(class_="top-item")
         if isinstance(top_item, bs4.Tag):
             links = top_item.find_all("a")
         return links[0].get("href")
