@@ -72,7 +72,7 @@ class ListParser(Parser):
         item: bs4.Tag | bs4.NavigableString | None = page.find(
             class_="pagination")
 
-        if type(item) == bs4.Tag:
+        if isinstance(item, bs4.Tag):
 
             links: bs4.ResultSet = item.find_all("a")
             string: str = links[-2].get("href")
@@ -114,7 +114,7 @@ class CardParser(Parser):
         top_item: bs4.Tag | bs4.NavigableString | None = self.bs.find(
             class_="top-item")
 
-        if type(top_item) == bs4.Tag:
+        if isinstance(top_item, bs4.Tag):
             links: bs4.ResultSet = top_item.find_all("a")
 
         return (links[0].get("href"), links[1].get("href"))
@@ -123,7 +123,7 @@ class CardParser(Parser):
         data: bs4.Tag | bs4.NavigableString | None = self.bs.find(
             attrs={"data-field": field})
 
-        if type(data) == bs4.Tag:
+        if isinstance(data, bs4.Tag):
             return data.find_all("td")[1]
         else:
             return None
@@ -132,18 +132,18 @@ class CardParser(Parser):
         if info == "idol":
             data: Optional[bs4.Tag] = self.get_data_field("idol")
 
-            if type(data) == bs4.Tag:
+            if isinstance(data, bs4.Tag):
                 found_data: bs4.Tag | bs4.NavigableString | None = data.find(
                     "span")
 
-                if type(found_data) == bs4.Tag:
+                if isinstance(found_data, bs4.Tag):
                     text: str = found_data.get_text().partition("Open idol")[
                         0].strip()
 
             return text
         else:
             other: Optional[bs4.Tag] = self.get_data_field(info)
-            if type(other) == bs4.Tag:
+            if isinstance(other, bs4.Tag):
                 return other.get_text().strip()
             else:
                 return ""
@@ -169,6 +169,6 @@ class StillParser(Parser):
     def get_item_image_url(self) -> str:
         top_item: bs4.Tag | bs4.NavigableString | None = self.bs.find(
             class_="top-item")
-        if type(top_item) == bs4.Tag:
+        if isinstance(top_item, bs4.Tag):
             links = top_item.find_all("a")
         return links[0].get("href")
