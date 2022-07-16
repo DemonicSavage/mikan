@@ -4,3 +4,4 @@ flake8-bugbear>=22.7.1
 bandit>=1.7.4
 isort>=5.10.1
 mypy>=0.961
+pep8-naming>=0.10.0
