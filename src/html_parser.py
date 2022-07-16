@@ -131,8 +131,7 @@ class CardParser(Parser):
 
         if isinstance(data, bs4.Tag):
             return data.find_all("td")[1]
-        else:
-            return None
+        return None
 
     def get_item_info(self, info: str) -> str:
         if info == "idol":
@@ -145,12 +144,13 @@ class CardParser(Parser):
                     text: str = found_data.get_text().partition("Open idol")[0].strip()
 
             return text
-        else:
-            other: Optional[bs4.Tag] = self.get_data_field(info)
-            if isinstance(other, bs4.Tag):
-                return other.get_text().strip()
-            else:
-                return ""
+
+        other: Optional[bs4.Tag] = self.get_data_field(info)
+
+        if isinstance(other, bs4.Tag):
+            return other.get_text().strip()
+
+        return ""
 
 
 class StillParser(Parser):
