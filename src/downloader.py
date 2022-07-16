@@ -19,7 +19,6 @@ class Downloader:
         self.objs: dict[int, Item] = {}
 
         self.img_type: type[Item] = img_type
-
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
 
         utils.init_path(Path(self.path) / self.img_type.get_folder())
@@ -32,7 +31,6 @@ class Downloader:
         self.updateables: list[int] = []
 
     async def __aenter__(self) -> Downloader:
-
         self.list_parser.set_session(self.session)
         self.item_parser.set_session(self.session)
 
