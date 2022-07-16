@@ -2,11 +2,11 @@ import re
 
 from dataclasses import dataclass
 from pathlib import Path
-
-import consts
-import parser
-import organizer
 from typing import TypeAlias, Optional
+
+import html_parser
+import consts
+import organizer
 
 
 @dataclass
@@ -36,7 +36,7 @@ class Card:
 
     def is_double_sized(self) -> bool:
         p: re.Pattern = re.compile(r"/2x/")
-        return p.search(self.normal_url) != None
+        return p.search(self.normal_url) is not None
 
     def get_urls(self) -> list[str]:
         return [self.normal_url, self.idolized_url]
@@ -64,12 +64,12 @@ class Card:
         return consts.CARD_RESULTS_DIR
 
     @staticmethod
-    def get_parser() -> parser.CardParser:
-        return parser.CardParser()
+    def get_parser() -> html_parser.CardParser:
+        return html_parser.CardParser()
 
     @staticmethod
-    def get_list_parser() -> parser.ListParser:
-        return parser.ListParser()
+    def get_list_parser() -> html_parser.ListParser:
+        return html_parser.ListParser()
 
     @staticmethod
     def get_json_filename() -> str:
@@ -87,7 +87,7 @@ class Still:
 
     def is_double_sized(self) -> bool:
         p: re.Pattern = re.compile(r"/2x/")
-        return p.search(self.url) != None
+        return p.search(self.url) is not None
 
     def get_urls(self) -> list[str]:
         return [self.url]
@@ -109,12 +109,12 @@ class Still:
         return consts.STILL_RESULTS_DIR
 
     @staticmethod
-    def get_parser() -> parser.StillParser:
-        return parser.StillParser()
+    def get_parser() -> html_parser.StillParser:
+        return html_parser.StillParser()
 
     @staticmethod
-    def get_list_parser() -> parser.ListParser:
-        return parser.ListParser(still=True)
+    def get_list_parser() -> html_parser.ListParser:
+        return html_parser.ListParser(still=True)
 
     @staticmethod
     def get_json_filename() -> str:

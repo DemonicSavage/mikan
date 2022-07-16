@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-import bs4
 import re
-import aiohttp
-import asyncio
-
-import utils
-import consts
-
 from abc import ABC, abstractmethod
 from typing import Optional, TYPE_CHECKING
+
+import bs4
+import aiohttp
+
+import consts
+
 
 if TYPE_CHECKING:
     from classes import Card, Still, Item

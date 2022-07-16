@@ -2,11 +2,10 @@
 
 import sys
 import asyncio
+from pathlib import Path
 
 from downloader import Downloader
 from organizer import Organizer
-
-from pathlib import Path
 from classes import Card, Still, Item
 
 import config

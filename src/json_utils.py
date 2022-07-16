@@ -1,12 +1,13 @@
 from pathlib import Path
 import json
+from typing import Mapping
 
 from classes import Item
-from typing import Mapping
 
 
 def to_json(cards: dict[int, Item]) -> str:
-    return json.dumps({key: value.__dict__ for (key, value) in cards.items()}, ensure_ascii=False, indent=4)
+    return json.dumps({key: value.__dict__ for (key, value) in cards.items()},
+                      ensure_ascii=False, indent=4)
 
 
 def dump_to_file(json_obj: str, path: Path, img_type: type[Item]) -> None:

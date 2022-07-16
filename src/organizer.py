@@ -1,9 +1,10 @@
 from __future__ import annotations
-import consts
-import utils
 
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+import utils
+
 if TYPE_CHECKING:
     from classes import Item
 
@@ -16,9 +17,9 @@ class Organizer:
         self.results_dir: str = img_type.get_folder()
 
     def get_filenames(self, suffix_list: list[str]) -> list[Path]:
-        dir: list[Path] = [x for x in (self.path/self.results_dir).iterdir()
-                           if x.is_file() and x.suffix in suffix_list]
-        return dir
+        _dir: list[Path] = [x for x in (self.path/self.results_dir).iterdir()
+                            if x.is_file() and x.suffix in suffix_list]
+        return _dir
 
     def remove_partially_downloaded(self) -> None:
         files: list[Path] = self.get_filenames([".part"])
@@ -38,7 +39,8 @@ class CardOrganizer:
         self.path: Path = path
 
     def remove_duplicates(self, paths: list[Path]) -> None:
-        prefixes: list[str] = [str(prefix).split(".")[0] for prefix in paths]
+        prefixes: list[str] = [str(prefix).split(
+            ".", maxsplit=1)[0] for prefix in paths]
 
         for path in prefixes:
             if prefixes.count(path) > 1:
@@ -80,7 +82,8 @@ class StillOrganizer:
         self.path: Path = path
 
     def remove_duplicates(self, paths: list[Path]) -> None:
-        prefixes: list[str] = [str(prefix).split(".")[0] for prefix in paths]
+        prefixes: list[str] = [str(prefix).split(
+            ".", maxsplit=1)[0] for prefix in paths]
 
         for path in prefixes:
             if prefixes.count(path) > 1:

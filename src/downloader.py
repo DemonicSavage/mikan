@@ -1,20 +1,16 @@
 from __future__ import annotations
 
-from bs4 import BeautifulSoup
+
 from pathlib import Path
-import re
-import operator
+from typing import Coroutine
+
 import asyncio
 import aiohttp
 
-
 import utils
 import json_utils
-import consts
 from classes import Item, Card
-from parser import CardParser, StillParser, ListParser
-
-from typing import Coroutine, Any
+from html_parser import CardParser, StillParser, ListParser
 
 
 class Downloader:
@@ -23,6 +19,8 @@ class Downloader:
         self.objs: dict[int, Item] = {}
 
         self.img_type: type[Item] = img_type
+
+        self.session: aiohttp.ClientSession = aiohttp.ClientSession()
 
         utils.init_path(Path(self.path) / self.img_type.get_folder())
 
@@ -34,7 +32,6 @@ class Downloader:
         self.updateables: list[int] = []
 
     async def __aenter__(self) -> Downloader:
-        self.session: aiohttp.ClientSession = aiohttp.ClientSession()
 
         self.list_parser.set_session(self.session)
         self.item_parser.set_session(self.session)
@@ -63,7 +60,7 @@ class Downloader:
             await self.write_to_file(path, item.get_urls()[i])
 
             message: str = f"Downloaded item {item.key}"
-            if type(item) is Card:
+            if isinstance(item, Card):
                 message += f", {'idolized' if i == 1 else 'normal'}"
             message += "."
 
@@ -75,7 +72,7 @@ class Downloader:
 
     async def update_if_needed(self, item: Item) -> None:
         if item.needs_update():
-            n, updated_item = await self.item_parser.get_item(item.key)
+            _, updated_item = await self.item_parser.get_item(item.key)
 
             if item.get_urls()[0] != updated_item.get_urls()[0]:
                 self.updateables.append(item.key)
@@ -102,7 +99,7 @@ class Downloader:
     async def get_cards_from_parser(self) -> None:
         num_pages: int = await self.list_parser.get_num_pages()+1
         current_num: int = 1
-        for i in range(1, num_pages):
+        for _ in range(1, num_pages):
             current_page: list[None] = await self.get_page(current_num)
             if not current_page:
                 break
@@ -110,7 +107,7 @@ class Downloader:
 
     async def download(self) -> None:
         tasks: list[Coroutine] = []
-        for key, item in self.objs.items():
+        for _, item in self.objs.items():
             tasks.append(self.get_images(item))
         await asyncio.gather(*tasks, return_exceptions=False)
 
@@ -119,7 +116,7 @@ class Downloader:
         await self.get_cards_from_parser()
 
         print("Checking if items can be updated to better resolution...")
-        for key, item in self.objs.items():
+        for _, item in self.objs.items():
             await self.update_if_needed(item)
 
         self.update_json_file()
