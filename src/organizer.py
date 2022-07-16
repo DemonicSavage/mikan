@@ -21,7 +21,7 @@ class Organizer:
         return dir
 
     def remove_partially_downloaded(self) -> None:
-        files = self.get_filenames([".part"])
+        files: list[Path] = self.get_filenames([".part"])
         for file in files:
             file.unlink()
 
