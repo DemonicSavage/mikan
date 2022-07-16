@@ -32,7 +32,7 @@ async def card_searcher(path: Path, img_type: type[Item]):
 
     async with Downloader(path, img_type) as downloader:
         await downloader.update()
-        await downloader.download()
+        await downloader.get()
 
     organizer.organize()
 

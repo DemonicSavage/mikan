@@ -39,23 +39,16 @@ class Downloader:
     async def __aexit__(self, exc_type: None, exc_value: None, exc_traceback: None) -> None:
         await self.session.close()
 
-    async def write_to_file(self, dest: Path, url: str) -> None:
+    async def request_from_server(self, dest: Path, url: str) -> None:
         response: aiohttp.ClientResponse = await self.session.get(f"https:{url}")
         if response.status == 200:
             response_data: bytes = await response.read()
             with open(dest, 'wb') as f:
                 f.write(response_data)
 
-    async def get_images(self, item: Item) -> None:
-        paths: list[Path] = item.get_paths(self.path)
-        try:
-            await self.download_images(paths, item)
-        except Exception as e:
-            print(f"Couldn't download card {item.key}: {e}.")
-
-    async def create_image_file(self, path: Path, item: Item, i: int) -> None:
+    async def download_file(self, path: Path, item: Item, i: int) -> None:
         if not path.exists() or item.key in self.updateables:
-            await self.write_to_file(path, item.get_urls()[i])
+            await self.request_from_server(path, item.get_urls()[i])
 
             message: str = f"Downloaded item {item.key}"
             if isinstance(item, Card):
@@ -63,10 +56,6 @@ class Downloader:
             message += "."
 
             print(message)
-
-    async def download_images(self, paths: list[Path], item: Item) -> None:
-        for i, path in enumerate(paths):
-            await self.create_image_file(path, item, i)
 
     async def update_if_needed(self, item: Item) -> None:
         if item.needs_update():
@@ -103,7 +92,15 @@ class Downloader:
                 break
             current_num += 1
 
-    async def download(self) -> None:
+    async def get_images(self, item: Item) -> None:
+        paths: list[Path] = item.get_paths(self.path)
+        try:
+            for i, path in enumerate(paths):
+                await self.download_file(path, item, i)
+        except Exception as e:
+            print(f"Couldn't download card {item.key}: {e}.")
+
+    async def get(self) -> None:
         tasks: list[Coroutine] = []
         for _, item in self.objs.items():
             tasks.append(self.get_images(item))
