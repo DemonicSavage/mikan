@@ -15,14 +15,14 @@ def to_json(cards: dict[int, Item]) -> str:
 
 def dump_to_file(json_obj: str, path: Path, img_type: type[Item]) -> None:
     card_path: Path = path / img_type.get_json_filename()
-    with open(card_path, "w", encoding="utf-8") as f:
-        f.write(json_obj)
+    with open(card_path, "w", encoding="utf-8") as file:
+        file.write(json_obj)
 
 
 def read_json_file(path: Path, cards: dict[int, Item], img_type: type[Item]) -> None:
     card_path: Path = path / img_type.get_json_filename()
-    with open(card_path, "r", encoding="utf-8") as f:
-        data = f.read()
+    with open(card_path, "r", encoding="utf-8") as file:
+        data = file.read()
         card_data: dict[str, Mapping] = json.loads(data)
     for key, card in card_data.items():
         cards[int(key)] = img_type(**card)

@@ -35,15 +35,15 @@ class Downloader:
 
         return self
 
-    async def __aexit__(self, type: None, value: None, trace: None) -> None:
+    async def __aexit__(self, ext_type: None, value: None, trace: None) -> None:
         await self.session.close()
 
     async def request_from_server(self, dest: Path, url: str) -> None:
         res: aiohttp.ClientResponse = await self.session.get(f"https:{url}")
         if res.status == 200:
             res_data: bytes = await res.read()
-            with open(dest, "wb") as f:
-                f.write(res_data)
+            with open(dest, "wb") as file:
+                file.write(res_data)
 
     async def download_file(self, path: Path, item: Item, i: int) -> None:
         if not path.exists() or item.key in self.updateables:
@@ -67,9 +67,9 @@ class Downloader:
                 item.set_url(i, updated_item.get_urls()[i])
 
     async def add_item_to_object_list(self, item: int) -> None:
-        n, obj = await self.item_parser.get_item(item)
-        self.objs[n] = obj
-        print(f"Getting item {n}.")
+        i, obj = await self.item_parser.get_item(item)
+        self.objs[i] = obj
+        print(f"Getting item {i}.")
 
     async def get_page(self, idx: int) -> list[None]:
         tasks: list[Coroutine] = []
@@ -95,8 +95,8 @@ class Downloader:
         try:
             for i, path in enumerate(paths):
                 await self.download_file(path, item, i)
-        except Exception as e:
-            print(f"Couldn't download card {item.key}: {e}.")
+        except aiohttp.ClientError as exception:
+            print(f"Couldn't download card {item.key}: {exception}.")
 
     async def get(self) -> None:
         tasks: list[Coroutine] = []

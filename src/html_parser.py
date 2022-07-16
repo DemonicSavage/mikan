@@ -14,8 +14,12 @@ if TYPE_CHECKING:
 
 
 class Parser(ABC):
+    def __init__(self):
+        self.session: aiohttp.ClientSession = ...
+        self.soup: bs4.BeautifulSoup = ...
+
     def set_session(self, session: aiohttp.ClientSession) -> None:
-        self.session: aiohttp.ClientSession = session
+        self.session = session
 
     async def get_html(self, url: str) -> str:
         html: aiohttp.ClientResponse = await self.session.get(url)
@@ -27,7 +31,7 @@ class Parser(ABC):
         )
 
     async def get_item(self, num: int) -> tuple[int, Item]:
-        self.bs: bs4.BeautifulSoup = await self.soup_page(num)
+        self.soup = await self.soup_page(num)
         return self.create_item(num)
 
     @abstractmethod
@@ -41,6 +45,7 @@ class Parser(ABC):
 
 class ListParser(Parser):
     def __init__(self, img_type: type[Item]):
+        super().__init__()
         self.url: str = img_type.get_list_template()
 
     def get_url(self, num: int):
@@ -48,7 +53,7 @@ class ListParser(Parser):
 
     async def get_page(self, num: int) -> list[int]:
         nums: list[int] = []
-        p: re.Pattern = re.compile(r"/([0-9]+)/")
+        pattern: re.Pattern = re.compile(r"/([0-9]+)/")
 
         page: bs4.BeautifulSoup = await self.soup_page(num)
         items: bs4.ResultSet = page.find_all(class_="top-item")
@@ -56,16 +61,16 @@ class ListParser(Parser):
         for item in items:
 
             string: str = item.find("a").get("href")
-            m: Optional[re.Match] = p.search(string)
+            match: Optional[re.Match] = pattern.search(string)
 
-            if m:
-                g = m.group(1)
-                nums.append(int(g))
+            if match:
+                group = match.group(1)
+                nums.append(int(group))
 
         return sorted(nums, reverse=True)
 
     async def get_num_pages(self) -> int:
-        p: re.Pattern = re.compile(r"=([0-9]+)")
+        pattern: re.Pattern = re.compile(r"=([0-9]+)")
 
         page: bs4.BeautifulSoup = await self.soup_page(1)
         item: bs4.Tag | bs4.NavigableString | None = page.find(class_="pagination")
@@ -75,11 +80,11 @@ class ListParser(Parser):
             links: bs4.ResultSet = item.find_all("a")
             string: str = links[-2].get("href")
 
-            m: Optional[re.Match] = p.search(string)
+            match: Optional[re.Match] = pattern.search(string)
 
-            if m:
-                g = m.group(1)
-        return int(g)
+            if match:
+                group = match.group(1)
+        return int(group)
 
     def create_item(self, num: int) -> tuple[int, Item]:
         ...
@@ -110,7 +115,9 @@ class CardParser(Parser):
         card.normal_url, card.idolized_url = self.get_item_image_urls()
 
     def get_item_image_urls(self) -> tuple[str, str]:
-        top_item: bs4.Tag | bs4.NavigableString | None = self.bs.find(class_="top-item")
+        top_item: bs4.Tag | bs4.NavigableString | None = self.soup.find(
+            class_="top-item"
+        )
 
         if isinstance(top_item, bs4.Tag):
             links: bs4.ResultSet = top_item.find_all("a")
@@ -118,7 +125,7 @@ class CardParser(Parser):
         return (links[0].get("href"), links[1].get("href"))
 
     def get_data_field(self, field: str) -> Optional[bs4.Tag]:
-        data: bs4.Tag | bs4.NavigableString | None = self.bs.find(
+        data: bs4.Tag | bs4.NavigableString | None = self.soup.find(
             attrs={"data-field": field}
         )
 
@@ -162,7 +169,9 @@ class StillParser(Parser):
         item.url = self.get_item_image_url()
 
     def get_item_image_url(self) -> str:
-        top_item: bs4.Tag | bs4.NavigableString | None = self.bs.find(class_="top-item")
+        top_item: bs4.Tag | bs4.NavigableString | None = self.soup.find(
+            class_="top-item"
+        )
         if isinstance(top_item, bs4.Tag):
             links = top_item.find_all("a")
         return links[0].get("href")

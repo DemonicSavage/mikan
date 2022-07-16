@@ -34,8 +34,8 @@ class Card:
     idolized_url: str
 
     def is_double_sized(self) -> bool:
-        p: re.Pattern = re.compile(r"/2x/")
-        return p.search(self.normal_url) is not None
+        pattern: re.Pattern = re.compile(r"/2x/")
+        return pattern.search(self.normal_url) is not None
 
     def get_urls(self) -> list[str]:
         return [self.normal_url, self.idolized_url]
@@ -85,13 +85,13 @@ class Still:
     url: str
 
     def is_double_sized(self) -> bool:
-        p: re.Pattern = re.compile(r"/2x/")
-        return p.search(self.url) is not None
+        pattern: re.Pattern = re.compile(r"/2x/")
+        return pattern.search(self.url) is not None
 
     def get_urls(self) -> list[str]:
         return [self.url]
 
-    def set_url(self, i: int, url: str) -> None:
+    def set_url(self, _: int, url: str) -> None:
         self.url: str = url
 
     def needs_update(self) -> bool:
