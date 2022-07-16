@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-
+import asyncio
 from pathlib import Path
 from typing import Coroutine
 
-import asyncio
 import aiohttp
 
-import utils
 import json_utils
-from classes import Item, Card
-from html_parser import CardParser, StillParser, ListParser
+import utils
+from classes import Card, Item
+from html_parser import CardParser, ListParser, StillParser
 
 
 class Downloader:
@@ -36,15 +35,15 @@ class Downloader:
 
         return self
 
-    async def __aexit__(self, exc_type: None, exc_value: None, exc_traceback: None) -> None:
+    async def __aexit__(self, type: None, value: None, trace: None) -> None:
         await self.session.close()
 
     async def request_from_server(self, dest: Path, url: str) -> None:
-        response: aiohttp.ClientResponse = await self.session.get(f"https:{url}")
-        if response.status == 200:
-            response_data: bytes = await response.read()
+        res: aiohttp.ClientResponse = await self.session.get(f"https:{url}")
+        if res.status == 200:
+            res_data: bytes = await res.read()
             with open(dest, 'wb') as f:
-                f.write(response_data)
+                f.write(res_data)
 
     async def download_file(self, path: Path, item: Item, i: int) -> None:
         if not path.exists() or item.key in self.updateables:
@@ -80,8 +79,8 @@ class Downloader:
 
                 tasks.append(
                     self.add_item_to_object_list(item))
-        results: list[None] = await asyncio.gather(*tasks, return_exceptions=True)
-        return results
+        res: list[None] = await asyncio.gather(*tasks, return_exceptions=True)
+        return res
 
     async def get_cards_from_parser(self) -> None:
         num_pages: int = await self.list_parser.get_num_pages()+1

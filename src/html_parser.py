@@ -2,16 +2,15 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
-import bs4
 import aiohttp
+import bs4
 
 import consts
 
-
 if TYPE_CHECKING:
-    from classes import Card, Still, Item
+    from classes import Card, Item, Still
 
 
 class Parser(ABC):

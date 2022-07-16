@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 
-import sys
 import asyncio
+import sys
 from pathlib import Path
 
+import config
+from classes import Card, Item, Still
 from downloader import Downloader
 from organizer import Organizer
-from classes import Card, Still, Item
-
-import config
 
 
 class UnrecognizedArgumentException(Exception):

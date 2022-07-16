@@ -1,11 +1,10 @@
 import re
-
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TypeAlias, Optional
+from typing import Optional, TypeAlias
 
-import html_parser
 import consts
+import html_parser
 import organizer
 
 
