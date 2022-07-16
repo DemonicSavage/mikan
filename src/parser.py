@@ -66,9 +66,9 @@ class ListParser(Parser):
         return sorted(nums, reverse=True)
 
     async def get_num_pages(self) -> int:
-        p = re.compile(r"=([0-9]+)")
+        p: re.Pattern = re.compile(r"=([0-9]+)")
 
-        page = await self.soup_page(1)
+        page: bs4.BeautifulSoup = await self.soup_page(1)
         item: bs4.Tag | bs4.NavigableString | None = page.find(
             class_="pagination")
 
@@ -94,17 +94,17 @@ class CardParser(Parser):
 
     def create_item(self, num: int) -> tuple[int, Card]:
         from classes import Card
-        urls = self.get_item_image_urls()
+        urls: tuple[str, str] = self.get_item_image_urls()
 
-        idol = self.get_item_info("idol")
-        rarity = self.get_item_info("rarity")
-        attr = self.get_item_info("attribute")
-        unit = self.get_item_info("i_unit")
-        sub = self.get_item_info("i_subunit")
-        year = self.get_item_info("i_year")
+        idol: str = self.get_item_info("idol")
+        rarity: str = self.get_item_info("rarity")
+        attr: str = self.get_item_info("attribute")
+        unit: str = self.get_item_info("i_unit")
+        sub: str = self.get_item_info("i_subunit")
+        year: str = self.get_item_info("i_year")
 
-        new_card = Card(num, idol, rarity, attr, unit,
-                        sub, year, urls[0], urls[1])
+        new_card: Card = Card(num, idol, rarity, attr, unit,
+                              sub, year, urls[0], urls[1])
         return num, new_card
 
     def update_item(self, card: Card) -> None:
@@ -156,9 +156,9 @@ class StillParser(Parser):
 
     def create_item(self, num: int) -> tuple[int, Still]:
         from classes import Still
-        url = self.get_item_image_url()
+        url: str = self.get_item_image_url()
 
-        new_item = Still(
+        new_item: Still = Still(
             num, url
         )
         return num, new_item

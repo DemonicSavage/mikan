@@ -43,9 +43,9 @@ class Card:
 
     def set_url(self, i: int, url: str) -> None:
         if i == 0:
-            self.normal_url = url
+            self.normal_url: str = url
         else:
-            self.idolized_url = url
+            self.idolized_url: str = url
 
     def needs_update(self) -> bool:
         return not self.is_double_sized() and self.rarity != "Rare"
@@ -93,7 +93,7 @@ class Still:
         return [self.url]
 
     def set_url(self, i: int, url: str) -> None:
-        self.url = url
+        self.url: str = url
 
     def needs_update(self) -> bool:
         return not self.is_double_sized()
