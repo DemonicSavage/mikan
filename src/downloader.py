@@ -15,13 +15,13 @@ from html_parser import CardParser, StillParser, ListParser
 
 class Downloader:
     def __init__(self, path: Path, img_type: type[Item]):
-        self.path: Path = utils.init_path(Path(path))
+        self.path: Path = utils.init_path(path)
         self.objs: dict[int, Item] = {}
 
         self.img_type: type[Item] = img_type
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
 
-        utils.init_path(Path(self.path) / self.img_type.get_folder())
+        utils.init_path(self.path / self.img_type.get_folder())
 
         json_utils.load_cards(self.path, self.objs, img_type)
 

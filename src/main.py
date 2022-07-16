@@ -24,7 +24,7 @@ async def main() -> None:
             raise UnrecognizedArgumentException(
                 "Only recognized argument is --stills.")
 
-    await card_searcher(Path(config.CARDS_DIR), img_type)
+    await card_searcher(config.CARDS_DIR, img_type)
 
 
 async def card_searcher(path: Path, img_type: type[Item]):

@@ -51,7 +51,7 @@ class CardOrganizer:
                     jpg_name: str = jpg.name
                     split_jpg: list[str] = jpg_name.split("_")
 
-                    (Path(self.path) /
+                    (self.path /
                      split_jpg[1] / split_jpg[2] / jpg_name).unlink()
 
                 except FileNotFoundError:
@@ -60,7 +60,7 @@ class CardOrganizer:
     def create_symlink(self, path: Path) -> None:
         file_name: str = path.name
         name: list[str] = file_name.split("_")
-        new_path: Path = Path(self.path) / name[1] / name[2]
+        new_path: Path = self.path / name[1] / name[2]
         new_card: Path = new_path / file_name
 
         utils.init_path(new_path)

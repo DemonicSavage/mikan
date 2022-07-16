@@ -52,7 +52,7 @@ class Card:
 
     def get_paths(self, path: Path) -> list[Path]:
         file_name: str = f"{self.key}_{self.unit}_{self.idol}"
-        base_path: Path = Path(path) / consts.CARD_RESULTS_DIR
+        base_path: Path = path / consts.CARD_RESULTS_DIR
 
         normal_path: str = f"{file_name}_Normal{Path(self.normal_url).suffix}"
         idolized_path: str = normal_path.replace("Normal", "Idolized")
@@ -100,7 +100,7 @@ class Still:
 
     def get_paths(self, path: Path) -> list[Path]:
         file_name: str = f"{self.key}_Still"
-        base_path: Path = Path(path) / consts.STILL_RESULTS_DIR
+        base_path: Path = path / consts.STILL_RESULTS_DIR
 
         return [base_path / f"{file_name}{Path(self.url).suffix}"]
 
