@@ -68,8 +68,8 @@ class Card:
         return html_parser.CardParser()
 
     @staticmethod
-    def get_list_parser() -> html_parser.ListParser:
-        return html_parser.ListParser()
+    def get_list_template() -> str:
+        return consts.CARDS_LIST_URL_TEMPLATE
 
     @staticmethod
     def get_json_filename() -> str:
@@ -113,8 +113,8 @@ class Still:
         return html_parser.StillParser()
 
     @staticmethod
-    def get_list_parser() -> html_parser.ListParser:
-        return html_parser.ListParser(still=True)
+    def get_list_template() -> str:
+        return consts.STILLS_LIST_URL_TEMPLATE
 
     @staticmethod
     def get_json_filename() -> str:

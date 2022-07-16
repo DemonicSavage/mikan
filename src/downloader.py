@@ -25,7 +25,7 @@ class Downloader:
 
         json_utils.load_cards(self.path, self.objs, img_type)
 
-        self.list_parser: ListParser = self.img_type.get_list_parser()
+        self.list_parser: ListParser = ListParser(self.img_type)
         self.item_parser: CardParser | StillParser = self.img_type.get_parser()
 
         self.updateables: list[int] = []

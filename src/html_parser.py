@@ -40,8 +40,8 @@ class Parser(ABC):
 
 
 class ListParser(Parser):
-    def __init__(self, still: bool = False):
-        self.url: str = consts.CARDS_LIST_URL_TEMPLATE if not still else consts.STILLS_LIST_URL_TEMPLATE
+    def __init__(self, img_type: type[Item]):
+        self.url: str = img_type.get_list_template()
 
     def get_url(self, num: int):
         return f"{self.url}{num}"
