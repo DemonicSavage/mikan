@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any
+from typing import Mapping
 
 from classes import Item
 
@@ -23,8 +23,7 @@ def read_json_file(path: Path, cards: dict[int, Item], img_type: type[Item]) -> 
     card_path: Path = path / img_type.get_json_filename()
     with open(card_path, "r", encoding="utf-8") as file:
         data = file.read()
-    card_data: dict[str, Any] = json.loads(data)
-
+        card_data: dict[str, Mapping] = json.loads(data)
     for key, card in card_data.items():
         cards[int(key)] = img_type(**card)
 

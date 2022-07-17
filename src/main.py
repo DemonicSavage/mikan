@@ -25,7 +25,7 @@ async def main() -> None:
     await card_searcher(config.CARDS_DIR, img_type)
 
 
-async def card_searcher(path: Path, img_type: type[Item]) -> None:
+async def card_searcher(path: Path, img_type: type[Item]):
     organizer: Organizer = Organizer(path, img_type)
 
     async with Downloader(path, img_type) as downloader:

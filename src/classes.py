@@ -54,7 +54,7 @@ class Card:
         return organizer.CardOrganizer(path)
 
     def is_double_sized(self) -> bool:
-        pattern: re.Pattern[str] = re.compile(r"/2x/")
+        pattern: re.Pattern = re.compile(r"/2x/")
         return pattern.search(self.normal_url) is not None
 
     def get_urls(self) -> list[str]:
@@ -105,7 +105,7 @@ class Still:
         return organizer.StillOrganizer(path)
 
     def is_double_sized(self) -> bool:
-        pattern: re.Pattern[str] = re.compile(r"/2x/")
+        pattern: re.Pattern = re.compile(r"/2x/")
         return pattern.search(self.url) is not None
 
     def get_urls(self) -> list[str]:
