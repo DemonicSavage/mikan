@@ -48,7 +48,7 @@ class ListParser(Parser):
         super().__init__()
         self.url: str = img_type.get_list_template()
 
-    def get_url(self, num: int):
+    def get_url(self, num: int) -> str:
         return f"{self.url}{num}"
 
     async def get_page(self, num: int) -> list[int]:
