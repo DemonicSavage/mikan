@@ -24,6 +24,7 @@ class Parser(ABC):
     async def get_html(self, url: str) -> str:
         if isinstance(self.session, aiohttp.ClientSession):
             html: aiohttp.ClientResponse = await self.session.get(url)
+
         return await html.text()
 
     async def soup_page(self, num: int) -> bs4.BeautifulSoup:
@@ -62,8 +63,10 @@ class ListParser(Parser):
         for item in items:
             if isinstance(item, bs4.Tag):
                 found: str | list[str] | None | Any = item.find("a")
+
                 if isinstance(found, bs4.Tag):
                     string: str | list[str] | None = found.get("href")
+
                     if isinstance(string, str):
                         match: Optional[re.Match[str]] = pattern.search(string)
 
@@ -80,9 +83,9 @@ class ListParser(Parser):
         item: bs4.Tag | bs4.NavigableString | None = page.find(class_="pagination")
 
         if isinstance(item, bs4.Tag):
-
             links: bs4.ResultSet[bs4.Tag] = item.find_all("a")
             string: str | list[str] | None = links[-2].get("href")
+
             if isinstance(string, str):
                 match: Optional[re.Match[str]] = pattern.search(string)
 
@@ -129,11 +132,13 @@ class CardParser(Parser):
 
             if isinstance(links[0], bs4.Tag):
                 first: str | list[str] | None = links[0].get("href")
+
                 if isinstance(first, str):
                     first_link: str = first
 
             if isinstance(links[1], bs4.Tag):
                 second: str | list[str] | None = links[1].get("href")
+
                 if isinstance(second, str):
                     second_link: str = second
 
@@ -144,8 +149,10 @@ class CardParser(Parser):
             data: bs4.Tag | bs4.NavigableString | None = self.soup.find(
                 attrs={"data-field": field}
             )
+
             if isinstance(data, bs4.Tag):
                 res: bs4.Tag | bs4.NavigableString | None = data.find_all("td")[1]
+
                 if isinstance(res, bs4.Tag):
                     return res
         return None
@@ -190,10 +197,13 @@ class StillParser(Parser):
             top_item: bs4.Tag | bs4.NavigableString | None = self.soup.find(
                 class_="top-item"
             )
+
             if isinstance(top_item, bs4.Tag):
                 links: list[bs4.Tag | bs4.NavigableString | None] = top_item.find_all(
                     "a"
                 )
+
                 if isinstance(links, bs4.Tag):
                     link: str = links[0].get("href")
+
         return link
