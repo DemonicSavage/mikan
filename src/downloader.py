@@ -76,7 +76,6 @@ class Downloader:
         page: list[int] = await self.list_parser.get_page(idx)
         for item in page:
             if item not in self.objs:
-
                 tasks.append(self.add_item_to_object_list(item))
         res: list[None] = await asyncio.gather(*tasks, return_exceptions=True)
         return res
