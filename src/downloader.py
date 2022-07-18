@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from pathlib import Path
-from typing import Coroutine
+from typing import Any, Coroutine
 
 import aiohttp
 
@@ -72,7 +72,7 @@ class Downloader:
         print(f"Getting item {i}.")
 
     async def get_page(self, idx: int) -> list[None]:
-        tasks: list[Coroutine] = []
+        tasks: list[Coroutine[Any, Any, None]] = []
         page: list[int] = await self.list_parser.get_page(idx)
         for item in page:
             if item not in self.objs:
@@ -99,7 +99,7 @@ class Downloader:
             print(f"Couldn't download card {item.key}: {exception}.")
 
     async def get(self) -> None:
-        tasks: list[Coroutine] = []
+        tasks: list[Coroutine[Any, Any, None]] = []
         for _, item in self.objs.items():
             tasks.append(self.get_images(item))
         await asyncio.gather(*tasks, return_exceptions=False)
