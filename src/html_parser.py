@@ -67,7 +67,7 @@ class ListParser(Parser):
                 and isinstance(string := found.get("href"), str)
                 and isinstance(match := pattern.search(string), re.Match)
             ):
-                group = match.group(1)
+                group: str = match.group(1)
                 nums.append(int(group))
 
         return sorted(nums, reverse=True)
