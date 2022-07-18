@@ -82,7 +82,7 @@ class ListParser(Parser):
             and isinstance(string := links[-2].get("href"), str)
             and isinstance(match := pattern.search(string), re.Match)
         ):
-            group = match.group(1)
+            group: str = match.group(1)
 
         return int(group)
 
@@ -122,7 +122,7 @@ class CardParser(Parser):
             and isinstance(first := links[0].get("href"), str)
             and isinstance(second := links[1].get("href"), str)
         ):
-            urls = (first, second)
+            urls: tuple[str, str] = (first, second)
         return urls
 
     def get_data_field(self, field: str) -> bs4.Tag:
@@ -138,6 +138,7 @@ class CardParser(Parser):
     def get_item_info(self, info: str) -> str:
         if info == "idol":
             data: bs4.Tag = self.get_data_field("idol")
+
             if isinstance(found_data := data.find("span"), bs4.Tag):
                 return found_data.get_text().partition("Open idol")[0].strip()
 
