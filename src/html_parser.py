@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, cast
 
 import aiohttp
 import bs4
@@ -125,28 +125,23 @@ class CardParser(Parser):
             urls = (first, second)
         return urls
 
-    def get_data_field(self, field: str) -> Optional[bs4.Tag]:
+    def get_data_field(self, field: str) -> bs4.Tag:
 
         if (
             isinstance(self.soup, bs4.BeautifulSoup)
             and isinstance(data := self.soup.find(attrs={"data-field": field}), bs4.Tag)
             and isinstance(res := data.find_all("td")[1], bs4.Tag)
         ):
-            return res
-        return None
+            pass
+        return cast(bs4.Tag, res)
 
     def get_item_info(self, info: str) -> str:
-        if (
-            info == "idol"
-            and isinstance(data := self.get_data_field("idol"), bs4.Tag)
-            and isinstance(found_data := data.find("span"), bs4.Tag)
-        ):
-            return found_data.get_text().partition("Open idol")[0].strip()
+        if info == "idol":
+            data: bs4.Tag = self.get_data_field("idol")
+            if isinstance(found_data := data.find("span"), bs4.Tag):
+                return found_data.get_text().partition("Open idol")[0].strip()
 
-        if isinstance(other := self.get_data_field(info), bs4.Tag):
-            return other.get_text().strip()
-
-        return ""
+        return self.get_data_field(info).get_text().strip()
 
 
 class StillParser(Parser):
@@ -171,4 +166,5 @@ class StillParser(Parser):
             and isinstance(links := top_item.find_all("a"), bs4.Tag)
         ):
             link: str = links[0].get("href")
+
         return link
