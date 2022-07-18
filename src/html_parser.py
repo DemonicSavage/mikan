@@ -61,15 +61,16 @@ class ListParser(Parser):
         items: bs4.ResultSet[bs4.Tag] = page.find_all(class_="top-item")
 
         for item in items:
-            print("a")
             if (
                 isinstance(item, bs4.Tag)
                 and isinstance(found := item.find("a"), bs4.Tag)
                 and isinstance(string := found.find("a"), str)
-                and isinstance(match := pattern.search(string), re.Match)
             ):
-                group = match.group(1)
-                nums.append(int(group))
+                print("a")
+                match = pattern.search(string)
+                if match:
+                    group = match.group(1)
+                    nums.append(int(group))
 
         return sorted(nums, reverse=True)
 
