@@ -64,13 +64,11 @@ class ListParser(Parser):
             if (
                 isinstance(item, bs4.Tag)
                 and isinstance(found := item.find("a"), bs4.Tag)
-                and isinstance(string := found.find("a"), str)
+                and isinstance(string := found.get("href"), str)
+                and isinstance(match := pattern.search(string), re.Match)
             ):
-                print("a")
-                match = pattern.search(string)
-                if match:
-                    group = match.group(1)
-                    nums.append(int(group))
+                group = match.group(1)
+                nums.append(int(group))
 
         return sorted(nums, reverse=True)
 
