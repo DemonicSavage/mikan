@@ -164,7 +164,7 @@ class StillParser(Parser):
         if (
             isinstance(self.soup, bs4.BeautifulSoup)
             and isinstance(top_item := self.soup.find(class_="top-item"), bs4.Tag)
-            and isinstance(links := top_item.find_all("a"), bs4.Tag)
+            and isinstance(links := top_item.find_all("a"), bs4.ResultSet)
         ):
             link: str = links[0].get("href")
 
