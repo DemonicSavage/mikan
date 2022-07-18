@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Optional
 
 import aiohttp
 import bs4
@@ -61,18 +61,15 @@ class ListParser(Parser):
         items: bs4.ResultSet[bs4.Tag] = page.find_all(class_="top-item")
 
         for item in items:
-            if isinstance(item, bs4.Tag):
-                found: str | list[str] | None | Any = item.find("a")
-
-                if isinstance(found, bs4.Tag):
-                    string: str | list[str] | None = found.get("href")
-
-                    if isinstance(string, str):
-                        match: Optional[re.Match[str]] = pattern.search(string)
-
-                        if match:
-                            group = match.group(1)
-                            nums.append(int(group))
+            print("a")
+            if (
+                isinstance(item, bs4.Tag)
+                and isinstance(found := item.find("a"), bs4.Tag)
+                and isinstance(string := found.find("a"), str)
+                and isinstance(match := pattern.search(string), re.Match)
+            ):
+                group = match.group(1)
+                nums.append(int(group))
 
         return sorted(nums, reverse=True)
 
@@ -80,17 +77,14 @@ class ListParser(Parser):
         pattern: re.Pattern[str] = re.compile(r"=([0-9]+)")
 
         page: bs4.BeautifulSoup = await self.soup_page(1)
-        item: bs4.Tag | bs4.NavigableString | None = page.find(class_="pagination")
+        if (
+            isinstance(item := page.find(class_="pagination"), bs4.Tag)
+            and isinstance(links := item.find_all("a"), bs4.ResultSet)
+            and isinstance(string := links[-2].get("href"), str)
+            and isinstance(match := pattern.search(string), re.Match)
+        ):
+            group = match.group(1)
 
-        if isinstance(item, bs4.Tag):
-            links: bs4.ResultSet[bs4.Tag] = item.find_all("a")
-            string: str | list[str] | None = links[-2].get("href")
-
-            if isinstance(string, str):
-                match: Optional[re.Match[str]] = pattern.search(string)
-
-                if match:
-                    group = match.group(1)
         return int(group)
 
     def create_item(self, num: int) -> tuple[int, Item]:
@@ -122,56 +116,35 @@ class CardParser(Parser):
         card.normal_url, card.idolized_url = self.get_item_image_urls()
 
     def get_item_image_urls(self) -> tuple[str, str]:
-        if isinstance(self.soup, bs4.BeautifulSoup):
-            top_item: bs4.Tag | bs4.NavigableString | None = self.soup.find(
-                class_="top-item"
-            )
-
-        if isinstance(top_item, bs4.Tag):
-            links: bs4.ResultSet[bs4.Tag] = top_item.find_all("a")
-
-            if isinstance(links[0], bs4.Tag):
-                first: str | list[str] | None = links[0].get("href")
-
-                if isinstance(first, str):
-                    first_link: str = first
-
-            if isinstance(links[1], bs4.Tag):
-                second: str | list[str] | None = links[1].get("href")
-
-                if isinstance(second, str):
-                    second_link: str = second
-
-        return first_link, second_link
+        if (
+            isinstance(self.soup, bs4.BeautifulSoup)
+            and isinstance(top_item := self.soup.find(class_="top-item"), bs4.Tag)
+            and isinstance(links := top_item.find_all("a"), bs4.ResultSet)
+            and isinstance(first := links[0].get("href"), str)
+            and isinstance(second := links[1].get("href"), str)
+        ):
+            urls = (first, second)
+        return urls
 
     def get_data_field(self, field: str) -> Optional[bs4.Tag]:
-        if isinstance(self.soup, bs4.BeautifulSoup):
-            data: bs4.Tag | bs4.NavigableString | None = self.soup.find(
-                attrs={"data-field": field}
-            )
 
-            if isinstance(data, bs4.Tag):
-                res: bs4.Tag | bs4.NavigableString | None = data.find_all("td")[1]
-
-                if isinstance(res, bs4.Tag):
-                    return res
+        if (
+            isinstance(self.soup, bs4.BeautifulSoup)
+            and isinstance(data := self.soup.find(attrs={"data-field": field}), bs4.Tag)
+            and isinstance(res := data.find_all("td")[1], bs4.Tag)
+        ):
+            return res
         return None
 
     def get_item_info(self, info: str) -> str:
-        if info == "idol":
-            data: Optional[bs4.Tag] = self.get_data_field("idol")
+        if (
+            info == "idol"
+            and isinstance(data := self.get_data_field("idol"), bs4.Tag)
+            and isinstance(found_data := data.find("span"), bs4.Tag)
+        ):
+            return found_data.get_text().partition("Open idol")[0].strip()
 
-            if isinstance(data, bs4.Tag):
-                found_data: bs4.Tag | bs4.NavigableString | None = data.find("span")
-
-                if isinstance(found_data, bs4.Tag):
-                    text: str = found_data.get_text().partition("Open idol")[0].strip()
-
-            return text
-
-        other: Optional[bs4.Tag] = self.get_data_field(info)
-
-        if isinstance(other, bs4.Tag):
+        if isinstance(other := self.get_data_field(info), bs4.Tag):
             return other.get_text().strip()
 
         return ""
@@ -193,17 +166,10 @@ class StillParser(Parser):
         item.url = self.get_item_image_url()
 
     def get_item_image_url(self) -> str:
-        if isinstance(self.soup, bs4.BeautifulSoup):
-            top_item: bs4.Tag | bs4.NavigableString | None = self.soup.find(
-                class_="top-item"
-            )
-
-            if isinstance(top_item, bs4.Tag):
-                links: list[bs4.Tag | bs4.NavigableString | None] = top_item.find_all(
-                    "a"
-                )
-
-                if isinstance(links, bs4.Tag):
-                    link: str = links[0].get("href")
-
+        if (
+            isinstance(self.soup, bs4.BeautifulSoup)
+            and isinstance(top_item := self.soup.find(class_="top-item"), bs4.Tag)
+            and isinstance(links := top_item.find_all("a"), bs4.Tag)
+        ):
+            link: str = links[0].get("href")
         return link
