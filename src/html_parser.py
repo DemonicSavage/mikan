@@ -120,7 +120,7 @@ class CardParser(Parser):
         year: str = self.get_item_info("i_year")
 
         new_card: Card = Card(
-            num, idol, rarity, attr, unit, sub, year, urls[0], urls[1]
+            num, idol, rarity, attr, unit, sub, year, urls[0], urls[1]  # type: ignore
         )
         return num, new_card
 
@@ -169,7 +169,7 @@ class StillParser(Parser):
 
         url: str = self.get_item_image_url()
 
-        new_item: Still = Still(num, url)
+        new_item: Still = Still(num, url)  # type: ignore
         return num, new_item
 
     def update_item(self, item: Still) -> None:
