@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import TypeAlias
 
 import consts
-import html_parser
 import organizer
+from html_parser import CardParser, StillParser
 
 
 @dataclass
@@ -25,8 +25,8 @@ class Card:
         return consts.CARD_RESULTS_DIR
 
     @staticmethod
-    def get_parser() -> html_parser.CardParser:
-        return html_parser.CardParser()
+    def get_parser() -> CardParser:
+        return CardParser()
 
     @staticmethod
     def get_list_template() -> str:
@@ -76,8 +76,8 @@ class Still:
         return consts.STILL_RESULTS_DIR
 
     @staticmethod
-    def get_parser() -> html_parser.StillParser:
-        return html_parser.StillParser()
+    def get_parser() -> StillParser:
+        return StillParser()
 
     @staticmethod
     def get_list_template() -> str:
