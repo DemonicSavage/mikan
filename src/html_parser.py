@@ -69,7 +69,7 @@ class ListParser(Parser):
         nums: list[int] = []
         pattern: re.Pattern[str] = re.compile(r"/([0-9]+)/")
 
-        page = await self.soup_page(num)
+        page: bs4.BeautifulSoup = await self.soup_page(num)
         items: bs4.ResultSet[bs4.Tag] = page.find_all(class_="top-item")
 
         for item in items:
@@ -88,7 +88,7 @@ class ListParser(Parser):
     async def get_num_pages(self) -> int:
         pattern: re.Pattern[str] = re.compile(r"=([0-9]+)")
 
-        page = await self.soup_page(1)
+        page: bs4.BeautifulSoup = await self.soup_page(1)
         if (
             isinstance(item := page.find(class_="pagination"), bs4.Tag)
             and (links := item.find_all("a"))
