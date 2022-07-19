@@ -169,7 +169,7 @@ class StillParser(Parser):
 
         url: str = self.get_item_image_url()
 
-        new_item: Still = Still(num, url)  # type: ignore
+        new_item: Still = Still(num, url)
         return num, new_item
 
     def update_item(self, item: Still) -> None:
