@@ -1,24 +1,11 @@
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, TypeAlias
+from typing import TypeAlias
 
 import consts
 import html_parser
 import organizer
-
-
-@dataclass
-class Idol:
-    first_name: str
-    last_name: str
-    alt_spelling: Optional[str] = None
-
-
-@dataclass
-class Group:
-    name: str
-    idols: list[Idol]
 
 
 @dataclass

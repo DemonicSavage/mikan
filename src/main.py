@@ -37,5 +37,7 @@ async def card_searcher(path: Path, img_type: type[Item]) -> None:
 
 if __name__ == "__main__":
     if sys.platform.startswith("win"):
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        asyncio.set_event_loop_policy(
+            asyncio.WindowsSelectorEventLoopPolicy()  # type: ignore
+        )
     asyncio.run(main())

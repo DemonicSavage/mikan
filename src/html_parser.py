@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, Optional
 
 import aiohttp
 import bs4
@@ -11,6 +11,18 @@ import consts
 
 if TYPE_CHECKING:
     from classes import Card, Item, Still
+
+
+class ListParsingException(Exception):
+    pass
+
+
+class ItemParsingException(Exception):
+    pass
+
+
+class NoHTTPSessionException(Exception):
+    pass
 
 
 class Parser(ABC):
@@ -24,8 +36,8 @@ class Parser(ABC):
     async def get_html(self, url: str) -> str:
         if isinstance(self.session, aiohttp.ClientSession):
             html: aiohttp.ClientResponse = await self.session.get(url)
-
-        return await html.text()
+            return await html.text()
+        raise NoHTTPSessionException()
 
     async def soup_page(self, num: int) -> bs4.BeautifulSoup:
         return bs4.BeautifulSoup(
@@ -57,34 +69,35 @@ class ListParser(Parser):
         nums: list[int] = []
         pattern: re.Pattern[str] = re.compile(r"/([0-9]+)/")
 
-        page: bs4.BeautifulSoup = await self.soup_page(num)
+        page = await self.soup_page(num)
         items: bs4.ResultSet[bs4.Tag] = page.find_all(class_="top-item")
 
         for item in items:
             if (
-                isinstance(item, bs4.Tag)
-                and isinstance(found := item.find("a"), bs4.Tag)
+                isinstance(found := item.find("a"), bs4.Tag)
                 and isinstance(string := found.get("href"), str)
                 and isinstance(match := pattern.search(string), re.Match)
             ):
                 group: str = match.group(1)
                 nums.append(int(group))
 
-        return sorted(nums, reverse=True)
+        if nums:
+            return sorted(nums, reverse=True)
+        raise ListParsingException()
 
     async def get_num_pages(self) -> int:
         pattern: re.Pattern[str] = re.compile(r"=([0-9]+)")
 
-        page: bs4.BeautifulSoup = await self.soup_page(1)
+        page = await self.soup_page(1)
         if (
             isinstance(item := page.find(class_="pagination"), bs4.Tag)
-            and isinstance(links := item.find_all("a"), bs4.ResultSet)
+            and (links := item.find_all("a"))
             and isinstance(string := links[-2].get("href"), str)
             and isinstance(match := pattern.search(string), re.Match)
         ):
-            group: str = match.group(1)
+            return int(match.group(1))
 
-        return int(group)
+        raise ListParsingException()
 
     def create_item(self, num: int) -> tuple[int, Item]:
         ...
@@ -116,33 +129,35 @@ class CardParser(Parser):
 
     def get_item_image_urls(self) -> tuple[str, str]:
         if (
-            isinstance(self.soup, bs4.BeautifulSoup)
+            self.soup
             and isinstance(top_item := self.soup.find(class_="top-item"), bs4.Tag)
-            and isinstance(links := top_item.find_all("a"), bs4.ResultSet)
+            and (links := top_item.find_all("a"))
             and isinstance(first := links[0].get("href"), str)
             and isinstance(second := links[1].get("href"), str)
         ):
-            urls: tuple[str, str] = (first, second)
-        return urls
+            return (first, second)
+
+        raise ItemParsingException()
 
     def get_data_field(self, field: str) -> bs4.Tag:
 
         if (
-            isinstance(self.soup, bs4.BeautifulSoup)
+            self.soup
             and isinstance(data := self.soup.find(attrs={"data-field": field}), bs4.Tag)
             and isinstance(res := data.find_all("td")[1], bs4.Tag)
         ):
-            pass
-        return cast(bs4.Tag, res)
+            return res
+
+        raise ItemParsingException()
 
     def get_item_info(self, info: str) -> str:
         if info == "idol":
-            data: bs4.Tag = self.get_data_field("idol")
-
+            data = self.get_data_field("idol")
             if isinstance(found_data := data.find("span"), bs4.Tag):
                 return found_data.get_text().partition("Open idol")[0].strip()
 
-        return self.get_data_field(info).get_text().strip()
+        data = self.get_data_field(info)
+        return data.get_text().strip()
 
 
 class StillParser(Parser):
@@ -164,8 +179,10 @@ class StillParser(Parser):
         if (
             isinstance(self.soup, bs4.BeautifulSoup)
             and isinstance(top_item := self.soup.find(class_="top-item"), bs4.Tag)
-            and isinstance(links := top_item.find_all("a"), bs4.ResultSet)
+            and (links := top_item.find_all("a"))
         ):
             link: str = links[0].get("href")
 
-        return link
+            return link
+
+        raise ItemParsingException()

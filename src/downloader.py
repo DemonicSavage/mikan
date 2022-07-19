@@ -71,20 +71,20 @@ class Downloader:
         self.objs[i] = obj
         print(f"Getting item {i}.")
 
-    async def get_page(self, idx: int) -> list[None]:
+    async def get_page(self, idx: int) -> tuple[()]:
         tasks: list[Coroutine[Any, Any, None]] = []
         page: list[int] = await self.list_parser.get_page(idx)
         for item in page:
             if item not in self.objs:
                 tasks.append(self.add_item_to_object_list(item))
-        res: list[None] = await asyncio.gather(*tasks, return_exceptions=True)
+        res: tuple[()] = await asyncio.gather(*tasks, return_exceptions=False)
         return res
 
     async def get_cards_from_parser(self) -> None:
         num_pages: int = await self.list_parser.get_num_pages() + 1
         current_num: int = 1
         for _ in range(1, num_pages):
-            current_page: list[None] = await self.get_page(current_num)
+            current_page: tuple[()] = await self.get_page(current_num)
             if not current_page:
                 break
             current_num += 1
