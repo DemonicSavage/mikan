@@ -152,11 +152,11 @@ class CardParser(Parser):
 
     def get_item_info(self, info: str) -> str:
         if info == "idol":
-            data = self.get_data_field("idol")
+            data: bs4.Tag = self.get_data_field("idol")
             if isinstance(found_data := data.find("span"), bs4.Tag):
                 return found_data.get_text().partition("Open idol")[0].strip()
 
-        data = self.get_data_field(info)
+        data: bs4.Tag = self.get_data_field(info)
         return data.get_text().strip()
 
 
