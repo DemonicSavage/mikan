@@ -4,8 +4,6 @@ from pathlib import Path
 from typing import TypeAlias
 
 import consts
-import organizer
-from html_parser import CardParser, StillParser
 
 
 @dataclass
@@ -21,24 +19,8 @@ class Card:
     idolized_url: str
 
     @staticmethod
-    def get_folder() -> str:
-        return consts.CARD_RESULTS_DIR
-
-    @staticmethod
-    def get_parser() -> CardParser:
-        return CardParser()
-
-    @staticmethod
-    def get_list_template() -> str:
-        return consts.CARDS_LIST_URL_TEMPLATE
-
-    @staticmethod
-    def get_json_filename() -> str:
-        return "cards.json"
-
-    @staticmethod
-    def get_organizer(path: Path) -> organizer.CardOrganizer:
-        return organizer.CardOrganizer(path)
+    def as_string() -> str:
+        return "Card"
 
     def is_double_sized(self) -> bool:
         pattern: re.Pattern[str] = re.compile(r"/2x/")
@@ -58,7 +40,7 @@ class Card:
 
     def get_paths(self, path: Path) -> list[Path]:
         file_name: str = f"{self.key}_{self.unit}_{self.idol}"
-        base_path: Path = path / consts.CARD_RESULTS_DIR
+        base_path: Path = path / consts.get_const(type(self), "RESULTS_DIR")
 
         normal_path: str = f"{file_name}_Normal{Path(self.normal_url).suffix}"
         idolized_path: str = normal_path.replace("Normal", "Idolized")
@@ -72,24 +54,8 @@ class Still:
     url: str
 
     @staticmethod
-    def get_folder() -> str:
-        return consts.STILL_RESULTS_DIR
-
-    @staticmethod
-    def get_parser() -> StillParser:
-        return StillParser()
-
-    @staticmethod
-    def get_list_template() -> str:
-        return consts.STILLS_LIST_URL_TEMPLATE
-
-    @staticmethod
-    def get_json_filename() -> str:
-        return "stills.json"
-
-    @staticmethod
-    def get_organizer(path: Path) -> organizer.StillOrganizer:
-        return organizer.StillOrganizer(path)
+    def as_string() -> str:
+        return "Still"
 
     def is_double_sized(self) -> bool:
         pattern: re.Pattern[str] = re.compile(r"/2x/")
@@ -106,7 +72,7 @@ class Still:
 
     def get_paths(self, path: Path) -> list[Path]:
         file_name: str = f"{self.key}_Still"
-        base_path: Path = path / consts.STILL_RESULTS_DIR
+        base_path: Path = path / consts.get_const(type(self), "RESULTS_DIR")
 
         return [base_path / f"{file_name}{Path(self.url).suffix}"]
 

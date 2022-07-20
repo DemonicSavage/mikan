@@ -6,6 +6,7 @@ from typing import Any, Coroutine
 
 import aiohttp
 
+import consts
 import json_utils
 import utils
 from classes import Card, Item
@@ -19,13 +20,15 @@ class Downloader:
 
         self.img_type: type[Item] = img_type
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
+        folder: str = consts.get_const(self.img_type, "RESULTS_DIR")
+        utils.init_path(self.path / folder)
 
-        utils.init_path(self.path / self.img_type.get_folder())
-
-        json_utils.load_cards(self.path, self.objs, img_type)
+        json_utils.load_cards(self.path, self.objs, self.img_type)
 
         self.list_parser: ListParser = ListParser(self.img_type)
-        self.item_parser: CardParser | StillParser = self.img_type.get_parser()
+        self.item_parser: CardParser | StillParser = consts.get_const(
+            img_type, "PARSER"
+        )()
 
         self.updateables: list[int] = []
 

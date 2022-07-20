@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import consts
 import utils
 
 if TYPE_CHECKING:
@@ -12,10 +13,10 @@ if TYPE_CHECKING:
 class Organizer:
     def __init__(self, path: Path, img_type: type[Item]):
         self.path: Path = utils.init_path(path)
-        self.organizer: CardOrganizer | StillOrganizer = img_type.get_organizer(
-            self.path
-        )
-        self.results_dir: str = img_type.get_folder()
+        self.organizer: CardOrganizer | StillOrganizer = consts.get_const(
+            img_type, "ORGANIZER"
+        )(self.path)
+        self.results_dir: str = consts.get_const(img_type, "RESULTS_DIR")
 
     def get_filenames(self, suffix_list: list[str]) -> list[Path]:
         _dir: list[Path] = [

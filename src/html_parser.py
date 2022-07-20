@@ -60,7 +60,7 @@ class Parser(ABC):
 class ListParser(Parser):
     def __init__(self, img_type: type[Item]):
         super().__init__()
-        self.url: str = img_type.get_list_template()
+        self.url: str = consts.get_const(img_type, "LIST_URL_TEMPLATE")
 
     def get_url(self, num: int) -> str:
         return f"{self.url}{num}"
@@ -105,7 +105,8 @@ class ListParser(Parser):
 
 class CardParser(Parser):
     def get_url(self, num: int) -> str:
-        return f"{consts.CARD_URL_TEMPLATE}{num}"
+        url: str = consts.get_const(Card, "URL_TEMPLATE")
+        return f"{url}{num}"
 
     def create_item(self, num: int) -> tuple[int, Card]:
         from classes import Card
@@ -162,7 +163,8 @@ class CardParser(Parser):
 
 class StillParser(Parser):
     def get_url(self, num: int) -> str:
-        return f"{consts.STILL_URL_TEMPLATE}{num}"
+        url: str = consts.get_const(Still, "URL_TEMPLATE")
+        return f"{url}{num}"
 
     def create_item(self, num: int) -> tuple[int, Still]:
         from classes import Still
