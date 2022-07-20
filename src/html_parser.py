@@ -109,6 +109,8 @@ class CardParser(Parser):
         return f"{url}{num}"
 
     def create_item(self, num: int) -> tuple[int, Card]:
+        from classes import Card
+
         urls: tuple[str, str] = self.get_item_image_urls()
 
         idol: str = self.get_item_info("idol")
@@ -165,6 +167,8 @@ class StillParser(Parser):
         return f"{url}{num}"
 
     def create_item(self, num: int) -> tuple[int, Still]:
+        from classes import Still
+
         url: str = self.get_item_image_url()
 
         new_item: Still = Still(num, url)
