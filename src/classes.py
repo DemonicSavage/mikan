@@ -18,10 +18,6 @@ class Card:
     normal_url: str
     idolized_url: str
 
-    @staticmethod
-    def as_string() -> str:
-        return "Card"
-
     def is_double_sized(self) -> bool:
         pattern: re.Pattern[str] = re.compile(r"/2x/")
         return pattern.search(self.normal_url) is not None
@@ -52,10 +48,6 @@ class Card:
 class Still:
     key: int
     url: str
-
-    @staticmethod
-    def as_string() -> str:
-        return "Still"
 
     def is_double_sized(self) -> bool:
         pattern: re.Pattern[str] = re.compile(r"/2x/")

@@ -46,5 +46,5 @@ def get_const(img_type: type[Item] | str, key: str) -> Any:
     if isinstance(img_type, str):
         tp = item[img_type]
     else:
-        tp = item[img_type.as_string()]
+        tp = item[img_type.__name__]
     return cast(Any, tp[key])
