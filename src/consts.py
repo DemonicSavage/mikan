@@ -42,6 +42,9 @@ item = {
 }
 
 
-def get_const(img_type: type[Item], key: str) -> Any:
-    tp = item[img_type.as_string()]
+def get_const(img_type: type[Item] | str, key: str) -> Any:
+    if isinstance(img_type, str):
+        tp = item[img_type]
+    else:
+        tp = item[img_type.as_string()]
     return cast(Any, tp[key])
