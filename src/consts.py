@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, TypedDict, cast
-
-import html_parser
-import organizer
+from typing import TYPE_CHECKING, TypedDict, cast
 
 if TYPE_CHECKING:
     from classes import Item
@@ -14,8 +11,6 @@ class Consts(TypedDict):
     LIST_URL_TEMPLATE: str
     URL_TEMPLATE: str
     JSON_FILENAME: str
-    PARSER: type[html_parser.CardParser | html_parser.StillParser]
-    ORGANIZER: type[organizer.CardOrganizer | organizer.StillOrganizer]
 
 
 card: Consts = {
@@ -23,8 +18,6 @@ card: Consts = {
     "LIST_URL_TEMPLATE": "https://idol.st/ajax/allstars/cards/?page=",
     "URL_TEMPLATE": "https://idol.st/ajax/allstars/card/",
     "JSON_FILENAME": "cards.json",
-    "PARSER": html_parser.CardParser,
-    "ORGANIZER": organizer.CardOrganizer,
 }
 
 still: Consts = {
@@ -32,8 +25,6 @@ still: Consts = {
     "LIST_URL_TEMPLATE": "https://idol.st/ajax/allstars/stills/?page=",
     "URL_TEMPLATE": "https://idol.st/ajax/allstars/still/",
     "JSON_FILENAME": "stills.json",
-    "PARSER": html_parser.StillParser,
-    "ORGANIZER": organizer.StillOrganizer,
 }
 
 item = {
@@ -42,9 +33,9 @@ item = {
 }
 
 
-def get_const(img_type: type[Item] | str, key: str) -> Any:
+def get_const(img_type: type[Item] | str, key: str) -> str:
     if isinstance(img_type, str):
         tp = item[img_type]
     else:
         tp = item[img_type.__name__]
-    return cast(Any, tp[key])
+    return cast(str, tp[key])

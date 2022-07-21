@@ -1,22 +1,14 @@
-from __future__ import annotations
-
+from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import consts
 import utils
 
-if TYPE_CHECKING:
-    from classes import Item
 
-
-class Organizer:
-    def __init__(self, path: Path, img_type: type[Item]):
+class Organizer(ABC):
+    def __init__(self, path: Path):
         self.path: Path = utils.init_path(path)
-        self.organizer: CardOrganizer | StillOrganizer = consts.get_const(
-            img_type, "ORGANIZER"
-        )(self.path)
-        self.results_dir: str = consts.get_const(img_type, "RESULTS_DIR")
+        self.results_dir: str = ""
 
     def get_filenames(self, suffix_list: list[str]) -> list[Path]:
         _dir: list[Path] = [
@@ -32,15 +24,24 @@ class Organizer:
             file.unlink()
 
     def organize(self) -> None:
-        self.organizer.remove_duplicates(self.get_filenames([".png", ".jpeg"]))
-        self.organizer.create_symlinks(self.get_filenames([".png", ".jpeg"]))
+        self.remove_duplicates(self.get_filenames([".png", ".jpeg"]))
+        self.create_symlinks(self.get_filenames([".png", ".jpeg"]))
 
         self.remove_partially_downloaded()
 
+    @abstractmethod
+    def remove_duplicates(self, paths: list[Path]):
+        ...
 
-class CardOrganizer:
+    @abstractmethod
+    def create_symlinks(self, paths: list[Path]):
+        ...
+
+
+class CardOrganizer(Organizer):
     def __init__(self, path: Path):
-        self.path: Path = path
+        super().__init__(path)
+        self.results_dir: str = consts.get_const("Card", "RESULTS_DIR")
 
     def remove_duplicates(self, paths: list[Path]) -> None:
         prefixes: list[str] = [
@@ -80,9 +81,10 @@ class CardOrganizer:
             self.create_symlink(card)
 
 
-class StillOrganizer:
+class StillOrganizer(Organizer):
     def __init__(self, path: Path):
-        self.path: Path = path
+        super().__init__(path)
+        self.results_dir: str = consts.get_const("Still", "RESULTS_DIR")
 
     def remove_duplicates(self, paths: list[Path]) -> None:
         prefixes: list[str] = [

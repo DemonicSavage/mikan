@@ -5,9 +5,9 @@ import sys
 from pathlib import Path
 
 import config
+import organizer
 from classes import Card, Item, Still
 from downloader import Downloader
-from organizer import Organizer
 
 
 class UnrecognizedArgumentException(Exception):
@@ -26,13 +26,13 @@ async def main() -> None:
 
 
 async def card_searcher(path: Path, img_type: type[Item]) -> None:
-    organizer: Organizer = Organizer(path, img_type)
+    item_organizer = getattr(organizer, f"{img_type.__name__}Organizer")
 
     async with Downloader(path, img_type) as downloader:
         await downloader.update()
         await downloader.get()
 
-    organizer.organize()
+    item_organizer(path).organize()
 
 
 if __name__ == "__main__":
