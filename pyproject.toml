@@ -21,12 +21,14 @@ flake8-bugbear = "^22.7.1"
 bandit = "^1.7.4"
 isort = "^5.10.1"
 pep8-naming = "^0.10.0"
+pre-commit = "^2.20.0"
+pyright = "^1.1.263"
 
 [tool.poetry.scripts]
 run = "src.main:main"
 
 [tool.pyright]
-strict = true
+typeCheckingMode = "strict"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

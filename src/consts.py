@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypedDict, cast
-
-if TYPE_CHECKING:
-    from src.classes import Item
+from typing import TypedDict, cast
 
 
 class Consts(TypedDict):
@@ -33,7 +30,7 @@ item = {
 }
 
 
-def get_const(img_type: type[Item] | str, key: str) -> str:
+def get_const(img_type: type | str, key: str) -> str:
     if isinstance(img_type, str):
         tp = item[img_type]
     else:
