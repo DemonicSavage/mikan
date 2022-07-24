@@ -1,1 +1,1 @@
-@py src/main.py %1
+@poetry run python src/main.py %1

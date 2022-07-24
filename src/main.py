@@ -14,7 +14,7 @@ class UnrecognizedArgumentException(Exception):
     pass
 
 
-async def main() -> None:
+async def run() -> None:
     img_type: type[Item] = Card
     if len(sys.argv) > 1:
         if sys.argv[1] == "--stills":
@@ -35,9 +35,14 @@ async def card_searcher(path: Path, img_type: type[Item]) -> None:
     item_organizer(path).organize()
 
 
-if __name__ == "__main__":
+def main():
     if sys.platform.startswith("win"):
         asyncio.set_event_loop_policy(
             asyncio.WindowsSelectorEventLoopPolicy()  # type: ignore
         )
-    asyncio.run(main())
+
+    asyncio.run(run())
+
+
+if __name__ == "__main__":
+    main()

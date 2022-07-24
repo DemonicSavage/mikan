@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-./src/main.py "$@"
+poetry run python src/main.py "$@"
