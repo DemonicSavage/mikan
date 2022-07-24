@@ -2,8 +2,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-import consts
-from classes import Item
+import src.consts as consts
+from src.classes import Item
 
 
 def to_json(cards: dict[int, Item]) -> str:

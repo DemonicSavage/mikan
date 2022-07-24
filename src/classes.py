@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TypeAlias
 
-import consts
+import src.consts as consts
 
 
 @dataclass

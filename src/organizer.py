@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-import consts
-import utils
+import src.consts as consts
+import src.utils as utils
 
 
 class Organizer(ABC):

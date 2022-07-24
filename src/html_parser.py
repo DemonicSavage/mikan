@@ -7,10 +7,10 @@ from typing import TYPE_CHECKING, Optional
 import aiohttp
 import bs4
 
-import consts
+import src.consts as consts
 
 if TYPE_CHECKING:
-    from classes import Card, Item, Still
+    from src.classes import Card, Item, Still
 
 
 class ListParsingException(Exception):
@@ -109,7 +109,7 @@ class CardParser(Parser):
         return f"{url}{num}"
 
     def create_item(self, num: int) -> tuple[int, Card]:
-        from classes import Card
+        from src.classes import Card
 
         urls: tuple[str, str] = self.get_item_image_urls()
 
@@ -167,7 +167,7 @@ class StillParser(Parser):
         return f"{url}{num}"
 
     def create_item(self, num: int) -> tuple[int, Still]:
-        from classes import Still
+        from src.classes import Still
 
         url: str = self.get_item_image_url()
 

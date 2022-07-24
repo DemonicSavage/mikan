@@ -6,11 +6,11 @@ from typing import Any, Coroutine
 
 import aiohttp
 
-import consts
-import html_parser
-import json_utils
-import utils
-from classes import Card, Item
+import src.consts as consts
+import src.html_parser as parser
+import src.json_utils as json_utils
+import src.utils as utils
+from src.classes import Card, Item
 
 
 class Downloader:
@@ -25,8 +25,8 @@ class Downloader:
 
         json_utils.load_cards(self.path, self.objs, self.img_type)
 
-        self.list_parser = html_parser.ListParser(self.img_type)
-        self.item_parser = getattr(html_parser, f"{img_type.__name__}Parser")()
+        self.list_parser = parser.ListParser(self.img_type)
+        self.item_parser = getattr(parser, f"{img_type.__name__}Parser")()
 
         self.updateables: list[int] = []
 

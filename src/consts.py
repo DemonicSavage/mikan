@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, TypedDict, cast
 
 if TYPE_CHECKING:
-    from classes import Item
+    from src.classes import Item
 
 
 class Consts(TypedDict):

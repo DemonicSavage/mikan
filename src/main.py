@@ -4,10 +4,10 @@ import asyncio
 import sys
 from pathlib import Path
 
-import config
-import organizer
-from classes import Card, Item, Still
-from downloader import Downloader
+import src.config as config
+import src.organizer as organizer
+from src.classes import Card, Item, Still
+from src.downloader import Downloader
 
 
 class UnrecognizedArgumentException(Exception):
