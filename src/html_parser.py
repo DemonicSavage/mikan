@@ -125,9 +125,6 @@ class CardParser(Parser):
         )
         return num, new_card
 
-    def update_item(self, card: Card) -> None:
-        card.normal_url, card.idolized_url = self.get_item_image_urls()
-
     def get_item_image_urls(self) -> tuple[str, str]:
         if (
             self.soup
@@ -173,9 +170,6 @@ class StillParser(Parser):
 
         new_item: Still = Still(num, url)
         return num, new_item
-
-    def update_item(self, item: Still) -> None:
-        item.url = self.get_item_image_url()
 
     def get_item_image_url(self) -> str:
         if (
