@@ -10,9 +10,9 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-beautifulsoup4 = "^4.0.0"
+beautifulsoup4 = "^4.11.1"
 aiohttp = "^3.8.1"
-lxml = "^4.0.0"
+lxml = "^4.9.1"
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"
@@ -20,7 +20,7 @@ flake8 = "^4.0.1"
 flake8-bugbear = "^22.7.1"
 bandit = "^1.7.4"
 isort = "^5.10.1"
-pep8-naming = "^0.10.0"
+pep8-naming = "^0.13.1"
 pre-commit = "^2.20.0"
 pyright = "^1.1.263"
 
