@@ -1,1 +1,1 @@
-@poetry run %1
+@poetry run run %1

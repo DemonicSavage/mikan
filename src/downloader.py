@@ -6,22 +6,18 @@ from typing import Any, Coroutine
 
 import aiohttp
 
-import src.consts as consts
 import src.html_parser as parser
 import src.json_utils as json_utils
-import src.utils as utils
 from src.classes import Card, Item
 
 
 class Downloader:
     def __init__(self, path: Path, img_type: type[Item]):
-        self.path: Path = utils.init_path(path)
+        self.path: Path = path.expanduser()
         self.objs: dict[int, Item] = {}
 
         self.img_type: type[Item] = img_type
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
-        folder: str = consts.get_const(self.img_type, "RESULTS_DIR")
-        utils.init_path(self.path / folder)
 
         json_utils.load_cards(self.path, self.objs, self.img_type)
 
@@ -43,6 +39,7 @@ class Downloader:
         res: aiohttp.ClientResponse = await self.session.get(f"https:{url}")
         if res.status == 200:
             res_data: bytes = await res.read()
+            dest.parent.mkdir(exist_ok=True, parents=True)
             with open(dest, "wb") as file:
                 file.write(res_data)
 

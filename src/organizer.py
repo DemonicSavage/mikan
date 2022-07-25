@@ -2,12 +2,11 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 import src.consts as consts
-import src.utils as utils
 
 
 class Organizer(ABC):
     def __init__(self, path: Path):
-        self.path: Path = utils.init_path(path)
+        self.path: Path = path.expanduser()
         self.results_dir: str = ""
 
     def get_filenames(self, suffix_list: list[str]) -> list[Path]:
@@ -68,7 +67,7 @@ class CardOrganizer(Organizer):
         new_path: Path = self.path / name[1] / name[2]
         new_card: Path = new_path / file_name
 
-        utils.init_path(new_path)
+        new_path.mkdir(exist_ok=True, parents=True)
         try:
             new_card.symlink_to(path)
 

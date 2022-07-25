@@ -16,6 +16,7 @@ def to_json(cards: dict[int, Item]) -> str:
 
 def dump_to_file(json_obj: str, path: Path, img_type: type[Item]) -> None:
     card_path: Path = path / consts.get_const(img_type, "JSON_FILENAME")
+    card_path.parent.mkdir(exist_ok=True, parents=True)
     with open(card_path, "w", encoding="utf-8") as file:
         file.write(json_obj)
 
