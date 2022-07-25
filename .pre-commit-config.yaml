@@ -1,4 +1,4 @@
-exclude: "test/*"
+exclude: "^test"
 repos:
   - repo: https://github.com/psf/black
     rev: 22.6.0
