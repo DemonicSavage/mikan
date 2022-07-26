@@ -93,3 +93,27 @@ stills_json = """{
         "url": "//url1.png"
     }
 }"""
+
+card_files = [
+    "1_Unit1_Name1_Idolized.png",
+    "1_Unit1_Name1_Normal.png",
+    "2_Unit2_Name2_Idolized.png",
+    "2_Unit2_Name2_Normal.png",
+    "3_Unit3_Name3_Idolized.png",
+    "3_Unit3_Name3_Normal.png",
+    "4_Unit4_Name4_Idolized.png",
+    "4_Unit4_Name4_Normal.png",
+    "5_Unit5_Name5_Idolized.png",
+    "5_Unit5_Name5_Normal.png",
+    "6_Unit6_Name6_Idolized.png",
+    "6_Unit6_Name6_Normal.png",
+]
+
+still_files = [
+    "1_Still.png",
+    "2_Still.png",
+    "3_Still.png",
+    "4_Still.png",
+    "5_Still.png",
+    "6_Still.png",
+]

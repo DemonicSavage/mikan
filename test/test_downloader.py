@@ -41,6 +41,14 @@ mock_file = MockResponse(
 )
 
 
+def check_files(path, answer):
+    path = Path(path)
+    if not path.is_dir():
+        return False
+    files = [x.name for x in path.iterdir()]
+    return set(files) == set(answer)
+
+
 @pytest.mark.asyncio
 async def test_downloader_cards(mocker):
     downloader = src.downloader.Downloader(Path("test/temp"), src.classes.Card)
@@ -61,6 +69,7 @@ async def test_downloader_cards(mocker):
         await downloader.update()
         await downloader.get()
         assert Path("test/temp/cards.json").open().read() == test.strings.cards_json
+        assert check_files("test/temp/All", test.strings.card_files)
     shutil.rmtree("test/temp", ignore_errors=True)
 
 
@@ -84,4 +93,5 @@ async def test_downloader_stills(mocker):
         await downloader.update()
         await downloader.get()
         assert Path("test/temp/stills.json").open().read() == test.strings.stills_json
+        assert check_files("test/temp/Stills", test.strings.still_files)
     shutil.rmtree("test/temp", ignore_errors=True)
