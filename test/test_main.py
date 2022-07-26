@@ -1,18 +1,7 @@
 import pytest
 
-from src.main import Downloader, UnrecognizedArgumentException, main, run
+from src.main import Downloader, UnrecognizedArgumentException, run
 from src.organizer import CardOrganizer, StillOrganizer
-
-
-class MockAsyncio:
-    def set_event_loop_policy(self):
-        pass
-
-    def WindowsSelectorEventLoopPolicy():
-        pass
-
-    def run(self):
-        pass
 
 
 @pytest.mark.asyncio
