@@ -1,44 +1,10 @@
 from pathlib import Path
-import shutil
 import pytest
 
 import src.downloader
 import src.classes
-import test.strings
-from test.mocks import MockResponse, awaitable_res
-
-num_pages = 3
-
-
-async def mock_page(self, n):
-    return [[1, 2, 3], [4, 5, 6], []][n - 1]
-
-
-async def mock_card(self, n):
-    return n, src.classes.Card(
-        n,
-        f"Name{n}",
-        f"Rarity{n}",
-        f"Attribute{n}",
-        f"Unit{n}",
-        f"Subunit{n}",
-        f"Year{n}",
-        f"//normal{n}.png",
-        f"//idolized{n}.png",
-    )
-
-
-async def mock_still(self, n):
-    return n, src.classes.Still(
-        n,
-        f"//url{n}.png",
-    )
-
-
-mock_file = MockResponse(
-    bytes(0x2A),
-    200,
-)
+import test.mocks
+from test.utils import awaitable_res
 
 
 def check_files(path, answer):
@@ -49,49 +15,59 @@ def check_files(path, answer):
     return set(files) == set(answer)
 
 
+@pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
-async def test_downloader_cards(mocker):
+async def test_downloader_cards(mocker, cleanup):
     downloader = src.downloader.Downloader(Path("test/temp"), src.classes.Card)
+
     mocker.patch(
         "src.html_parser.ListParser.get_num_pages",
-        return_value=num_pages,
+        return_value=test.mocks.mock_num_pages,
     )
     mocker.patch(
         "src.html_parser.ListParser.get_page",
-        mock_page,
+        test.mocks.mock_page,
     )
     mocker.patch(
         "src.html_parser.CardParser.get_item",
-        mock_card,
+        test.mocks.mock_card,
     )
-    mocker.patch("aiohttp.ClientSession.get", return_value=awaitable_res(mock_file))
+    mocker.patch(
+        "aiohttp.ClientSession.get", return_value=awaitable_res(test.mocks.mock_file)
+    )
+
     async with downloader as downloader:
         await downloader.update()
         await downloader.get()
-        assert Path("test/temp/cards.json").open().read() == test.strings.cards_json
-        assert check_files("test/temp/All", test.strings.card_files)
-    shutil.rmtree("test/temp", ignore_errors=True)
+
+    assert Path("test/temp/cards.json").open().read() == test.mocks.cards_json
+    assert check_files("test/temp/All", test.mocks.card_files)
 
 
+@pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_stills(mocker):
     downloader = src.downloader.Downloader(Path("test/temp"), src.classes.Still)
+
     mocker.patch(
         "src.html_parser.ListParser.get_num_pages",
-        return_value=num_pages,
+        return_value=test.mocks.mock_num_pages,
     )
     mocker.patch(
         "src.html_parser.ListParser.get_page",
-        mock_page,
+        test.mocks.mock_page,
     )
     mocker.patch(
         "src.html_parser.StillParser.get_item",
-        mock_still,
+        test.mocks.mock_still,
     )
-    mocker.patch("aiohttp.ClientSession.get", return_value=awaitable_res(mock_file))
+    mocker.patch(
+        "aiohttp.ClientSession.get", return_value=awaitable_res(test.mocks.mock_file)
+    )
+
     async with downloader as downloader:
         await downloader.update()
         await downloader.get()
-        assert Path("test/temp/stills.json").open().read() == test.strings.stills_json
-        assert check_files("test/temp/Stills", test.strings.still_files)
-    shutil.rmtree("test/temp", ignore_errors=True)
+
+    assert Path("test/temp/stills.json").open().read() == test.mocks.stills_json
+    assert check_files("test/temp/Stills", test.mocks.still_files)
