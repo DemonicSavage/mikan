@@ -1,11 +1,11 @@
-from pkgutil import get_data
-import pytest
+import test.mocks
+from test.utils import awaitable_res
+
 import aiohttp
+import pytest
 
 import src.classes
 import src.html_parser
-import test.mocks
-from test.utils import awaitable_res
 
 
 class Parser:
