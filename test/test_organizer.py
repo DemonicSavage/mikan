@@ -35,6 +35,8 @@ async def test_organizer_cards(cleanup):
     create_file("test/temp/All/file.part")
 
     organizer.organize()
+    organizer.create_symlink(Path("1_Unit1_Name1_Normal.png"))
+
     assert all(check_created_cards(n) for n in range(1, 7))
 
 

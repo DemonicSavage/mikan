@@ -217,3 +217,33 @@ mock_still_response = MockResponse(
     """,
     200,
 )
+
+mock_still_response_error = MockResponse(
+    mock_still_response._text.replace("top-item", "top-tem"), 200
+)
+mock_card_response_error = MockResponse(
+    mock_card_response._text.replace("top-item", "top-tem"), 200
+)
+mock_list_response_error = MockResponse(
+    mock_list_response._text.replace("top-item", "top-tem"), 200
+)
+mock_num_pages_response_error = MockResponse(
+    mock_list_response._text.replace("pagination", "paginaion"), 200
+)
+mock_card_response_data_error = MockResponse(
+    mock_card_response._text.replace("idol", "idl"), 200
+)
+
+pre_json = """{
+        "4": {
+        "key": 4,
+        "idol": "Name4",
+        "rarity": "Rarity4",
+        "attribute": "Attribute4",
+        "unit": "Unit4",
+        "subunit": "Subunit4",
+        "year": "Year4",
+        "normal_url": "//normal4.png",
+        "idolized_url": "//idolized4.png"
+        }
+    }"""

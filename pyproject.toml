@@ -13,6 +13,7 @@ python = "^3.10"
 beautifulsoup4 = "^4.11.1"
 aiohttp = "^3.8.1"
 lxml = "^4.9.1"
+pytest-cov = "^3.0.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"

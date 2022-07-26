@@ -1,3 +1,4 @@
+from pkgutil import get_data
 import pytest
 import aiohttp
 
@@ -76,3 +77,71 @@ async def test_still_parser(mocker):
                 "URL",
             ),
         )
+
+
+@pytest.mark.asyncio
+async def test_list_parser_fail(mocker):
+    mocker.patch(
+        "src.html_parser.aiohttp.ClientSession.get",
+        return_value=awaitable_res(test.mocks.mock_list_response_error),
+    )
+    async with Parser(src.html_parser.ListParser(src.classes.Card)) as parser:
+        with pytest.raises(src.html_parser.ListParsingException) as ex:
+            await parser.parser.get_page(1)
+        assert ex.type == src.html_parser.ListParsingException
+
+
+@pytest.mark.asyncio
+async def test_num_pages_parser_fail(mocker):
+    mocker.patch(
+        "src.html_parser.aiohttp.ClientSession.get",
+        return_value=awaitable_res(test.mocks.mock_num_pages_response_error),
+    )
+    async with Parser(src.html_parser.ListParser(src.classes.Card)) as parser:
+        with pytest.raises(src.html_parser.ListParsingException) as ex:
+            await parser.parser.get_num_pages()
+        assert ex.type == src.html_parser.ListParsingException
+
+
+@pytest.mark.asyncio
+async def test_card_parser_fail(mocker):
+    mocker.patch(
+        "src.html_parser.aiohttp.ClientSession.get",
+        return_value=awaitable_res(test.mocks.mock_card_response_error),
+    )
+    async with Parser(src.html_parser.CardParser()) as parser:
+        with pytest.raises(src.html_parser.ItemParsingException) as ex:
+            await parser.parser.get_item(98)
+    assert ex.type == src.html_parser.ItemParsingException
+
+
+@pytest.mark.asyncio
+async def test_card_parser_data_fail(mocker):
+    mocker.patch(
+        "src.html_parser.aiohttp.ClientSession.get",
+        return_value=awaitable_res(test.mocks.mock_card_response_data_error),
+    )
+    async with Parser(src.html_parser.CardParser()) as parser:
+        with pytest.raises(src.html_parser.ItemParsingException) as ex:
+            await parser.parser.get_item(98)
+    assert ex.type == src.html_parser.ItemParsingException
+
+
+@pytest.mark.asyncio
+async def test_still_parser_fail(mocker):
+    mocker.patch(
+        "src.html_parser.aiohttp.ClientSession.get",
+        return_value=awaitable_res(test.mocks.mock_still_response_error),
+    )
+    async with Parser(src.html_parser.StillParser()) as parser:
+        with pytest.raises(src.html_parser.ItemParsingException) as ex:
+            await parser.parser.get_item(98)
+    assert ex.type == src.html_parser.ItemParsingException
+
+
+@pytest.mark.asyncio
+async def test_parse_http_fail(mocker):
+    parser = src.html_parser.CardParser()
+    with pytest.raises(src.html_parser.NoHTTPSessionException) as ex:
+        await parser.get_item(98)
+    assert ex.type == src.html_parser.NoHTTPSessionException
