@@ -1,5 +1,6 @@
-import src.classes
 from test.utils import MockResponse
+
+import src.classes
 
 cards_json = """{
     "6": {

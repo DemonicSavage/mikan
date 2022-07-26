@@ -1,10 +1,20 @@
 import pytest
 
-from src.main import run, UnrecognizedArgumentException, Downloader
+from src.main import Downloader, UnrecognizedArgumentException, main, run
 from src.organizer import CardOrganizer, StillOrganizer
 
 
-@pytest.mark.usefixtures("cleanup")
+class MockAsyncio:
+    def set_event_loop_policy(self):
+        pass
+
+    def WindowsSelectorEventLoopPolicy():
+        pass
+
+    def run(self):
+        pass
+
+
 @pytest.mark.asyncio
 async def test_main(mocker):
     update = mocker.patch.object(Downloader, "update")
@@ -17,7 +27,6 @@ async def test_main(mocker):
     organizer.assert_called()
 
 
-@pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_main_stills(mocker):
     update = mocker.patch.object(Downloader, "update")
@@ -30,7 +39,6 @@ async def test_main_stills(mocker):
     organizer.assert_called()
 
 
-@pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_main_fail(mocker):
     mocker.patch.object(Downloader, "update")

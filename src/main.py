@@ -35,7 +35,7 @@ async def card_searcher(path: Path, img_type: type[Item]) -> None:
     item_organizer(path).organize()
 
 
-def main():
+def main():  # pragma: no cover
     if sys.platform.startswith("win"):
         asyncio.set_event_loop_policy(
             asyncio.WindowsSelectorEventLoopPolicy()  # type: ignore
@@ -44,5 +44,5 @@ def main():
     asyncio.run(run())
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

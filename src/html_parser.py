@@ -1,16 +1,14 @@
 from __future__ import annotations
 
 import re
-from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from abc import ABC
+from typing import Optional
 
 import aiohttp
 import bs4
 
 import src.consts as consts
-
-if TYPE_CHECKING:
-    from src.classes import Card, Item, Still
+from src.classes import Card, Item, Still
 
 
 class ListParsingException(Exception):
@@ -48,11 +46,9 @@ class Parser(ABC):
         self.soup = await self.soup_page(num)
         return self.create_item(num)
 
-    @abstractmethod
     def create_item(self, num: int) -> tuple[int, Item]:
         ...
 
-    @abstractmethod
     def get_url(self, num: int) -> str:
         ...
 

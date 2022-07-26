@@ -1,8 +1,9 @@
+import test.mocks
 from pathlib import Path
+
 import pytest
 
 import src.organizer
-import test.mocks
 
 
 def create_mock_card_files(path, items):
@@ -52,3 +53,9 @@ async def test_organizer_stills(cleanup):
     organizer.organize()
     assert not Path("test/temp/Stills/1_Still.jpeg").exists()
     assert not Path("test/temp/Stills/file.part").exists()
+
+
+@pytest.mark.asyncio
+async def test_unimplemented(cleanup):
+    assert src.organizer.Organizer(Path("test/temp")).remove_duplicates([]) is None
+    assert src.organizer.Organizer(Path("test/temp")).create_symlinks([]) is None

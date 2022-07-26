@@ -1,11 +1,12 @@
-from pathlib import Path
-import pytest
-import aiohttp
-
-import src.downloader
-import src.classes
 import test.mocks
+from pathlib import Path
 from test.utils import awaitable_res
+
+import aiohttp
+import pytest
+
+import src.classes
+import src.downloader
 
 
 def check_files(path, answer):

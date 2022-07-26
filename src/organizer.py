@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from pathlib import Path
 
 import src.consts as consts
@@ -28,11 +28,9 @@ class Organizer(ABC):
 
         self.remove_partially_downloaded()
 
-    @abstractmethod
     def remove_duplicates(self, paths: list[Path]):
         ...
 
-    @abstractmethod
     def create_symlinks(self, paths: list[Path]):
         ...
 

@@ -145,3 +145,10 @@ async def test_parse_http_fail(mocker):
     with pytest.raises(src.html_parser.NoHTTPSessionException) as ex:
         await parser.get_item(98)
     assert ex.type == src.html_parser.NoHTTPSessionException
+
+
+@pytest.mark.asyncio
+async def test_unimplemented(mocker):
+    assert src.html_parser.ListParser(src.classes.Card).create_item(98) is None
+    assert src.html_parser.Parser().create_item(98) is None
+    assert src.html_parser.Parser().get_url(98) is None
