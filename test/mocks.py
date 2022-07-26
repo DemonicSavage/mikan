@@ -9,6 +9,9 @@ class MockResponse:
     async def text(self):
         return self._text
 
+    async def read(self):
+        return self._text
+
     async def __aexit__(self, exc_type, exc, tb):
         pass
 
