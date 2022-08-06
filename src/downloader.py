@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Coroutine
 
 import aiohttp
+from tqdm.asyncio import tqdm
 
 import src.html_parser as parser
 import src.json_utils as json_utils
@@ -52,7 +53,7 @@ class Downloader:
                 message += f", {'idolized' if i == 1 else 'normal'}"
             message += "."
 
-            print(message)
+            tqdm.write(message)
 
     async def update_if_needed(self, item: Item) -> None:
         if item.needs_update():
@@ -98,8 +99,13 @@ class Downloader:
     async def get(self) -> None:
         tasks: list[Coroutine[Any, Any, None]] = []
         for _, item in self.objs.items():
-            tasks.append(self.get_images(item))
-        await asyncio.gather(*tasks, return_exceptions=False)
+            paths: list[Path] = item.get_paths(self.path)
+            if (
+                any([not path.exists() for path in paths])
+                or item.key in self.updateables
+            ):
+                tasks.append(self.get_images(item))
+        await tqdm.gather(*tasks)  # type: ignore
 
     async def update(self) -> None:
         print("Searching for new or missing items...")
