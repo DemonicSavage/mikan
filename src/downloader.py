@@ -98,6 +98,7 @@ class Downloader:
 
     async def get(self) -> None:
         tasks: list[Coroutine[Any, Any, None]] = []
+
         for _, item in self.objs.items():
             paths: list[Path] = item.get_paths(self.path)
             if (
@@ -105,7 +106,8 @@ class Downloader:
                 or item.key in self.updateables
             ):
                 tasks.append(self.get_images(item))
-        await tqdm.gather(*tasks)  # type: ignore
+
+        await tqdm.gather(*tasks, disable=len(tasks) == 0)  # type: ignore
 
     async def update(self) -> None:
         print("Searching for new or missing items...")
