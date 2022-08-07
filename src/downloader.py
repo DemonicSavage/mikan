@@ -18,7 +18,11 @@ class Downloader:
         self.objs: dict[int, Item] = {}
 
         self.img_type: type[Item] = img_type
-        self.session: aiohttp.ClientSession = aiohttp.ClientSession()
+
+        session_timeout = aiohttp.ClientTimeout(total=None)
+        self.session: aiohttp.ClientSession = aiohttp.ClientSession(
+            timeout=session_timeout
+        )
 
         json_utils.load_cards(self.path, self.objs, self.img_type)
 
@@ -101,11 +105,13 @@ class Downloader:
 
         for _, item in self.objs.items():
             paths: list[Path] = item.get_paths(self.path)
-            if (
-                any([not path.exists() for path in paths])
-                or item.key in self.updateables
-            ):
-                tasks.append(self.get_images(item))
+            tasks.extend(
+                [
+                    self.download_file(path, item, i)
+                    for i, path in enumerate(paths)
+                    if not path.exists() or item.key in self.updateables
+                ]
+            )
 
         await tqdm.gather(*tasks, disable=len(tasks) == 0)  # type: ignore
 
