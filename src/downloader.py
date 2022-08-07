@@ -49,7 +49,7 @@ class Downloader:
                 file.write(res_data)
 
     async def download_file(self, path: Path, item: Item, i: int) -> None:
-        if not path.exists() or item.key in self.updateables:
+        try:
             await self.request_from_server(path, item.get_urls()[i])
 
             message: str = f"Downloaded item {item.key}"
@@ -57,7 +57,10 @@ class Downloader:
                 message += f", {'idolized' if i == 1 else 'normal'}"
             message += "."
 
-            tqdm.write(message)
+        except aiohttp.ClientError as e:
+            message = f"Couldn't download item {item.key}: {e}"
+
+        tqdm.write(message)
 
     async def update_if_needed(self, item: Item) -> None:
         if item.needs_update():

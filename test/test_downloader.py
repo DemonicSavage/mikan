@@ -94,13 +94,11 @@ async def test_downloader_fail(mocker):
     )
     mocker.patch("aiohttp.ClientSession.get", side_effect=aiohttp.ClientError("Err"))
 
-    with pytest.raises(aiohttp.ClientError) as ex:
-        async with downloader as downloader:
-            await downloader.update()
-            await downloader.get()
+    async with downloader as downloader:
+        await downloader.update()
+        await downloader.get()
 
     assert not Path("test/temp/All").exists()
-    assert ex.type == aiohttp.ClientError
 
 
 @pytest.mark.usefixtures("cleanup")
