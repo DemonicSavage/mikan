@@ -92,14 +92,6 @@ class Downloader:
                 break
             current_num += 1
 
-    async def get_images(self, item: Item) -> None:
-        paths: list[Path] = item.get_paths(self.path)
-        try:
-            for i, path in enumerate(paths):
-                await self.download_file(path, item, i)
-        except aiohttp.ClientError as exception:
-            print(f"Couldn't download card {item.key}: {exception}.")
-
     async def get(self) -> None:
         tasks: list[Coroutine[Any, Any, None]] = []
 
