@@ -15,7 +15,7 @@ class UnrecognizedArgumentException(Exception):
 
 
 async def run() -> None:
-    img_type: type[Item] = Card
+    img_type = Card
     if len(sys.argv) > 1:
         if sys.argv[1] == "--stills":
             img_type = Still

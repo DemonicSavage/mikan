@@ -14,15 +14,13 @@ from src.classes import Card, Item
 
 class Downloader:
     def __init__(self, path: Path, img_type: type[Item]):
-        self.path: Path = path.expanduser()
+        self.path = path.expanduser()
         self.objs: dict[int, Item] = {}
 
-        self.img_type: type[Item] = img_type
+        self.img_type = img_type
 
         session_timeout = aiohttp.ClientTimeout(total=None)
-        self.session: aiohttp.ClientSession = aiohttp.ClientSession(
-            timeout=session_timeout
-        )
+        self.session = aiohttp.ClientSession(timeout=session_timeout)
 
         json_utils.load_cards(self.path, self.objs, self.img_type)
 
@@ -41,10 +39,12 @@ class Downloader:
         await self.session.close()
 
     async def request_from_server(self, dest: Path, url: str) -> None:
-        res: aiohttp.ClientResponse = await self.session.get(f"https:{url}")
+        res = await self.session.get(f"https:{url}")
+
         if res.status == 200:
-            res_data: bytes = await res.read()
+            res_data = await res.read()
             dest.parent.mkdir(exist_ok=True, parents=True)
+
             with open(dest, "wb") as file:
                 file.write(res_data)
 
@@ -52,7 +52,7 @@ class Downloader:
         try:
             await self.request_from_server(path, item.get_urls()[i])
 
-            message: str = f"Downloaded item {item.key}"
+            message = f"Downloaded item {item.key}"
             if isinstance(item, Card):
                 message += f", {'idolized' if i == 1 else 'normal'}"
             message += "."
@@ -79,27 +79,33 @@ class Downloader:
 
     async def get_page(self, idx: int) -> list[None]:
         tasks: list[Coroutine[Any, Any, None]] = []
-        page: list[int] = await self.list_parser.get_page(idx)
+        page = await self.list_parser.get_page(idx)
+
         for item in page:
             if item not in self.objs:
                 tasks.append(self.add_item_to_object_list(item))
-        res: list[None] = await asyncio.gather(*tasks, return_exceptions=False)
+
+        res = await asyncio.gather(*tasks, return_exceptions=False)
+
         return res
 
     async def get_cards_from_parser(self) -> None:
-        num_pages: int = await self.list_parser.get_num_pages() + 1
-        current_num: int = 1
+        num_pages = await self.list_parser.get_num_pages() + 1
+        current_num = 1
+
         for _ in range(1, num_pages):
-            current_page: list[None] = await self.get_page(current_num)
+            current_page = await self.get_page(current_num)
+
             if not current_page:
                 break
+
             current_num += 1
 
     async def get(self) -> None:
         tasks: list[Coroutine[Any, Any, None]] = []
 
         for _, item in self.objs.items():
-            paths: list[Path] = item.get_paths(self.path)
+            paths = item.get_paths(self.path)
             tasks.extend(
                 [
                     self.download_file(path, item, i)

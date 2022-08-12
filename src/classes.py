@@ -19,7 +19,7 @@ class Card:
     idolized_url: str
 
     def is_double_sized(self) -> bool:
-        pattern: re.Pattern[str] = re.compile(r"/2x/")
+        pattern = re.compile(r"/2x/")
         return pattern.search(self.normal_url) is not None
 
     def get_urls(self) -> list[str]:
@@ -35,11 +35,11 @@ class Card:
         return not self.is_double_sized() and self.rarity != "Rare"
 
     def get_paths(self, path: Path) -> list[Path]:
-        file_name: str = f"{self.key}_{self.unit}_{self.idol}"
-        base_path: Path = path / consts.get_const(type(self), "RESULTS_DIR")
+        file_name = f"{self.key}_{self.unit}_{self.idol}"
+        base_path = path / consts.get_const(type(self), "RESULTS_DIR")
 
-        normal_path: str = f"{file_name}_Normal{Path(self.normal_url).suffix}"
-        idolized_path: str = normal_path.replace("Normal", "Idolized")
+        normal_path = f"{file_name}_Normal{Path(self.normal_url).suffix}"
+        idolized_path = normal_path.replace("Normal", "Idolized")
 
         return [base_path / normal_path, base_path / idolized_path]
 
@@ -50,7 +50,7 @@ class Still:
     url: str
 
     def is_double_sized(self) -> bool:
-        pattern: re.Pattern[str] = re.compile(r"/2x/")
+        pattern = re.compile(r"/2x/")
         return pattern.search(self.url) is not None
 
     def get_urls(self) -> list[str]:
@@ -63,8 +63,8 @@ class Still:
         return not self.is_double_sized()
 
     def get_paths(self, path: Path) -> list[Path]:
-        file_name: str = f"{self.key}_Still"
-        base_path: Path = path / consts.get_const(type(self), "RESULTS_DIR")
+        file_name = f"{self.key}_Still"
+        base_path = path / consts.get_const(type(self), "RESULTS_DIR")
 
         return [base_path / f"{file_name}{Path(self.url).suffix}"]
 

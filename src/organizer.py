@@ -6,11 +6,11 @@ import src.consts as consts
 
 class Organizer(ABC):
     def __init__(self, path: Path):
-        self.path: Path = path.expanduser()
-        self.results_dir: str = ""
+        self.path = path.expanduser()
+        self.results_dir = ""
 
     def get_filenames(self, suffix_list: list[str]) -> list[Path]:
-        _dir: list[Path] = [
+        _dir = [
             x
             for x in (self.path / self.results_dir).iterdir()
             if x.is_file() and x.suffix in suffix_list
@@ -18,7 +18,7 @@ class Organizer(ABC):
         return _dir
 
     def remove_partially_downloaded(self) -> None:
-        files: list[Path] = self.get_filenames([".part"])
+        files = self.get_filenames([".part"])
         for file in files:
             file.unlink()
 
@@ -38,21 +38,19 @@ class Organizer(ABC):
 class CardOrganizer(Organizer):
     def __init__(self, path: Path):
         super().__init__(path)
-        self.results_dir: str = consts.get_const("Card", "RESULTS_DIR")
+        self.results_dir = consts.get_const("Card", "RESULTS_DIR")
 
     def remove_duplicates(self, paths: list[Path]) -> None:
-        prefixes: list[str] = [
-            str(prefix).split(".", maxsplit=1)[0] for prefix in paths
-        ]
+        prefixes = [str(prefix).split(".", maxsplit=1)[0] for prefix in paths]
 
         for path in prefixes:
             if prefixes.count(path) > 1:
-                jpg: Path = Path(f"{path}.jpeg")
+                jpg = Path(f"{path}.jpeg")
                 try:
                     jpg.unlink()
 
-                    jpg_name: str = jpg.name
-                    split_jpg: list[str] = jpg_name.split("_")
+                    jpg_name = jpg.name
+                    split_jpg = jpg_name.split("_")
 
                     (self.path / split_jpg[1] / split_jpg[2] / jpg_name).unlink()
 
@@ -60,10 +58,10 @@ class CardOrganizer(Organizer):
                     pass
 
     def create_symlink(self, path: Path) -> None:
-        file_name: str = path.name
-        name: list[str] = file_name.split("_")
-        new_path: Path = self.path / name[1] / name[2]
-        new_card: Path = new_path / file_name
+        file_name = path.name
+        name = file_name.split("_")
+        new_path = self.path / name[1] / name[2]
+        new_card = new_path / file_name
 
         new_path.mkdir(exist_ok=True, parents=True)
         try:
@@ -81,16 +79,14 @@ class CardOrganizer(Organizer):
 class StillOrganizer(Organizer):
     def __init__(self, path: Path):
         super().__init__(path)
-        self.results_dir: str = consts.get_const("Still", "RESULTS_DIR")
+        self.results_dir = consts.get_const("Still", "RESULTS_DIR")
 
     def remove_duplicates(self, paths: list[Path]) -> None:
-        prefixes: list[str] = [
-            str(prefix).split(".", maxsplit=1)[0] for prefix in paths
-        ]
+        prefixes = [str(prefix).split(".", maxsplit=1)[0] for prefix in paths]
 
         for path in prefixes:
             if prefixes.count(path) > 1:
-                jpg: Path = Path(f"{path}.jpeg")
+                jpg = Path(f"{path}.jpeg")
                 try:
                     jpg.unlink()
                 except FileNotFoundError:
