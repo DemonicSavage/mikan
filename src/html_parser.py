@@ -57,7 +57,7 @@ class Parser(ABC):
 class ListParser(Parser):
     def __init__(self, img_type: type[Item]):
         super().__init__()
-        self.url: str = consts.get_const(img_type, "LIST_URL_TEMPLATE")
+        self.url = consts.get_const(img_type, "LIST_URL_TEMPLATE")
 
     def get_url(self, num: int) -> str:
         return f"{self.url}{num}"
