@@ -5,8 +5,8 @@ from test.utils import awaitable_res
 import aiohttp
 import pytest
 
-import src.classes
-import src.downloader
+import sifas_card_downloader.classes
+import sifas_card_downloader.downloader
 
 
 def check_files(path, answer):
@@ -20,18 +20,20 @@ def check_files(path, answer):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_cards(mocker, cleanup):
-    downloader = src.downloader.Downloader(Path("test/temp"), src.classes.Card)
+    downloader = sifas_card_downloader.downloader.Downloader(
+        Path("test/temp"), sifas_card_downloader.classes.Card
+    )
 
     mocker.patch(
-        "src.html_parser.ListParser.get_num_pages",
+        "sifas_card_downloader.html_parser.ListParser.get_num_pages",
         return_value=test.mocks.mock_num_pages,
     )
     mocker.patch(
-        "src.html_parser.ListParser.get_page",
+        "sifas_card_downloader.html_parser.ListParser.get_page",
         test.mocks.mock_page,
     )
     mocker.patch(
-        "src.html_parser.CardParser.get_item",
+        "sifas_card_downloader.html_parser.CardParser.get_item",
         test.mocks.mock_card,
     )
     mocker.patch(
@@ -49,18 +51,20 @@ async def test_downloader_cards(mocker, cleanup):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_stills(mocker):
-    downloader = src.downloader.Downloader(Path("test/temp"), src.classes.Still)
+    downloader = sifas_card_downloader.downloader.Downloader(
+        Path("test/temp"), sifas_card_downloader.classes.Still
+    )
 
     mocker.patch(
-        "src.html_parser.ListParser.get_num_pages",
+        "sifas_card_downloader.html_parser.ListParser.get_num_pages",
         return_value=test.mocks.mock_num_pages,
     )
     mocker.patch(
-        "src.html_parser.ListParser.get_page",
+        "sifas_card_downloader.html_parser.ListParser.get_page",
         test.mocks.mock_page,
     )
     mocker.patch(
-        "src.html_parser.StillParser.get_item",
+        "sifas_card_downloader.html_parser.StillParser.get_item",
         test.mocks.mock_still,
     )
     mocker.patch(
@@ -78,18 +82,20 @@ async def test_downloader_stills(mocker):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_fail(mocker):
-    downloader = src.downloader.Downloader(Path("test/temp"), src.classes.Card)
+    downloader = sifas_card_downloader.downloader.Downloader(
+        Path("test/temp"), sifas_card_downloader.classes.Card
+    )
 
     mocker.patch(
-        "src.html_parser.ListParser.get_num_pages",
+        "sifas_card_downloader.html_parser.ListParser.get_num_pages",
         return_value=test.mocks.mock_num_pages,
     )
     mocker.patch(
-        "src.html_parser.ListParser.get_page",
+        "sifas_card_downloader.html_parser.ListParser.get_page",
         test.mocks.mock_page,
     )
     mocker.patch(
-        "src.html_parser.CardParser.get_item",
+        "sifas_card_downloader.html_parser.CardParser.get_item",
         test.mocks.mock_card,
     )
     mocker.patch("aiohttp.ClientSession.get", side_effect=aiohttp.ClientError("Err"))
@@ -104,10 +110,12 @@ async def test_downloader_fail(mocker):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_update_2x(mocker):
-    downloader = src.downloader.Downloader(Path("test/temp"), src.classes.Card)
+    downloader = sifas_card_downloader.downloader.Downloader(
+        Path("test/temp"), sifas_card_downloader.classes.Card
+    )
 
     mocker.patch(
-        "src.html_parser.CardParser.get_item",
+        "sifas_card_downloader.html_parser.CardParser.get_item",
         test.mocks.mock_card,
     )
     _, old_card = await test.mocks.mock_card(downloader, 2)
@@ -126,5 +134,7 @@ async def test_downloader_card_load(mocker):
     directory.mkdir(parents=True)
     with open(directory / "cards.json", "w") as file:
         file.write(test.mocks.pre_json)
-    downloader = src.downloader.Downloader(directory, src.classes.Card)
+    downloader = sifas_card_downloader.downloader.Downloader(
+        directory, sifas_card_downloader.classes.Card
+    )
     assert list(downloader.objs.keys()) == [4]

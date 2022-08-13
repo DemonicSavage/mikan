@@ -3,11 +3,11 @@
 import asyncio
 import sys
 from pathlib import Path
+from typing import Type
 
-import src.config as config
-import src.organizer as organizer
-from src.classes import Card, Item, Still
-from src.downloader import Downloader
+from sifas_card_downloader import config, organizer
+from sifas_card_downloader.classes import Card, Item, Still
+from sifas_card_downloader.downloader import Downloader
 
 
 class UnrecognizedArgumentException(Exception):
@@ -15,7 +15,7 @@ class UnrecognizedArgumentException(Exception):
 
 
 async def run() -> None:
-    img_type = Card
+    img_type: Type[Card | Still] = Card
     if len(sys.argv) > 1:
         if sys.argv[1] == "--stills":
             img_type = Still
@@ -35,11 +35,9 @@ async def card_searcher(path: Path, img_type: type[Item]) -> None:
     item_organizer(path).organize()
 
 
-def main():  # pragma: no cover
+def main() -> None:  # pragma: no cover
     if sys.platform.startswith("win"):
-        asyncio.set_event_loop_policy(
-            asyncio.WindowsSelectorEventLoopPolicy()  # type: ignore
-        )
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
     asyncio.run(run())
 

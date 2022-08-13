@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-import src.organizer
+import sifas_card_downloader.organizer
 
 
 def create_mock_card_files(path, items):
@@ -29,7 +29,7 @@ def check_created_cards(n):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_organizer_cards(cleanup):
-    organizer = src.organizer.CardOrganizer(Path("test/temp"))
+    organizer = sifas_card_downloader.organizer.CardOrganizer(Path("test/temp"))
 
     create_mock_card_files("test/temp/All", test.mocks.card_files)
     create_file("test/temp/All/1_Unit1_Name1_Normal.jpeg")
@@ -44,7 +44,7 @@ async def test_organizer_cards(cleanup):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_organizer_stills(cleanup):
-    organizer = src.organizer.StillOrganizer(Path("test/temp"))
+    organizer = sifas_card_downloader.organizer.StillOrganizer(Path("test/temp"))
 
     create_mock_card_files("test/temp/Stills", test.mocks.still_files)
     create_file("test/temp/Stills/1_Still.jpeg")
@@ -57,5 +57,13 @@ async def test_organizer_stills(cleanup):
 
 @pytest.mark.asyncio
 async def test_unimplemented(cleanup):
-    assert src.organizer.Organizer(Path("test/temp")).remove_duplicates([]) is None
-    assert src.organizer.Organizer(Path("test/temp")).create_symlinks([]) is None
+    assert (
+        sifas_card_downloader.organizer.Organizer(Path("test/temp")).remove_duplicates(
+            []
+        )
+        is None
+    )
+    assert (
+        sifas_card_downloader.organizer.Organizer(Path("test/temp")).create_symlinks([])
+        is None
+    )

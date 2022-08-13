@@ -1,7 +1,7 @@
 from abc import ABC
 from pathlib import Path
 
-import src.consts as consts
+from sifas_card_downloader import consts
 
 
 class Organizer(ABC):
@@ -28,10 +28,10 @@ class Organizer(ABC):
 
         self.remove_partially_downloaded()
 
-    def remove_duplicates(self, paths: list[Path]):
+    def remove_duplicates(self, paths: list[Path]) -> None:
         ...
 
-    def create_symlinks(self, paths: list[Path]):
+    def create_symlinks(self, paths: list[Path]) -> None:
         ...
 
 

@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import re
 from abc import ABC
+from typing import Optional
 
 import aiohttp
 import bs4
 
-import src.consts as consts
-from src.classes import Card, Item, Still
+from sifas_card_downloader import consts
+from sifas_card_downloader.classes import Card, Item, Still
 
 
 class ListParsingException(Exception):
@@ -24,8 +25,8 @@ class NoHTTPSessionException(Exception):
 
 class Parser(ABC):
     def __init__(self) -> None:
-        self.session = None
-        self.soup = None
+        self.session: Optional[aiohttp.ClientSession] = None
+        self.soup: Optional[bs4.BeautifulSoup] = None
 
     def set_session(self, session: aiohttp.ClientSession) -> None:
         self.session = session
@@ -104,7 +105,7 @@ class CardParser(Parser):
         return f"{url}{num}"
 
     def create_item(self, num: int) -> tuple[int, Card]:
-        from src.classes import Card
+        from sifas_card_downloader.classes import Card
 
         urls = self.get_item_image_urls()
 
@@ -133,22 +134,28 @@ class CardParser(Parser):
 
     def get_data_field(self, field: str) -> bs4.Tag:
 
-        if self.soup and isinstance(
-            data := self.soup.find(attrs={"data-field": field}), bs4.Tag
+        if (
+            self.soup
+            and isinstance(data := self.soup.find(attrs={"data-field": field}), bs4.Tag)
+            and isinstance(field := data.find_all("td")[1], bs4.Tag)
         ):
-            return data.find_all("td")[1]
+            return field
 
         raise ItemParsingException()
 
     def get_item_info(self, info: str) -> str:
         if info == "idol":
             data = self.get_data_field("idol")
-            if isinstance(found_data := data.find("span"), bs4.Tag):
-                return found_data.get_text().partition("Open idol")[0].strip()
+            if isinstance(found_data := data.find("span"), bs4.Tag) and isinstance(
+                text := found_data.get_text(), str
+            ):
 
-        data = self.get_data_field(info)
+                return text.partition("Open idol")[0].strip()
 
-        return data.get_text().strip()
+        if isinstance(text := self.get_data_field(info).getText(), str):
+            return text.strip()
+
+        raise ItemParsingException()
 
 
 class StillParser(Parser):
@@ -158,7 +165,7 @@ class StillParser(Parser):
         return f"{url}{num}"
 
     def create_item(self, num: int) -> tuple[int, Still]:
-        from src.classes import Still
+        from sifas_card_downloader.classes import Still
 
         url = self.get_item_image_url()
 
@@ -171,8 +178,7 @@ class StillParser(Parser):
             top_item := self.soup.find(class_="top-item"), bs4.Tag
         ):
             links = top_item.find_all("a")
-            link = links[0].get("href")
-
-            return link
+            if isinstance(link := links[0].get("href"), str):
+                return link
 
         raise ItemParsingException()

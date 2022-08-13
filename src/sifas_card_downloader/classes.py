@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TypeAlias
 
-import src.consts as consts
+from sifas_card_downloader import consts
 
 
 @dataclass

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TypedDict, cast
+from typing import Literal, TypedDict
 
 
 class Consts(TypedDict):
@@ -30,9 +30,12 @@ item = {
 }
 
 
-def get_const(img_type: type | str, key: str) -> str:
+def get_const(
+    img_type: type | str,
+    key: Literal["RESULTS_DIR", "LIST_URL_TEMPLATE", "URL_TEMPLATE", "JSON_FILENAME"],
+) -> str:
     if isinstance(img_type, str):
         tp = item[img_type]
     else:
         tp = item[img_type.__name__]
-    return cast(str, tp[key])
+    return tp[key]

@@ -1,7 +1,7 @@
 import pytest
 
-from src.main import Downloader, UnrecognizedArgumentException, run
-from src.organizer import CardOrganizer, StillOrganizer
+from sifas_card_downloader.main import Downloader, UnrecognizedArgumentException, run
+from sifas_card_downloader.organizer import CardOrganizer, StillOrganizer
 
 
 @pytest.mark.asyncio
@@ -9,7 +9,7 @@ async def test_main(mocker):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     organizer = mocker.patch.object(CardOrganizer, "organize")
-    mocker.patch("src.main.sys.argv", [])
+    mocker.patch("sifas_card_downloader.main.sys.argv", [])
     await run()
     update.assert_called()
     get.assert_called()
@@ -21,7 +21,7 @@ async def test_main_stills(mocker):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     organizer = mocker.patch.object(StillOrganizer, "organize")
-    mocker.patch("src.main.sys.argv", ["ex", "--stills"])
+    mocker.patch("sifas_card_downloader.main.sys.argv", ["ex", "--stills"])
     await run()
     update.assert_called()
     get.assert_called()
@@ -32,7 +32,7 @@ async def test_main_stills(mocker):
 async def test_main_fail(mocker):
     mocker.patch.object(Downloader, "update")
     mocker.patch.object(Downloader, "get")
-    mocker.patch("src.main.sys.argv", ["ex", "--stlls"])
+    mocker.patch("sifas_card_downloader.main.sys.argv", ["ex", "--stlls"])
     with pytest.raises(UnrecognizedArgumentException) as ex:
         await run()
     assert ex.type == UnrecognizedArgumentException

@@ -5,7 +5,7 @@ description = "Downloads cards and stills from idol.st"
 authors = ["DemonicSavage"]
 license = "GPLv3"
 packages = [
-    {include = "src"}
+    {include = "sifas_card_downloader", from = "src"}
 ]
 
 [tool.poetry.dependencies]
@@ -24,17 +24,19 @@ bandit = "^1.7.4"
 isort = "^5.10.1"
 pep8-naming = "^0.13.1"
 pre-commit = "^2.20.0"
-pyright = "^1.1.263"
 pytest = "^7.1.2"
 pytest-asyncio = "^0.19.0"
 pytest-mock = "^3.8.2"
+mypy = "^0.971"
+types-beautifulsoup4 = "^4.11.4"
+types-tqdm = "^4.64.4"
 
 [tool.poetry.scripts]
-run = "src.main:main"
+run = "src.sifas_card_downloader.main:main"
 
-[tool.pyright]
-typeCheckingMode = "strict"
-ignore = ["test"]
+[tool.mypy]
+strict = true
+exclude = ["test/"]
 
 [tool.isort]
 profile = "black"

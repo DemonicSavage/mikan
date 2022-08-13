@@ -1,6 +1,6 @@
 from test.utils import MockResponse
 
-import src.classes
+import sifas_card_downloader.classes
 
 cards_json = """{
     "6": {
@@ -130,7 +130,7 @@ async def mock_page(self, n):
 
 
 async def mock_card(self, n):
-    return n, src.classes.Card(
+    return n, sifas_card_downloader.classes.Card(
         n,
         f"Name{n}",
         f"Rarity{n}",
@@ -144,7 +144,7 @@ async def mock_card(self, n):
 
 
 async def mock_still(self, n):
-    return n, src.classes.Still(
+    return n, sifas_card_downloader.classes.Still(
         n,
         f"//url{n}.png",
     )

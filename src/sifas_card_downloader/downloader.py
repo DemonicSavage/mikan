@@ -7,9 +7,9 @@ from typing import Any, Coroutine
 import aiohttp
 from tqdm.asyncio import tqdm
 
-import src.html_parser as parser
-import src.json_utils as json_utils
-from src.classes import Card, Item
+import sifas_card_downloader.html_parser as parser
+from sifas_card_downloader import json_utils
+from sifas_card_downloader.classes import Card, Item
 
 
 class Downloader:
@@ -85,7 +85,7 @@ class Downloader:
             if item not in self.objs:
                 tasks.append(self.add_item_to_object_list(item))
 
-        res = await asyncio.gather(*tasks, return_exceptions=False)
+        res: list[None] = await asyncio.gather(*tasks, return_exceptions=False)
 
         return res
 
@@ -114,7 +114,7 @@ class Downloader:
                 ]
             )
 
-        await tqdm.gather(*tasks, disable=len(tasks) == 0)  # type: ignore
+        await tqdm.gather(*tasks, disable=len(tasks) == 0)
 
     async def update(self) -> None:
         print("Searching for new or missing items...")

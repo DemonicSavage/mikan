@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 
-import src.consts as consts
-from src.classes import Item
+from sifas_card_downloader import consts
+from sifas_card_downloader.classes import Item
 
 
 def to_json(cards: dict[int, Item]) -> str:
