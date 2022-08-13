@@ -26,11 +26,12 @@ repos:
     rev: v0.971
     hooks:
       - id: mypy
-        args: [--strict, --ignore-missing-imports]
+        args: [--strict]
         exclude: "^test"
         additional_dependencies:
           - types-beautifulsoup4
           - types-tqdm
+          - aiohttp
 
   - repo: local
     hooks:
