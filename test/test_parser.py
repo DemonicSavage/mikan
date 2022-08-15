@@ -169,7 +169,7 @@ async def test_parse_http_fail(mocker):
 async def test_parse_item_info_fail(mocker):
     mocker.patch(
         "sifas_card_downloader.html_parser.bs4.Tag.getText",
-        return_value=98,
+        return_value="98",
     )
     parser = sifas_card_downloader.html_parser.CardParser()
     with pytest.raises(sifas_card_downloader.html_parser.ItemParsingException) as ex:
