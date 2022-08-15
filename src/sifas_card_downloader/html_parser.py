@@ -7,7 +7,6 @@ from typing import Optional
 import aiohttp
 import bs4
 
-from sifas_card_downloader import consts
 from sifas_card_downloader.classes import Card, Item, Still
 
 
@@ -58,7 +57,7 @@ class Parser(ABC):
 class ListParser(Parser):
     def __init__(self, img_type: type[Item]):
         super().__init__()
-        self.url = consts.get_const(img_type, "LIST_URL_TEMPLATE")
+        self.url = img_type.list_url_template
 
     def get_url(self, num: int) -> str:
         return f"{self.url}{num}"
@@ -100,13 +99,9 @@ class ListParser(Parser):
 
 class CardParser(Parser):
     def get_url(self, num: int) -> str:
-        url = consts.get_const("Card", "URL_TEMPLATE")
-
-        return f"{url}{num}"
+        return f"{Card.url_template}{num}"
 
     def create_item(self, num: int) -> tuple[int, Card]:
-        from sifas_card_downloader.classes import Card
-
         urls = self.get_item_image_urls()
 
         idol = self.get_item_info("idol")
@@ -160,13 +155,9 @@ class CardParser(Parser):
 
 class StillParser(Parser):
     def get_url(self, num: int) -> str:
-        url = consts.get_const("Still", "URL_TEMPLATE")
-
-        return f"{url}{num}"
+        return f"{Still.url_template}{num}"
 
     def create_item(self, num: int) -> tuple[int, Still]:
-        from sifas_card_downloader.classes import Still
-
         url = self.get_item_image_url()
 
         new_item = Still(num, url)

@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 
-from sifas_card_downloader import consts
 from sifas_card_downloader.classes import Item
 
 
@@ -14,14 +13,14 @@ def to_json(cards: dict[int, Item]) -> str:
 
 
 def dump_to_file(json_obj: str, path: Path, img_type: type[Item]) -> None:
-    card_path = path / consts.get_const(img_type, "JSON_FILENAME")
+    card_path = path / img_type.json_filename
     card_path.parent.mkdir(exist_ok=True, parents=True)
     with open(card_path, "w", encoding="utf-8") as file:
         file.write(json_obj)
 
 
 def read_json_file(path: Path, cards: dict[int, Item], img_type: type[Item]) -> None:
-    card_path = path / consts.get_const(img_type, "JSON_FILENAME")
+    card_path = path / img_type.json_filename
     with open(card_path, "r", encoding="utf-8") as file:
         data = file.read()
     card_data = json.loads(data)
@@ -31,6 +30,6 @@ def read_json_file(path: Path, cards: dict[int, Item], img_type: type[Item]) -> 
 
 
 def load_cards(path: Path, cards: dict[int, Item], img_type: type[Item]) -> None:
-    card_path = path / consts.get_const(img_type, "JSON_FILENAME")
+    card_path = path / img_type.json_filename
     if card_path.is_file():
         read_json_file(path, cards, img_type)

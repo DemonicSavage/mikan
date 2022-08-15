@@ -1,13 +1,16 @@
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TypeAlias
-
-from sifas_card_downloader import consts
+from typing import ClassVar, TypeAlias
 
 
 @dataclass
 class Card:
+    results_dir: ClassVar = "All"
+    list_url_template: ClassVar = "https://idol.st/ajax/allstars/cards/?page="
+    url_template: ClassVar = "https://idol.st/ajax/allstars/card/"
+    json_filename: ClassVar = "cards.json"
+
     key: int
     idol: str
     rarity: str
@@ -36,7 +39,7 @@ class Card:
 
     def get_paths(self, path: Path) -> list[Path]:
         file_name = f"{self.key}_{self.unit}_{self.idol}"
-        base_path = path / consts.get_const(type(self), "RESULTS_DIR")
+        base_path = path / self.results_dir
 
         normal_path = f"{file_name}_Normal{Path(self.normal_url).suffix}"
         idolized_path = normal_path.replace("Normal", "Idolized")
@@ -46,6 +49,11 @@ class Card:
 
 @dataclass
 class Still:
+    results_dir: ClassVar = "Stills"
+    list_url_template: ClassVar = "https://idol.st/ajax/allstars/stills/?page="
+    url_template: ClassVar = "https://idol.st/ajax/allstars/still/"
+    json_filename: ClassVar = "stills.json"
+
     key: int
     url: str
 
@@ -64,7 +72,7 @@ class Still:
 
     def get_paths(self, path: Path) -> list[Path]:
         file_name = f"{self.key}_Still"
-        base_path = path / consts.get_const(type(self), "RESULTS_DIR")
+        base_path = path / self.results_dir
 
         return [base_path / f"{file_name}{Path(self.url).suffix}"]
 

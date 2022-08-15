@@ -1,7 +1,7 @@
 from abc import ABC
 from pathlib import Path
 
-from sifas_card_downloader import consts
+from sifas_card_downloader.classes import Card, Still
 
 
 class Organizer(ABC):
@@ -38,7 +38,7 @@ class Organizer(ABC):
 class CardOrganizer(Organizer):
     def __init__(self, path: Path):
         super().__init__(path)
-        self.results_dir = consts.get_const("Card", "RESULTS_DIR")
+        self.results_dir = Card.results_dir
 
     def remove_duplicates(self, paths: list[Path]) -> None:
         prefixes = [str(prefix).split(".", maxsplit=1)[0] for prefix in paths]
@@ -79,7 +79,7 @@ class CardOrganizer(Organizer):
 class StillOrganizer(Organizer):
     def __init__(self, path: Path):
         super().__init__(path)
-        self.results_dir = consts.get_const("Still", "RESULTS_DIR")
+        self.results_dir = Still.results_dir
 
     def remove_duplicates(self, paths: list[Path]) -> None:
         prefixes = [str(prefix).split(".", maxsplit=1)[0] for prefix in paths]
