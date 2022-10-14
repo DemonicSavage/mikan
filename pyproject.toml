@@ -16,7 +16,7 @@ lxml = "^4.9.1"
 pytest-cov = "^3.0.0"
 tqdm = "^4.64.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 black = "^22.6.0"
 flake8 = "^4.0.1"
 flake8-bugbear = "^22.7.1"
