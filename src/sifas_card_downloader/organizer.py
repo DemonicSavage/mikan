@@ -67,7 +67,6 @@ class CardOrganizer(Organizer):
         try:
             new_card.symlink_to(path)
 
-            print(f"Symlinked to {name[1]}/{name[2]}/{file_name}.")
         except FileExistsError:
             pass
 
