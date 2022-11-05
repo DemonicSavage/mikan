@@ -189,5 +189,7 @@ async def test_unimplemented(mocker):
         ).create_item(98)
         is None
     )
-    assert sifas_card_downloader.html_parser.Parser().create_item(98) is None
-    assert sifas_card_downloader.html_parser.Parser().get_url(98) is None
+    with pytest.raises(TypeError) as ex:
+        assert sifas_card_downloader.html_parser.Parser().create_item(98) is None
+        assert sifas_card_downloader.html_parser.Parser().get_url(98) is None
+    assert ex.type == TypeError

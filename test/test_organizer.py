@@ -57,13 +57,17 @@ async def test_organizer_stills(cleanup):
 
 @pytest.mark.asyncio
 async def test_unimplemented(cleanup):
-    assert (
-        sifas_card_downloader.organizer.Organizer(Path("test/temp")).remove_duplicates(
-            []
+    with pytest.raises(TypeError) as ex:
+        assert (
+            sifas_card_downloader.organizer.Organizer(
+                Path("test/temp")
+            ).remove_duplicates([])
+            is None
         )
-        is None
-    )
-    assert (
-        sifas_card_downloader.organizer.Organizer(Path("test/temp")).create_symlinks([])
-        is None
-    )
+        assert (
+            sifas_card_downloader.organizer.Organizer(
+                Path("test/temp")
+            ).create_symlinks([])
+            is None
+        )
+    assert ex.type == TypeError

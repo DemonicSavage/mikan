@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from pathlib import Path
 
 from sifas_card_downloader.classes import Card, Still
@@ -28,9 +28,11 @@ class Organizer(ABC):
 
         self.remove_partially_downloaded()
 
+    @abstractmethod
     def remove_duplicates(self, paths: list[Path]) -> None:
         ...
 
+    @abstractmethod
     def create_symlinks(self, paths: list[Path]) -> None:
         ...
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Optional
 
 import aiohttp
@@ -47,9 +47,11 @@ class Parser(ABC):
 
         return self.create_item(num)
 
+    @abstractmethod
     def create_item(self, num: int) -> tuple[int, Item]:
         ...
 
+    @abstractmethod
     def get_url(self, num: int) -> str:
         ...
 
