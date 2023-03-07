@@ -37,6 +37,20 @@ class Organizer(ABC):
         ...
 
 
+class SIFCardOrganizer(Organizer):
+    def __init__(self, path: Path):
+        ...
+
+    def organize(self) -> None:
+        ...
+
+    def remove_duplicates(self, paths: list[Path]) -> None:
+        ...
+
+    def create_symlinks(self, paths: list[Path]) -> None:
+        ...
+
+
 class CardOrganizer(Organizer):
     def __init__(self, path: Path):
         super().__init__(path)

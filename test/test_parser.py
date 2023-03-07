@@ -184,7 +184,7 @@ async def test_parse_item_info_fail(mocker):
 @pytest.mark.asyncio
 async def test_unimplemented(mocker):
     assert (
-        sifas_card_downloader.html_parser.ListParser(
+        await sifas_card_downloader.html_parser.ListParser(
             sifas_card_downloader.classes.Card
         ).create_item(98)
         is None

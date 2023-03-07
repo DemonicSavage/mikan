@@ -77,4 +77,49 @@ class Still:
         return [base_path / f"{file_name}{Path(self.url).suffix}"]
 
 
-Item: TypeAlias = Card | Still
+@dataclass
+class SIFCard:
+    results_dir: ClassVar = "SIF"
+    list_url_template: ClassVar = ""
+    url_template: ClassVar = ""
+    json_filename: ClassVar = "sif.json"
+
+    key: int
+    idol: str
+    rarity: str
+    attribute: str
+    unit: str
+    subunit: str
+    year: str
+    normal_url: str
+    idolized_url: str
+
+    def is_double_sized(self) -> bool:
+        return True
+
+    def get_urls(self) -> list[str]:
+        return [x for x in [self.normal_url, self.idolized_url] if x is not None]
+
+    def set_url(self, i: int, url: str) -> None:
+        if i == 0:
+            self.normal_url = url
+        else:
+            self.idolized_url = url
+
+    def needs_update(self) -> bool:
+        return False
+
+    def get_paths(self, path: Path) -> list[Path]:
+        file_name = f"{self.key}_{self.idol}"
+        base_path = path / self.results_dir
+
+        normal_path, idolized_path = None, None
+        if self.normal_url:
+            normal_path = f"{file_name}_Normal{Path(self.normal_url).suffix}"
+        if self.idolized_url:
+            idolized_path = f"{file_name}_Idolized{Path(self.idolized_url).suffix}"
+
+        return [base_path / x for x in [normal_path, idolized_path] if x is not None]
+
+
+Item: TypeAlias = Card | Still | SIFCard

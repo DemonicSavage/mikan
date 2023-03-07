@@ -9,7 +9,7 @@ from tqdm.asyncio import tqdm
 
 import sifas_card_downloader.html_parser as parser
 from sifas_card_downloader import json_utils
-from sifas_card_downloader.classes import Card, Item
+from sifas_card_downloader.classes import Card, Item, SIFCard
 
 
 class Downloader:
@@ -24,7 +24,11 @@ class Downloader:
 
         json_utils.load_cards(self.path, self.objs, self.img_type)
 
-        self.list_parser = parser.ListParser(self.img_type)
+        self.list_parser: parser.ListParser | parser.SIFListParser = (
+            parser.ListParser(self.img_type)
+            if self.img_type != SIFCard
+            else parser.SIFListParser()
+        )
         self.item_parser = getattr(parser, f"{img_type.__name__}Parser")()
 
         self.updateables: list[int] = []
@@ -92,10 +96,8 @@ class Downloader:
     async def get_cards_from_parser(self) -> None:
         num_pages = await self.list_parser.get_num_pages() + 1
         current_num = 1
-
         for _ in range(1, num_pages):
             current_page = await self.get_page(current_num)
-
             if not current_page:
                 break
 

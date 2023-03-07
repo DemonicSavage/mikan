@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Type
 
 from sifas_card_downloader import config, organizer
-from sifas_card_downloader.classes import Card, Item, Still
+from sifas_card_downloader.classes import Card, Item, SIFCard, Still
 from sifas_card_downloader.downloader import Downloader
 
 
@@ -15,12 +15,16 @@ class UnrecognizedArgumentException(Exception):
 
 
 async def run() -> None:
-    img_type: Type[Card | Still] = Card
+    img_type: Type[Card | Still | SIFCard] = Card
     if len(sys.argv) > 1:
         if sys.argv[1] == "--stills":
             img_type = Still
+        elif sys.argv[1] == "--sif":
+            img_type = SIFCard
         else:
-            raise UnrecognizedArgumentException("Only recognized argument is --stills.")
+            raise UnrecognizedArgumentException(
+                "Only recognized arguments are --stills and --sif."
+            )
 
     await card_searcher(config.CARDS_DIR, img_type)
 

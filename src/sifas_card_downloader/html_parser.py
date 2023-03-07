@@ -7,7 +7,7 @@ from typing import Optional
 import aiohttp
 import bs4
 
-from sifas_card_downloader.classes import Card, Item, Still
+from sifas_card_downloader.classes import Card, Item, SIFCard, Still
 
 
 class ListParsingException(Exception):
@@ -45,15 +45,70 @@ class Parser(ABC):
     async def get_item(self, num: int) -> tuple[int, Item]:
         self.soup = await self.soup_page(num)
 
-        return self.create_item(num)
+        return await self.create_item(num)
 
     @abstractmethod
-    def create_item(self, num: int) -> tuple[int, Item]:
+    async def create_item(self, num: int) -> tuple[int, Item]:
         ...
 
     @abstractmethod
     def get_url(self, num: int) -> str:
         ...
+
+
+class SIFListParser(Parser):
+    def __init__(self) -> None:
+        self.items: list[list[int]] = []
+
+    async def get_items(self) -> None:
+        if isinstance(self.session, aiohttp.ClientSession):
+            html = await self.session.get("http://schoolido.lu/api/cardids/")
+            json = await html.json()
+
+            self.items = [json[i : i + 10] for i in range(0, len(json), 10)]  # noqa
+        else:
+            raise NoHTTPSessionException()
+
+    async def get_page(self, num: int) -> list[int]:
+        return self.items[num - 1]
+
+    async def get_num_pages(self) -> int:
+        await self.get_items()
+        return len(self.items)
+
+    async def create_item(self, num: int) -> tuple[int, Item]:
+        ...
+
+    def get_url(self, num: int) -> str:
+        ...
+
+
+class SIFCardParser(Parser):
+    def get_url(self, num: int) -> str:
+        ...
+
+    async def create_item(self, num: int) -> tuple[int, SIFCard]:
+        if isinstance(self.session, aiohttp.ClientSession):
+            html = await self.session.get(f"http://schoolido.lu/api/cards/{num}/")
+            json = await html.json()
+
+            new_card = SIFCard(
+                json["id"],
+                json["idol"]["name"],
+                json["rarity"],
+                json["attribute"],
+                json["idol"]["main_unit"],
+                json["idol"]["sub_unit"],
+                json["idol"]["year"],
+                json["card_image"],
+                json["card_idolized_image"],
+            )
+
+            return json["id"], new_card
+        raise ItemParsingException()
+
+    async def get_item(self, num: int) -> tuple[int, SIFCard]:
+        return await self.create_item(num)
 
 
 class ListParser(Parser):
@@ -95,7 +150,7 @@ class ListParser(Parser):
 
         raise ListParsingException()
 
-    def create_item(self, num: int) -> tuple[int, Item]:
+    async def create_item(self, num: int) -> tuple[int, Item]:
         ...
 
 
@@ -103,7 +158,7 @@ class CardParser(Parser):
     def get_url(self, num: int) -> str:
         return f"{Card.url_template}{num}"
 
-    def create_item(self, num: int) -> tuple[int, Card]:
+    async def create_item(self, num: int) -> tuple[int, Card]:
         urls = self.get_item_image_urls()
 
         idol = self.get_item_info("idol")
@@ -159,7 +214,7 @@ class StillParser(Parser):
     def get_url(self, num: int) -> str:
         return f"{Still.url_template}{num}"
 
-    def create_item(self, num: int) -> tuple[int, Still]:
+    async def create_item(self, num: int) -> tuple[int, Still]:
         url = self.get_item_image_url()
 
         new_item = Still(num, url)
