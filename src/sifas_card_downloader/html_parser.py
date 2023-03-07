@@ -165,6 +165,8 @@ class CardParser(Parser):
         rarity = self.get_item_info("rarity")
         attr = self.get_item_info("attribute")
         unit = self.get_item_info("i_unit")
+        if unit.startswith("Nijigasaki"):  # pragma: no cover
+            unit = "Nijigasaki"
         sub = self.get_item_info("i_subunit")
         year = self.get_item_info("i_year")
 
