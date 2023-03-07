@@ -4,16 +4,21 @@ SYNOPSIS:
 
 DESCRIPTION:
     The program automatically downloads and categorizes cards from the game Love Live! School Idol Festival ALL STARS.
-    Images are downloaded from https://idol.st/.
+    Images are downloaded from https://idol.st/. Also works with School Idol Festival cards, with images downloaded
+    from https://schoolido.lu/.
 
 
 USAGE:
-    Just run ./sifas_card_downloader. Use "--stills" to download stills instead of cards.
+    Just run ./sifas_card_downloader. Use "--stills" to download stills instead of cards, or use "--sif" to download
+    School Idol Festival cards.
 
 
 OPTIONS:
     -h, --help
-            Outputs a usage message and exits
+            Outputs this message and exits
 
     --stills
             Works with stills instead of cards (won't organize the stills)
+
+    --sif
+            Works with SIF cards instead of SIFAS cards (won't organize the cards)
