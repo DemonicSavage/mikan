@@ -42,6 +42,17 @@ async def test_organizer_cards(cleanup):
 
 
 @pytest.mark.usefixtures("cleanup")
+def test_organizer_sif_cards(cleanup):
+    organizer = sifas_card_downloader.organizer.SIFCardOrganizer(Path("test/temp"))
+
+    create_mock_card_files("test/temp/SIF", test.mocks.card_files)
+    create_file("test/temp/SIF/file.part")
+    organizer.organize()
+
+    assert not Path("test/temp/SIF/file.part").exists()
+
+
+@pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_organizer_stills(cleanup):
     organizer = sifas_card_downloader.organizer.StillOrganizer(Path("test/temp"))

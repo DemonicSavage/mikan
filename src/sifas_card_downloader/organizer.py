@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from sifas_card_downloader.classes import Card, Still
+from sifas_card_downloader.classes import Card, SIFCard, Still
 
 
 class Organizer(ABC):
@@ -30,25 +30,23 @@ class Organizer(ABC):
 
     @abstractmethod
     def remove_duplicates(self, paths: list[Path]) -> None:
-        ...
+        pass
 
     @abstractmethod
     def create_symlinks(self, paths: list[Path]) -> None:
-        ...
+        pass
 
 
 class SIFCardOrganizer(Organizer):
     def __init__(self, path: Path):
-        ...
-
-    def organize(self) -> None:
-        ...
+        super().__init__(path)
+        self.results_dir = SIFCard.results_dir
 
     def remove_duplicates(self, paths: list[Path]) -> None:
-        ...
+        pass
 
     def create_symlinks(self, paths: list[Path]) -> None:
-        ...
+        pass
 
 
 class CardOrganizer(Organizer):

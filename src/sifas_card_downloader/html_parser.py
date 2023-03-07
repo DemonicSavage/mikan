@@ -49,11 +49,11 @@ class Parser(ABC):
 
     @abstractmethod
     async def create_item(self, num: int) -> tuple[int, Item]:
-        ...
+        pass
 
     @abstractmethod
     def get_url(self, num: int) -> str:
-        ...
+        pass
 
 
 class SIFListParser(Parser):
@@ -67,7 +67,7 @@ class SIFListParser(Parser):
 
             self.items = [json[i : i + 10] for i in range(0, len(json), 10)]  # noqa
         else:
-            raise NoHTTPSessionException()
+            raise ListParsingException()
 
     async def get_page(self, num: int) -> list[int]:
         return self.items[num - 1]
@@ -77,15 +77,15 @@ class SIFListParser(Parser):
         return len(self.items)
 
     async def create_item(self, num: int) -> tuple[int, Item]:
-        ...
+        pass
 
     def get_url(self, num: int) -> str:
-        ...
+        pass
 
 
 class SIFCardParser(Parser):
     def get_url(self, num: int) -> str:
-        ...
+        pass
 
     async def create_item(self, num: int) -> tuple[int, SIFCard]:
         if isinstance(self.session, aiohttp.ClientSession):
@@ -151,7 +151,7 @@ class ListParser(Parser):
         raise ListParsingException()
 
     async def create_item(self, num: int) -> tuple[int, Item]:
-        ...
+        pass
 
 
 class CardParser(Parser):

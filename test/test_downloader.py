@@ -50,6 +50,37 @@ async def test_downloader_cards(mocker, cleanup):
 
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
+async def test_downloader_sif_cards(mocker, cleanup):
+    downloader = sifas_card_downloader.downloader.Downloader(
+        Path("test/temp"), sifas_card_downloader.classes.SIFCard
+    )
+
+    mocker.patch(
+        "sifas_card_downloader.html_parser.SIFListParser.get_num_pages",
+        return_value=test.mocks.mock_num_pages,
+    )
+    mocker.patch(
+        "sifas_card_downloader.html_parser.SIFListParser.get_page",
+        test.mocks.mock_page,
+    )
+    mocker.patch(
+        "sifas_card_downloader.html_parser.SIFCardParser.get_item",
+        test.mocks.mock_sif_card,
+    )
+    mocker.patch(
+        "aiohttp.ClientSession.get", return_value=awaitable_res(test.mocks.mock_file)
+    )
+
+    async with downloader as downloader:
+        await downloader.update()
+        await downloader.get()
+
+    assert Path("test/temp/sif.json").open().read() == test.mocks.cards_json
+    assert check_files("test/temp/SIF", test.mocks.sif_card_files)
+
+
+@pytest.mark.usefixtures("cleanup")
+@pytest.mark.asyncio
 async def test_downloader_stills(mocker):
     downloader = sifas_card_downloader.downloader.Downloader(
         Path("test/temp"), sifas_card_downloader.classes.Still

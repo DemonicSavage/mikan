@@ -1,3 +1,4 @@
+import json
 from test.utils import MockResponse
 
 import sifas_card_downloader.classes
@@ -113,6 +114,21 @@ card_files = [
     "6_Unit6_Name6_Normal.png",
 ]
 
+sif_card_files = [
+    "1_Name1_Idolized.png",
+    "1_Name1_Normal.png",
+    "2_Name2_Idolized.png",
+    "2_Name2_Normal.png",
+    "3_Name3_Idolized.png",
+    "3_Name3_Normal.png",
+    "4_Name4_Idolized.png",
+    "4_Name4_Normal.png",
+    "5_Name5_Idolized.png",
+    "5_Name5_Normal.png",
+    "6_Name6_Idolized.png",
+    "6_Name6_Normal.png",
+]
+
 still_files = [
     "1_Still.png",
     "2_Still.png",
@@ -131,6 +147,20 @@ async def mock_page(self, n):
 
 async def mock_card(self, n):
     return n, sifas_card_downloader.classes.Card(
+        n,
+        f"Name{n}",
+        f"Rarity{n}",
+        f"Attribute{n}",
+        f"Unit{n}",
+        f"Subunit{n}",
+        f"Year{n}",
+        f"//normal{n}.png",
+        f"//idolized{n}.png",
+    )
+
+
+async def mock_sif_card(self, n):
+    return n, sifas_card_downloader.classes.SIFCard(
         n,
         f"Name{n}",
         f"Rarity{n}",
@@ -163,6 +193,38 @@ mock_list_response = MockResponse(
     """,
     200,
 )
+mock_sif_list_response = MockResponse(
+    """
+    [123]
+    """,
+    200,
+)
+
+
+async def mock_sif_list_json():
+    return json.loads(await mock_sif_list_response.text())
+
+
+mock_sif_card_response = MockResponse(
+    """{
+        "idol": {"name": "Name", "main_unit": "Unit", "sub_unit": "Subunit", "year": "Year"},
+        "rarity": "Rarity",
+        "attribute": "Attribute",
+        "card_image": "Normal",
+        "card_idolized_image": "Idolized",
+        "id": 98
+        }""",
+    200,
+)
+
+
+async def mock_sif_card_json():
+    return json.loads(await mock_sif_card_response.text())
+
+
+mock_sif_list_response.json = mock_sif_list_json
+mock_sif_card_response.json = mock_sif_card_json
+
 mock_num_pages_response = MockResponse(
     """
     <div class='pagination'>

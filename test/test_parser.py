@@ -17,7 +17,8 @@ class Parser:
         return self
 
     async def __aexit__(self, a, b, c):
-        await self.parser.session.close()
+        if self.parser.session:
+            await self.parser.session.close()
 
 
 @pytest.mark.asyncio
@@ -33,6 +34,49 @@ async def test_list_parser(mocker):
 
 
 @pytest.mark.asyncio
+async def test_sif_list_parser(mocker):
+    mocker.patch(
+        "sifas_card_downloader.html_parser.aiohttp.ClientSession.get",
+        return_value=awaitable_res(test.mocks.mock_sif_list_response),
+    )
+    async with Parser(sifas_card_downloader.html_parser.SIFListParser()) as parser:
+        await parser.parser.get_items()
+        assert await parser.parser.get_page(1) == [123]
+
+
+@pytest.mark.asyncio
+async def test_sif_list_parser_fail(mocker):
+    async with Parser(sifas_card_downloader.html_parser.SIFListParser()) as parser:
+        with pytest.raises(
+            sifas_card_downloader.html_parser.ListParsingException
+        ) as ex:
+            parser.parser.session = None
+            await parser.parser.get_items()
+        assert ex.type == sifas_card_downloader.html_parser.ListParsingException
+
+
+@pytest.mark.asyncio
+async def test_sif_card_parser_fail(mocker):
+    async with Parser(sifas_card_downloader.html_parser.SIFCardParser()) as parser:
+        with pytest.raises(
+            sifas_card_downloader.html_parser.ItemParsingException
+        ) as ex:
+            parser.parser.session = None
+            await parser.parser.get_item(98)
+        assert ex.type == sifas_card_downloader.html_parser.ItemParsingException
+
+
+@pytest.mark.asyncio
+async def test_sif_num_pages_parser(mocker):
+    mocker.patch(
+        "sifas_card_downloader.html_parser.aiohttp.ClientSession.get",
+        return_value=awaitable_res(test.mocks.mock_sif_list_response),
+    )
+    async with Parser(sifas_card_downloader.html_parser.SIFListParser()) as parser:
+        assert await parser.parser.get_num_pages() == 1
+
+
+@pytest.mark.asyncio
 async def test_num_pages_parser(mocker):
     mocker.patch(
         "sifas_card_downloader.html_parser.aiohttp.ClientSession.get",
@@ -42,6 +86,29 @@ async def test_num_pages_parser(mocker):
         sifas_card_downloader.html_parser.ListParser(sifas_card_downloader.classes.Card)
     ) as parser:
         assert await parser.parser.get_num_pages() == 42
+
+
+@pytest.mark.asyncio
+async def test_sif_card_parser(mocker):
+    mocker.patch(
+        "sifas_card_downloader.html_parser.aiohttp.ClientSession.get",
+        return_value=awaitable_res(test.mocks.mock_sif_card_response),
+    )
+    async with Parser(sifas_card_downloader.html_parser.SIFCardParser()) as parser:
+        assert await parser.parser.get_item(98) == (
+            98,
+            sifas_card_downloader.classes.SIFCard(
+                98,
+                "Name",
+                "Rarity",
+                "Attribute",
+                "Unit",
+                "Subunit",
+                "Year",
+                "Normal",
+                "Idolized",
+            ),
+        )
 
 
 @pytest.mark.asyncio

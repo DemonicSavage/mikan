@@ -95,16 +95,13 @@ class SIFCard:
     idolized_url: str
 
     def is_double_sized(self) -> bool:
-        return True
+        pass
 
     def get_urls(self) -> list[str]:
         return [x for x in [self.normal_url, self.idolized_url] if x is not None]
 
     def set_url(self, i: int, url: str) -> None:
-        if i == 0:
-            self.normal_url = url
-        else:
-            self.idolized_url = url
+        pass
 
     def needs_update(self) -> bool:
         return False
