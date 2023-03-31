@@ -98,7 +98,7 @@ class Downloader:
         current_num = 1
         for _ in range(1, num_pages):
             current_page = await self.get_page(current_num)
-            if not current_page:
+            if not current_page and self.img_type != SIFCard:
                 break
 
             current_num += 1
