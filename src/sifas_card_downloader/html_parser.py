@@ -161,14 +161,14 @@ class CardParser(Parser):
     async def create_item(self, num: int) -> tuple[int, Card]:
         urls = self.get_item_image_urls()
 
-        idol = self.get_item_info("idol")
-        rarity = self.get_item_info("rarity")
-        attr = self.get_item_info("attribute")
-        unit = self.get_item_info("i_unit")
-        if unit.startswith("Nijigasaki"):  # pragma: no cover
+        idol = self.get_data_field("idol")
+        rarity = self.get_data_field("rarity")
+        attr = self.get_data_field("attribute")
+        unit = self.get_data_field("idol__i_unit")
+        if unit and unit.startswith("Nijigasaki"):  # pragma: no cover
             unit = "Nijigasaki"
-        sub = self.get_item_info("i_subunit")
-        year = self.get_item_info("i_year")
+        sub = self.get_data_field("idol__i_subunit")
+        year = self.get_data_field("idol__i_year")
 
         new_card = Card(num, idol, rarity, attr, unit, sub, year, urls[0], urls[1])
 
@@ -186,29 +186,20 @@ class CardParser(Parser):
 
         raise ItemParsingException()
 
-    def get_data_field(self, field: str) -> bs4.Tag:
-
+    def get_data_field(self, field: str) -> str:
         if (
             self.soup
-            and isinstance(data := self.soup.find(attrs={"data-field": field}), bs4.Tag)
-            and isinstance(field := data.find_all("td")[1], bs4.Tag)
+            and isinstance(
+                data_field := self.soup.find(attrs={"data-field": field}), bs4.Tag
+            )
+            and isinstance(
+                data := [
+                    x for x in data_field.get_text().strip().split("\n") if x != ""
+                ][1],
+                str,
+            )
         ):
-            return field
-
-        raise ItemParsingException()
-
-    def get_item_info(self, info: str) -> str:
-        if info == "idol":
-            data = self.get_data_field("idol")
-            if isinstance(found_data := data.find("span"), bs4.Tag) and isinstance(
-                text := found_data.get_text(), str
-            ):
-
-                return text.partition("Open idol")[0].strip()
-
-        if isinstance(text := self.get_data_field(info).getText(), str):
-            return text.strip()
-
+            return data
         raise ItemParsingException()
 
 

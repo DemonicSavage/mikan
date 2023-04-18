@@ -233,22 +233,6 @@ async def test_parse_http_fail(mocker):
 
 
 @pytest.mark.asyncio
-async def test_parse_item_info_fail(mocker):
-    mocker.patch(
-        "sifas_card_downloader.html_parser.aiohttp.ClientSession.get",
-        return_value=awaitable_res(test.mocks.mock_card_response),
-    )
-    mocker.patch(
-        "sifas_card_downloader.html_parser.bs4.Tag.getText",
-        return_value=98,
-    )
-    with pytest.raises(sifas_card_downloader.html_parser.ItemParsingException) as ex:
-        async with Parser(sifas_card_downloader.html_parser.CardParser()) as parser:
-            await parser.parser.get_item(98)
-    assert ex.type == sifas_card_downloader.html_parser.ItemParsingException
-
-
-@pytest.mark.asyncio
 async def test_unimplemented(mocker):
     assert (
         await sifas_card_downloader.html_parser.ListParser(

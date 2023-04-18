@@ -237,38 +237,31 @@ mock_num_pages_response = MockResponse(
 )
 mock_card_response = MockResponse(
     """
-    <div class='top-item'>
-        <a href='Normal'></a>
-        <a href='Idolized'></a>
+    <div class="top-item">
+    <a href="Normal"></a>
+    <a href="Idolized"></a>
     </div>
-    <table>
-        <tbody>
-            <tr data-field="idol">
-                <td>null</td>
-                <td><span>Name      Open idol</td>
-            </tr>
-            <tr data-field="rarity">
-                <td>null</td>
-                <td>Rarity</td>
-            </tr>
-            <tr data-field="attribute">
-                <td>null</td>
-                <td>Attribute</td>
-            </tr>
-            <tr data-field="i_unit">
-                <td>null</td>
-                <td>Unit</td>
-            </tr>
-            <tr data-field="i_subunit">
-                <td>null</td>
-                <td>Subunit</td>
-            </tr>
-            <tr data-field="i_year">
-                <td>null</td>
-                <td>Year</td>
-            </tr>
-        </tbody>
-    </table>
+
+    <div>
+    <div data-field="idol">
+    null\nName
+    </div>
+    <div data-field="rarity">
+    null\nRarity
+    </div>
+    <div data-field="attribute">
+    null\nAttribute
+    </div>
+    <div data-field="idol__i_unit">
+    null\nUnit
+    </div>
+    <div data-field="idol__i_subunit">
+    null\nSubunit
+    </div>
+    <div data-field="idol__i_year">
+    null\nYear
+    </div>
+    </div>
     """,
     200,
 )
