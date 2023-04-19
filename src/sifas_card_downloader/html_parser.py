@@ -62,7 +62,7 @@ class SIFListParser(Parser):
 
     async def get_items(self) -> None:
         if isinstance(self.session, aiohttp.ClientSession):
-            html = await self.session.get("http://schoolido.lu/api/cardids/")
+            html = await self.session.get("https://schoolido.lu/api/cardids/")
             json = await html.json()
 
             self.items = [json[i : i + 10] for i in range(0, len(json), 10)]  # noqa
@@ -89,7 +89,7 @@ class SIFCardParser(Parser):
 
     async def create_item(self, num: int) -> tuple[int, SIFCard]:
         if isinstance(self.session, aiohttp.ClientSession):
-            html = await self.session.get(f"http://schoolido.lu/api/cards/{num}/")
+            html = await self.session.get(f"https://schoolido.lu/api/cards/{num}/")
             json = await html.json()
 
             new_card = SIFCard(

@@ -19,8 +19,7 @@ class Downloader:
 
         self.img_type = img_type
 
-        session_timeout = aiohttp.ClientTimeout(total=None)
-        self.session = aiohttp.ClientSession(timeout=session_timeout)
+        self.session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=None))
 
         json_utils.load_cards(self.path, self.objs, self.img_type)
 
