@@ -121,7 +121,7 @@ class ListParser(Parser):
 
     async def get_page(self, num: int) -> list[int]:
         nums: list[int] = []
-        pattern = re.compile(r"/([0-9]+)/")
+        pattern = re.compile(r"/(\d+)/")
 
         page = await self.soup_page(num)
         items = page.find_all(class_="top-item")
@@ -138,7 +138,7 @@ class ListParser(Parser):
         raise ListParsingException()
 
     async def get_num_pages(self) -> int:
-        pattern = re.compile(r"=([0-9]+)")
+        pattern = re.compile(r"=(\d+)")
         page = await self.soup_page(1)
 
         if isinstance(item := page.find(class_="pagination"), bs4.Tag):
