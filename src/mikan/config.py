@@ -13,18 +13,20 @@
 # You should have received a copy of the GNU General Public License
 
 import configparser
+import os
 import shutil
 from pathlib import Path
 
 import platformdirs
 
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 cfg = configparser.ConfigParser()
 
 cfg_dir = Path(platformdirs.user_config_dir("mikan", ensure_exists=True))
 cfg_file = cfg_dir / "config.cfg"
 
 if not cfg_file.exists():
-    shutil.copy("default_config.cfg", cfg_file)
+    shutil.copy(Path(ROOT_DIR) / "default_config.cfg", cfg_file)
 
 cfg.read(cfg_dir / "config.cfg")
 

@@ -1,12 +1,13 @@
 [tool.poetry]
-name = "mikan"
-version = "0.1.0"
-description = "Downloads cards and stills from idol.st"
+name = "mikan-card-downloader"
+version = "0.1.2"
+description = "Downloads cards and stills from SIFAS and SIF."
 authors = ["DemonicSavage"]
 license = "GPLv3"
 packages = [
     {include = "mikan", from = "src"}
 ]
+include = ["src/mikan/default_config.cfg"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
