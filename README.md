@@ -33,9 +33,9 @@ The `config.cfg` currently only has one option, which is `data_dir`. Change that
 
 ## Usage
 
-This is a command line script. It first downloads (or updates) metadata files about the available cards (`cards.json`/`stills.json`/`sif.json`), and then downloads the image files themselves.
+This is a command line script. It first creates (or updates) metadata files about the available cards (`cards.json`/`stills.json`/`sif.json`), and then downloads the image files themselves.
 
-By default, running `sifas_card_downloader` without any arguments will download SIFAS cards. Using the `--stills` argument will download SIFAS stills instead, and `--sif` will download SIF cards.
+By default, running `sifas_card_downloader` without any arguments will create metadata and then download SIFAS cards. Using the `--stills` argument will download SIFAS stills instead, and `--sif` will download SIF cards.
 
 ## License
 
