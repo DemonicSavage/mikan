@@ -37,6 +37,11 @@ This is a command line script. It first creates (or updates) metadata files abou
 
 By default, running `sifas_card_downloader` without any arguments will create metadata and then download SIFAS cards. Using the `--stills` argument will download SIFAS stills instead, and `--sif` will download SIF cards.
 
+### Note for Windows users
+
+SIFAS Card Downloader is semi-tested on Windows, and seems to work. There is a `sifas_card_downloader.bat` file that you should use.
+Windows requires admin privileges for symlinks, so you need to run this as admin. This limitation is not present in macOS and Linux.
+
 ## License
 
 This software is released under the GNU GPLv3, and its dependencies are released under their respective licenses.
