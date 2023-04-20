@@ -58,8 +58,8 @@ async def test_downloader_cards(mocker, cleanup):
         await downloader.update()
         await downloader.get()
 
-    assert Path("test/temp/cards.json").open().read() == test.mocks.cards_json
-    assert check_files("test/temp/All", test.mocks.card_files)
+    assert Path("test/temp/sifas_cards.json").open().read() == test.mocks.cards_json
+    assert check_files("test/temp/SIFAS_Cards", test.mocks.card_files)
 
 
 @pytest.mark.usefixtures("cleanup")
@@ -89,8 +89,8 @@ async def test_downloader_sif_cards(mocker, cleanup):
         await downloader.update()
         await downloader.get()
 
-    assert Path("test/temp/sif.json").open().read() == test.mocks.cards_json
-    assert check_files("test/temp/SIF", test.mocks.sif_card_files)
+    assert Path("test/temp/sif_cards.json").open().read() == test.mocks.cards_json
+    assert check_files("test/temp/SIF_Cards", test.mocks.sif_card_files)
 
 
 @pytest.mark.usefixtures("cleanup")
@@ -120,8 +120,8 @@ async def test_downloader_stills(mocker):
         await downloader.update()
         await downloader.get()
 
-    assert Path("test/temp/stills.json").open().read() == test.mocks.stills_json
-    assert check_files("test/temp/Stills", test.mocks.still_files)
+    assert Path("test/temp/sifas_stills.json").open().read() == test.mocks.stills_json
+    assert check_files("test/temp/SIFAS_Stills", test.mocks.still_files)
 
 
 @pytest.mark.usefixtures("cleanup")
@@ -149,7 +149,7 @@ async def test_downloader_fail(mocker):
         await downloader.update()
         await downloader.get()
 
-    assert not Path("test/temp/All").exists()
+    assert not Path("test/temp/SIFAS_Cards").exists()
 
 
 @pytest.mark.usefixtures("cleanup")
@@ -177,7 +177,7 @@ async def test_downloader_update_2x(mocker):
 async def test_downloader_card_load(mocker):
     directory = Path("test/temp")
     directory.mkdir(parents=True)
-    with open(directory / "cards.json", "w") as file:
+    with open(directory / "sifas_cards.json", "w") as file:
         file.write(test.mocks.pre_json)
     downloader = sifas_card_downloader.downloader.Downloader(
         directory, sifas_card_downloader.classes.Card

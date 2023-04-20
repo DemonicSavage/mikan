@@ -20,10 +20,10 @@ from typing import ClassVar, TypeAlias
 
 @dataclass
 class Card:
-    results_dir: ClassVar = "All"
+    results_dir: ClassVar = "SIFAS_Cards"
     list_url_template: ClassVar = "https://idol.st/ajax/allstars/cards/?page="
     url_template: ClassVar = "https://idol.st/ajax/allstars/card/"
-    json_filename: ClassVar = "cards.json"
+    json_filename: ClassVar = "sifas_cards.json"
 
     key: int
     idol: str
@@ -63,10 +63,10 @@ class Card:
 
 @dataclass
 class Still:
-    results_dir: ClassVar = "Stills"
+    results_dir: ClassVar = "SIFAS_Stills"
     list_url_template: ClassVar = "https://idol.st/ajax/allstars/stills/?page="
     url_template: ClassVar = "https://idol.st/ajax/allstars/still/"
-    json_filename: ClassVar = "stills.json"
+    json_filename: ClassVar = "sifas_stills.json"
 
     key: int
     url: str
@@ -93,10 +93,10 @@ class Still:
 
 @dataclass
 class SIFCard:
-    results_dir: ClassVar = "SIF"
+    results_dir: ClassVar = "SIF_Cards"
     list_url_template: ClassVar = ""
     url_template: ClassVar = ""
-    json_filename: ClassVar = "sif.json"
+    json_filename: ClassVar = "sif_cards.json"
 
     key: int
     idol: str

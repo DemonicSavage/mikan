@@ -12,7 +12,7 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DemonicSavage_sifas_card_downloader&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=DemonicSavage_sifas_card_downloader)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DemonicSavage_sifas_card_downloader&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=DemonicSavage_sifas_card_downloader)
 
-SIFAS Card Downloader automatically downloads and categorizes cards from the games Love Live! School Idol Festival ALL STARS (SIFAS) and Love Live! School Idol Festival (SIF).
+SIFAS Card Downloader automatically downloads cards from the games Love Live! School Idol Festival ALL STARS (SIFAS) and Love Live! School Idol Festival (SIF).
 
 SIFAS cards and stills are downloaded from [Idol Story](https://idol.st/).
 
@@ -36,11 +36,6 @@ The `config.cfg` currently only has one option, which is `data_dir`. Change that
 This is a command line script. It first creates (or updates) metadata files about the available cards (`cards.json`/`stills.json`/`sif.json`), and then downloads the image files themselves.
 
 By default, running `sifas_card_downloader` without any arguments will create metadata and then download SIFAS cards. Using the `--stills` argument will download SIFAS stills instead, and `--sif` will download SIF cards.
-
-### Note for Windows users
-
-SIFAS Card Downloader is not actively tested on Windows, but it seems to work. There is a `sifas_card_downloader.bat` file that you should use.
-Windows requires admin privileges for symlinks, so you need to run this as admin. This limitation is not present in macOS and Linux.
 
 ## License
 

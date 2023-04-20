@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 from typing import Type
 
-from sifas_card_downloader import config, organizer
+from sifas_card_downloader import config
 from sifas_card_downloader.classes import Card, Item, SIFCard, Still
 from sifas_card_downloader.downloader import Downloader
 
@@ -44,13 +44,9 @@ async def run() -> None:
 
 
 async def card_searcher(path: Path, img_type: type[Item]) -> None:
-    item_organizer = getattr(organizer, f"{img_type.__name__}Organizer")
-
     async with Downloader(path, img_type) as downloader:
         await downloader.update()
         await downloader.get()
-
-    item_organizer(path).organize()
 
 
 def main() -> None:  # pragma: no cover

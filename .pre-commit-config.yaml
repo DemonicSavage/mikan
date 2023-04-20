@@ -32,6 +32,7 @@ repos:
           - types-beautifulsoup4
           - types-tqdm
           - aiohttp
+          - platformdirs
 
   - repo: local
     hooks:
@@ -48,3 +49,4 @@ repos:
           - aiohttp
           - lxml
           - tqdm
+          - platformdirs

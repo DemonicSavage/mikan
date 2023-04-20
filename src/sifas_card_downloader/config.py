@@ -13,9 +13,21 @@
 # You should have received a copy of the GNU General Public License
 
 import configparser
+import shutil
 from pathlib import Path
 
+import platformdirs
+
 cfg = configparser.ConfigParser()
-cfg.read("config.cfg")
+
+cfg_dir = Path(
+    platformdirs.user_config_dir("sifas_card_downloader", ensure_exists=True)
+)
+cfg_file = cfg_dir / "config.cfg"
+
+if not cfg_file.exists():
+    shutil.copy("default_config.cfg", cfg_file)
+
+cfg.read(cfg_dir / "config.cfg")
 
 CARDS_DIR = Path(cfg["Paths"]["data_dir"])
