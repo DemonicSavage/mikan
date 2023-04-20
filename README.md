@@ -39,7 +39,7 @@ By default, running `sifas_card_downloader` without any arguments will create me
 
 ### Note for Windows users
 
-SIFAS Card Downloader is semi-tested on Windows, and seems to work. There is a `sifas_card_downloader.bat` file that you should use.
+SIFAS Card Downloader is not actively tested on Windows, but it seems to work. There is a `sifas_card_downloader.bat` file that you should use.
 Windows requires admin privileges for symlinks, so you need to run this as admin. This limitation is not present in macOS and Linux.
 
 ## License
