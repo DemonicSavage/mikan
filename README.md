@@ -20,6 +20,10 @@ SIF cards are downloaded from [School Idol Tomodachi](https://schoolido.lu/).
 
 ## Installation
 
+To install Mikan, just `pip install mikan-card-downloader`.
+
+## Building by source
+
 (Note: this software requires [Python](https://www.python.org/)>=3.10 and [Poetry](https://python-poetry.org/))
 
 1. Clone this GitHub repository (`git clone https://github.com/DemonicSavage/mikan.git`)
@@ -30,6 +34,9 @@ SIF cards are downloaded from [School Idol Tomodachi](https://schoolido.lu/).
 ## Configuration
 
 The `config.cfg` currently only has one option, which is `data_dir`. Change that to the directory you want your cards to be downloaded to.
+You can find this file in `$XDG_CONFIG_HOME/mikan` on Linux, `%APPDATA%\Local\mikan\mikan` on Windows, or `/Library/Application Support/mikan` on macOS.
+
+If building from source, you can also modify `src/mikan/default_config.cfg` before running it for the first time.
 
 ## Usage
 
