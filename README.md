@@ -27,7 +27,7 @@ To install Mikan, just `pip install mikan-card-downloader`.
 (Note: this software requires [Python](https://www.python.org/)>=3.10 and [Poetry](https://python-poetry.org/))
 
 1. Clone this GitHub repository (`git clone https://github.com/DemonicSavage/mikan.git`)
-2. Go to the `sifas_card_downloader` directory (`cd mikan` on Unix).
+2. Go to the `mikan` directory (`cd mikan` on Unix).
 3. Optionally, [configure the program to your liking](#configuration).
 4. Run `poetry install` to grab the necessary dependencies.
 
