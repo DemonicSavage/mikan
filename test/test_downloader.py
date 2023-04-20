@@ -1,11 +1,11 @@
 # Copyright (C) 2022-2023 DemonicSavage
-# This file is part of SIFAS Card Downloader.
+# This file is part of Mikan.
 
-# SIFAS Card Downloader is free software: you can redistribute it and/or modify
+# Mikan is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, version 3 of the License.
 
-# SIFAS Card Downloader is distributed in the hope that it will be useful,
+# Mikan is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -19,8 +19,8 @@ from test.utils import awaitable_res
 import aiohttp
 import pytest
 
-import sifas_card_downloader.classes
-import sifas_card_downloader.downloader
+import mikan.classes
+import mikan.downloader
 
 
 def check_files(path, answer):
@@ -34,20 +34,18 @@ def check_files(path, answer):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_cards(mocker, cleanup):
-    downloader = sifas_card_downloader.downloader.Downloader(
-        Path("test/temp"), sifas_card_downloader.classes.Card
-    )
+    downloader = mikan.downloader.Downloader(Path("test/temp"), mikan.classes.Card)
 
     mocker.patch(
-        "sifas_card_downloader.html_parser.ListParser.get_num_pages",
+        "mikan.html_parser.ListParser.get_num_pages",
         return_value=test.mocks.mock_num_pages,
     )
     mocker.patch(
-        "sifas_card_downloader.html_parser.ListParser.get_page",
+        "mikan.html_parser.ListParser.get_page",
         test.mocks.mock_page,
     )
     mocker.patch(
-        "sifas_card_downloader.html_parser.CardParser.get_item",
+        "mikan.html_parser.CardParser.get_item",
         test.mocks.mock_card,
     )
     mocker.patch(
@@ -65,20 +63,18 @@ async def test_downloader_cards(mocker, cleanup):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_sif_cards(mocker, cleanup):
-    downloader = sifas_card_downloader.downloader.Downloader(
-        Path("test/temp"), sifas_card_downloader.classes.SIFCard
-    )
+    downloader = mikan.downloader.Downloader(Path("test/temp"), mikan.classes.SIFCard)
 
     mocker.patch(
-        "sifas_card_downloader.html_parser.SIFListParser.get_num_pages",
+        "mikan.html_parser.SIFListParser.get_num_pages",
         return_value=test.mocks.mock_num_pages,
     )
     mocker.patch(
-        "sifas_card_downloader.html_parser.SIFListParser.get_page",
+        "mikan.html_parser.SIFListParser.get_page",
         test.mocks.mock_page,
     )
     mocker.patch(
-        "sifas_card_downloader.html_parser.SIFCardParser.get_item",
+        "mikan.html_parser.SIFCardParser.get_item",
         test.mocks.mock_sif_card,
     )
     mocker.patch(
@@ -96,20 +92,18 @@ async def test_downloader_sif_cards(mocker, cleanup):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_stills(mocker):
-    downloader = sifas_card_downloader.downloader.Downloader(
-        Path("test/temp"), sifas_card_downloader.classes.Still
-    )
+    downloader = mikan.downloader.Downloader(Path("test/temp"), mikan.classes.Still)
 
     mocker.patch(
-        "sifas_card_downloader.html_parser.ListParser.get_num_pages",
+        "mikan.html_parser.ListParser.get_num_pages",
         return_value=test.mocks.mock_num_pages,
     )
     mocker.patch(
-        "sifas_card_downloader.html_parser.ListParser.get_page",
+        "mikan.html_parser.ListParser.get_page",
         test.mocks.mock_page,
     )
     mocker.patch(
-        "sifas_card_downloader.html_parser.StillParser.get_item",
+        "mikan.html_parser.StillParser.get_item",
         test.mocks.mock_still,
     )
     mocker.patch(
@@ -127,20 +121,18 @@ async def test_downloader_stills(mocker):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_fail(mocker):
-    downloader = sifas_card_downloader.downloader.Downloader(
-        Path("test/temp"), sifas_card_downloader.classes.Card
-    )
+    downloader = mikan.downloader.Downloader(Path("test/temp"), mikan.classes.Card)
 
     mocker.patch(
-        "sifas_card_downloader.html_parser.ListParser.get_num_pages",
+        "mikan.html_parser.ListParser.get_num_pages",
         return_value=test.mocks.mock_num_pages,
     )
     mocker.patch(
-        "sifas_card_downloader.html_parser.ListParser.get_page",
+        "mikan.html_parser.ListParser.get_page",
         test.mocks.mock_page,
     )
     mocker.patch(
-        "sifas_card_downloader.html_parser.CardParser.get_item",
+        "mikan.html_parser.CardParser.get_item",
         test.mocks.mock_card,
     )
     mocker.patch("aiohttp.ClientSession.get", side_effect=aiohttp.ClientError("Err"))
@@ -155,12 +147,10 @@ async def test_downloader_fail(mocker):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_update_2x(mocker):
-    downloader = sifas_card_downloader.downloader.Downloader(
-        Path("test/temp"), sifas_card_downloader.classes.Card
-    )
+    downloader = mikan.downloader.Downloader(Path("test/temp"), mikan.classes.Card)
 
     mocker.patch(
-        "sifas_card_downloader.html_parser.CardParser.get_item",
+        "mikan.html_parser.CardParser.get_item",
         test.mocks.mock_card,
     )
     _, old_card = await test.mocks.mock_card(downloader, 2)
@@ -179,7 +169,5 @@ async def test_downloader_card_load(mocker):
     directory.mkdir(parents=True)
     with open(directory / "sifas_cards.json", "w") as file:
         file.write(test.mocks.pre_json)
-    downloader = sifas_card_downloader.downloader.Downloader(
-        directory, sifas_card_downloader.classes.Card
-    )
+    downloader = mikan.downloader.Downloader(directory, mikan.classes.Card)
     assert list(downloader.objs.keys()) == [4]

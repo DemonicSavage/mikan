@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "sifas_card_downloader"
+name = "mikan"
 version = "0.1.0"
 description = "Downloads cards and stills from idol.st"
 authors = ["DemonicSavage"]
 license = "GPLv3"
 packages = [
-    {include = "sifas_card_downloader", from = "src"}
+    {include = "mikan", from = "src"}
 ]
 
 [tool.poetry.dependencies]
@@ -33,7 +33,7 @@ types-tqdm = "^4.65.0"
 pytest-cov = "^4.0.0"
 
 [tool.poetry.scripts]
-run = "src.sifas_card_downloader.main:main"
+mikan = "mikan.main:main"
 
 [tool.mypy]
 strict = true
