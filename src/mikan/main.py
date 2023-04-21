@@ -28,6 +28,10 @@ class UnrecognizedArgumentException(Exception):
     pass
 
 
+class InvalidPathException(Exception):
+    pass
+
+
 async def run() -> None:
     img_type: Type[Card | Still | SIFCard] = Card
     if len(sys.argv) > 1:
@@ -40,7 +44,12 @@ async def run() -> None:
                 "Only recognized arguments are --stills and --sif."
             )
 
-    await card_searcher(config.get_data_dir(), img_type)
+    data_dir = config.get_data_dir()
+    if data_dir.exists() and not data_dir.is_dir():
+        raise InvalidPathException(
+            "The specified directory is not valid (is a regular file)."
+        )
+    await card_searcher(data_dir, img_type)
 
 
 async def card_searcher(path: Path, img_type: type[Item]) -> None:

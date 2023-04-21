@@ -35,12 +35,10 @@ to (leave empty to default to ~/Idol_Cards): """
         )
         if selected_dir.strip() == "":
             selected_dir = "~/Idol_Cards"
-        selected_dir = str(Path(selected_dir).expanduser().resolve())
 
-        with open(Path(selected_dir), "w") as _:
-            cfg["Paths"]["data_dir"] = selected_dir
-            with open(cfg_file, "w") as file:
-                cfg.write(file)
+        cfg["Paths"]["data_dir"] = str(Path(selected_dir).expanduser().resolve())
+        with open(cfg_file, "w") as file:
+            cfg.write(file)
 
     cfg.read(cfg_file)
     return Path(cfg["Paths"]["data_dir"])
