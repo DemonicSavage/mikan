@@ -22,7 +22,7 @@ from mikan.main import Downloader, UnrecognizedArgumentException, run
 async def test_main(mocker):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
-    mocker.patch.object(builtins, "input", lambda _: "TestDir")
+    mocker.patch.object(builtins, "input", lambda _: "test_dir")
     mocker.patch("mikan.main.sys.argv", [])
     await run()
     update.assert_called()
@@ -33,7 +33,7 @@ async def test_main(mocker):
 async def test_main_stills(mocker):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
-    mocker.patch.object(builtins, "input", lambda _: "TestDir")
+    mocker.patch.object(builtins, "input", lambda _: "test_dir")
     mocker.patch("mikan.main.sys.argv", ["ex", "--stills"])
     await run()
     update.assert_called()
@@ -44,7 +44,7 @@ async def test_main_stills(mocker):
 async def test_main_sif_cards(mocker):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
-    mocker.patch.object(builtins, "input", lambda _: "TestDir")
+    mocker.patch.object(builtins, "input", lambda _: "test_dir")
     mocker.patch("mikan.main.sys.argv", ["ex", "--sif"])
     await run()
     update.assert_called()
@@ -55,7 +55,7 @@ async def test_main_sif_cards(mocker):
 async def test_main_fail(mocker):
     mocker.patch.object(Downloader, "update")
     mocker.patch.object(Downloader, "get")
-    mocker.patch.object(builtins, "input", lambda _: "TestDir")
+    mocker.patch.object(builtins, "input", lambda _: "test_dir")
     mocker.patch("mikan.main.sys.argv", ["ex", "--stlls"])
     with pytest.raises(UnrecognizedArgumentException) as ex:
         await run()
