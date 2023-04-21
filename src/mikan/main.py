@@ -40,7 +40,7 @@ async def run() -> None:
                 "Only recognized arguments are --stills and --sif."
             )
 
-    await card_searcher(config.CARDS_DIR, img_type)
+    await card_searcher(config.get_data_dir(), img_type)
 
 
 async def card_searcher(path: Path, img_type: type[Item]) -> None:
