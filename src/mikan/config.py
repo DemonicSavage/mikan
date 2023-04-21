@@ -16,16 +16,12 @@ import configparser
 import os
 from pathlib import Path
 
-import platformdirs
-
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 cfg = configparser.ConfigParser()
 
-cfg_dir = Path(platformdirs.user_config_dir("mikan", ensure_exists=True))
-cfg_file = cfg_dir / "config.cfg"
 
-
-def get_data_dir() -> Path:
+def get_data_dir(path: Path) -> Path:
+    cfg_file = path / "config.cfg"
     if not cfg_file.exists():
         cfg["Paths"] = {}
 

@@ -19,6 +19,8 @@ import sys
 from pathlib import Path
 from typing import Type
 
+import platformdirs
+
 from mikan import config
 from mikan.classes import Card, Item, SIFCard, Still
 from mikan.downloader import Downloader
@@ -32,7 +34,9 @@ class InvalidPathException(Exception):
     pass
 
 
-async def run() -> None:
+async def run(
+    path: Path = Path(platformdirs.user_config_dir("mikan", ensure_exists=True))
+) -> None:
     img_type: Type[Card | Still | SIFCard] = Card
     if len(sys.argv) > 1:
         if sys.argv[1] == "--stills":
@@ -44,7 +48,7 @@ async def run() -> None:
                 "Only recognized arguments are --stills and --sif."
             )
 
-    data_dir = config.get_data_dir()
+    data_dir = config.get_data_dir(path)
     if data_dir.exists() and not data_dir.is_dir():  # pragma: no cover
         raise InvalidPathException(
             "The specified directory is not valid (is a regular file)."
