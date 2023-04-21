@@ -28,21 +28,20 @@ To install Mikan, just `pip install mikan-card-downloader`.
 
 1. Clone this GitHub repository (`git clone https://github.com/DemonicSavage/mikan.git`)
 2. Go to the `mikan` directory (`cd mikan` on Unix).
-3. Optionally, [configure the program to your liking](#configuration).
-4. Run `poetry install` to grab the necessary dependencies.
+3. Run `poetry install` to grab the necessary dependencies.
 
 ## Configuration
 
 The `config.cfg` currently only has one option, which is `data_dir`. Change that to the directory you want your cards to be downloaded to.
 You can find this file in `$XDG_CONFIG_HOME/mikan` on Linux, `%APPDATA%\Local\mikan\mikan` on Windows, or `/Library/Application Support/mikan` on macOS.
 
-If building from source, you can also modify `src/mikan/default_config.cfg` before running it for the first time.
-
 ## Usage
 
 This is a command line script. It first creates (or updates) metadata files about the available cards (`cards.json`/`stills.json`/`sif.json`), and then downloads the image files themselves.
 
 By default, running `mikan` without any arguments will create metadata and then download SIFAS cards. Using the `--stills` argument will download SIFAS stills instead, and `--sif` will download SIF cards.
+
+Running it for the first time will prompt you for the directory cards and stills should be downloaded to.
 
 ## License
 
