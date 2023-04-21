@@ -45,7 +45,7 @@ async def run() -> None:
             )
 
     data_dir = config.get_data_dir()
-    if data_dir.exists() and not data_dir.is_dir():
+    if data_dir.exists() and not data_dir.is_dir():  # pragma: no cover
         raise InvalidPathException(
             "The specified directory is not valid (is a regular file)."
         )

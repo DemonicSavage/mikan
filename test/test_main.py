@@ -15,7 +15,12 @@
 import pytest
 import builtins
 
-from mikan.main import Downloader, UnrecognizedArgumentException, run
+from mikan.main import (
+    Downloader,
+    UnrecognizedArgumentException,
+    InvalidPathException,
+    run,
+)
 
 
 @pytest.mark.asyncio
@@ -23,6 +28,17 @@ async def test_main(mocker):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     mocker.patch.object(builtins, "input", lambda _: "test_dir")
+    mocker.patch("mikan.main.sys.argv", [])
+    await run()
+    update.assert_called()
+    get.assert_called()
+
+
+@pytest.mark.asyncio
+async def test_main_default_dir(mocker):
+    update = mocker.patch.object(Downloader, "update")
+    get = mocker.patch.object(Downloader, "get")
+    mocker.patch.object(builtins, "input", lambda _: "")
     mocker.patch("mikan.main.sys.argv", [])
     await run()
     update.assert_called()
