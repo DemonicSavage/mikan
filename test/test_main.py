@@ -19,9 +19,10 @@ from mikan.main import Downloader, UnrecognizedArgumentException, run, config
 
 
 @pytest.mark.asyncio
-async def test_main(mocker):
+async def test_main(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
+    mocker.patch("mikan.config.cfg_dir", tmp_path)
     mocker.patch.object(builtins, "input", lambda _: "test_dir")
     mocker.patch("mikan.main.sys.argv", [])
     await run()
@@ -34,7 +35,7 @@ async def test_main_default_dir(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     mocker.patch("mikan.config.cfg_dir", tmp_path)
-    mocker.patch.object(builtins, "input", lambda _: "")
+    mocker.patch.object(builtins, "input", lambda _: "\n")
     mocker.patch("mikan.main.sys.argv", [])
     await run()
     update.assert_called()
@@ -42,9 +43,10 @@ async def test_main_default_dir(mocker, tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_main_stills(mocker):
+async def test_main_stills(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
+    mocker.patch("mikan.config.cfg_dir", tmp_path)
     mocker.patch.object(builtins, "input", lambda _: "test_dir")
     mocker.patch("mikan.main.sys.argv", ["ex", "--stills"])
     await run()
@@ -53,9 +55,10 @@ async def test_main_stills(mocker):
 
 
 @pytest.mark.asyncio
-async def test_main_sif_cards(mocker):
+async def test_main_sif_cards(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
+    mocker.patch("mikan.config.cfg_dir", tmp_path)
     mocker.patch.object(builtins, "input", lambda _: "test_dir")
     mocker.patch("mikan.main.sys.argv", ["ex", "--sif"])
     await run()
@@ -64,9 +67,10 @@ async def test_main_sif_cards(mocker):
 
 
 @pytest.mark.asyncio
-async def test_main_fail(mocker):
+async def test_main_fail(mocker, tmp_path):
     mocker.patch.object(Downloader, "update")
     mocker.patch.object(Downloader, "get")
+    mocker.patch("mikan.config.cfg_dir", tmp_path)
     mocker.patch.object(builtins, "input", lambda _: "test_dir")
     mocker.patch("mikan.main.sys.argv", ["ex", "--stlls"])
     with pytest.raises(UnrecognizedArgumentException) as ex:
