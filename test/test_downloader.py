@@ -12,6 +12,7 @@
 
 # You should have received a copy of the GNU General Public License
 
+import json
 import test.mocks
 from pathlib import Path
 from test.utils import awaitable_res
@@ -56,7 +57,9 @@ async def test_downloader_cards(mocker, cleanup):
         await downloader.update()
         await downloader.get()
 
-    assert Path("test/temp/sifas_cards.json").open().read() == test.mocks.cards_json
+    assert json.loads(Path("test/temp/sifas_cards.json").open().read()) == json.loads(
+        test.mocks.cards_json
+    )
     assert check_files("test/temp/SIFAS_Cards", test.mocks.card_files)
 
 
@@ -75,7 +78,7 @@ async def test_downloader_sif_cards(mocker, cleanup):
     )
     mocker.patch(
         "mikan.html_parser.SIFCardParser.get_item",
-        test.mocks.mock_sif_card,
+        test.mocks.mock_card,
     )
     mocker.patch(
         "aiohttp.ClientSession.get", return_value=awaitable_res(test.mocks.mock_file)
@@ -85,8 +88,10 @@ async def test_downloader_sif_cards(mocker, cleanup):
         await downloader.update()
         await downloader.get()
 
-    assert Path("test/temp/sif_cards.json").open().read() == test.mocks.cards_json
-    assert check_files("test/temp/SIF_Cards", test.mocks.sif_card_files)
+    assert json.loads(Path("test/temp/sif_cards.json").open().read()) == json.loads(
+        test.mocks.cards_json
+    )
+    assert check_files("test/temp/SIF_Cards", test.mocks.card_files)
 
 
 @pytest.mark.usefixtures("cleanup")
@@ -114,7 +119,9 @@ async def test_downloader_stills(mocker):
         await downloader.update()
         await downloader.get()
 
-    assert Path("test/temp/sifas_stills.json").open().read() == test.mocks.stills_json
+    assert json.loads(Path("test/temp/sifas_stills.json").open().read()) == json.loads(
+        test.mocks.stills_json
+    )
     assert check_files("test/temp/SIFAS_Stills", test.mocks.still_files)
 
 
@@ -142,24 +149,6 @@ async def test_downloader_fail(mocker):
         await downloader.get()
 
     assert not Path("test/temp/SIFAS_Cards").exists()
-
-
-@pytest.mark.usefixtures("cleanup")
-@pytest.mark.asyncio
-async def test_downloader_update_2x(mocker):
-    downloader = mikan.downloader.Downloader(Path("test/temp"), mikan.classes.Card)
-
-    mocker.patch(
-        "mikan.html_parser.CardParser.get_item",
-        test.mocks.mock_card,
-    )
-    _, old_card = await test.mocks.mock_card(downloader, 2)
-    old_card.normal_url = "old"
-
-    async with downloader as downloader:
-        await downloader.update_if_needed(old_card)
-
-    assert downloader.updateables == [2]
 
 
 @pytest.mark.usefixtures("cleanup")

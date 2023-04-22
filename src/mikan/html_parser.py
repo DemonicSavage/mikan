@@ -21,7 +21,7 @@ from typing import Optional
 import aiohttp
 import bs4
 
-from mikan.classes import Card, Item, SIFCard, Still
+from mikan.classes import Card, Item, Still
 
 
 class ListParsingException(Exception):
@@ -56,13 +56,13 @@ class Parser(ABC):
             await self.get_html(self.get_url(num)), features="lxml"
         )
 
-    async def get_item(self, num: int) -> tuple[int, Item]:
+    async def get_item(self, num: int) -> tuple[int, list[str]]:
         self.soup = await self.soup_page(num)
 
         return await self.create_item(num)
 
     @abstractmethod
-    async def create_item(self, num: int) -> tuple[int, Item]:
+    async def create_item(self, num: int) -> tuple[int, list[str]]:
         pass
 
     @abstractmethod
@@ -90,7 +90,7 @@ class SIFListParser(Parser):
         await self.get_items()
         return len(self.items)
 
-    async def create_item(self, num: int) -> tuple[int, Item]:
+    async def create_item(self, num: int) -> tuple[int, list[str]]:
         pass
 
     def get_url(self, num: int) -> str:
@@ -101,27 +101,19 @@ class SIFCardParser(Parser):
     def get_url(self, num: int) -> str:
         pass
 
-    async def create_item(self, num: int) -> tuple[int, SIFCard]:
+    async def create_item(self, num: int) -> tuple[int, list[str]]:
         if isinstance(self.session, aiohttp.ClientSession):
             html = await self.session.get(f"https://schoolido.lu/api/cards/{num}/")
             json = await html.json()
 
-            new_card = SIFCard(
-                json["id"],
-                json["idol"]["name"],
-                json["rarity"],
-                json["attribute"],
-                json["idol"]["main_unit"],
-                json["idol"]["sub_unit"],
-                json["idol"]["year"],
-                json["card_image"],
-                json["card_idolized_image"],
-            )
-
-            return json["id"], new_card
+            return json["id"], [
+                card
+                for card in [json["card_image"], json["card_idolized_image"]]
+                if card
+            ]
         raise ItemParsingException()
 
-    async def get_item(self, num: int) -> tuple[int, SIFCard]:
+    async def get_item(self, num: int) -> tuple[int, list[str]]:
         return await self.create_item(num)
 
 
@@ -164,7 +156,7 @@ class ListParser(Parser):
 
         raise ListParsingException()
 
-    async def create_item(self, num: int) -> tuple[int, Item]:
+    async def create_item(self, num: int) -> tuple[int, list[str]]:
         pass
 
 
@@ -172,21 +164,9 @@ class CardParser(Parser):
     def get_url(self, num: int) -> str:
         return f"{Card.url_template}{num}"
 
-    async def create_item(self, num: int) -> tuple[int, Card]:
+    async def create_item(self, num: int) -> tuple[int, list[str]]:
         urls = self.get_item_image_urls()
-
-        idol = self.get_data_field("idol")
-        rarity = self.get_data_field("rarity")
-        attr = self.get_data_field("attribute")
-        unit = self.get_data_field("idol__i_unit")
-        if unit and unit.startswith("Nijigasaki"):  # pragma: no cover
-            unit = "Nijigasaki"
-        sub = self.get_data_field("idol__i_subunit")
-        year = self.get_data_field("idol__i_year")
-
-        new_card = Card(num, idol, rarity, attr, unit, sub, year, urls[0], urls[1])
-
-        return num, new_card
+        return num, [urls[0], urls[1]]
 
     def get_item_image_urls(self) -> tuple[str, str]:
         if self.soup and isinstance(
@@ -200,33 +180,14 @@ class CardParser(Parser):
 
         raise ItemParsingException()
 
-    def get_data_field(self, field: str) -> str:
-        if (
-            self.soup
-            and isinstance(
-                data_field := self.soup.find(attrs={"data-field": field}), bs4.Tag
-            )
-            and isinstance(
-                data := [
-                    x for x in data_field.get_text().strip().split("\n") if x != ""
-                ][1],
-                str,
-            )
-        ):
-            return data
-        raise ItemParsingException()
-
 
 class StillParser(Parser):
     def get_url(self, num: int) -> str:
         return f"{Still.url_template}{num}"
 
-    async def create_item(self, num: int) -> tuple[int, Still]:
+    async def create_item(self, num: int) -> tuple[int, list[str]]:
         url = self.get_item_image_url()
-
-        new_item = Still(num, url)
-
-        return num, new_item
+        return num, [url]
 
     def get_item_image_url(self) -> str:
         if self.soup and isinstance(

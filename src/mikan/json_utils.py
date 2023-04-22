@@ -18,9 +18,9 @@ from pathlib import Path
 from mikan.classes import Item
 
 
-def to_json(cards: dict[int, Item]) -> str:
+def to_json(cards: dict[int, list[str]]) -> str:
     return json.dumps(
-        {key: value.__dict__ for (key, value) in cards.items()},
+        {key: [card for card in value] for (key, value) in cards.items()},
         ensure_ascii=False,
         indent=4,
     )
@@ -33,17 +33,19 @@ def dump_to_file(json_obj: str, path: Path, img_type: type[Item]) -> None:
         file.write(json_obj)
 
 
-def read_json_file(path: Path, cards: dict[int, Item], img_type: type[Item]) -> None:
+def read_json_file(
+    path: Path, cards: dict[int, list[str]], img_type: type[Item]
+) -> None:
     card_path = path / img_type.json_filename
     with open(card_path, "r", encoding="utf-8") as file:
         data = file.read()
     card_data = json.loads(data)
 
-    for key, card in card_data.items():
-        cards[int(key)] = img_type(**card)
+    for key, item in card_data.items():
+        cards[int(key)] = [card for card in item]
 
 
-def load_cards(path: Path, cards: dict[int, Item], img_type: type[Item]) -> None:
+def load_cards(path: Path, cards: dict[int, list[str]], img_type: type[Item]) -> None:
     card_path = path / img_type.json_filename
     if card_path.is_file():
         read_json_file(path, cards, img_type)

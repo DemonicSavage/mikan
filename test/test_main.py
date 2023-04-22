@@ -15,7 +15,7 @@
 import pytest
 import builtins
 
-from mikan.main import Downloader, UnrecognizedArgumentException, run, config
+from mikan.main import Downloader, UnrecognizedArgumentException, run
 
 
 @pytest.mark.asyncio

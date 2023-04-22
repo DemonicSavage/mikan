@@ -101,20 +101,7 @@ async def test_sif_card_parser(mocker):
         return_value=awaitable_res(test.mocks.mock_sif_card_response),
     )
     async with Parser(mikan.html_parser.SIFCardParser()) as parser:
-        assert await parser.parser.get_item(98) == (
-            98,
-            mikan.classes.SIFCard(
-                98,
-                "Name",
-                "Rarity",
-                "Attribute",
-                "Unit",
-                "Subunit",
-                "Year",
-                "Normal",
-                "Idolized",
-            ),
-        )
+        assert await parser.parser.get_item(98) == (98, ["Normal", "Idolized"])
 
 
 @pytest.mark.asyncio
@@ -124,20 +111,7 @@ async def test_card_parser(mocker):
         return_value=awaitable_res(test.mocks.mock_card_response),
     )
     async with Parser(mikan.html_parser.CardParser()) as parser:
-        assert await parser.parser.get_item(98) == (
-            98,
-            mikan.classes.Card(
-                98,
-                "Name",
-                "Rarity",
-                "Attribute",
-                "Unit",
-                "Subunit",
-                "Year",
-                "Normal",
-                "Idolized",
-            ),
-        )
+        assert await parser.parser.get_item(98) == (98, ["Normal", "Idolized"])
 
 
 @pytest.mark.asyncio
@@ -147,13 +121,7 @@ async def test_still_parser(mocker):
         return_value=awaitable_res(test.mocks.mock_still_response),
     )
     async with Parser(mikan.html_parser.StillParser()) as parser:
-        assert await parser.parser.get_item(98) == (
-            98,
-            mikan.classes.Still(
-                98,
-                "URL",
-            ),
-        )
+        assert await parser.parser.get_item(98) == (98, ["URL"])
 
 
 @pytest.mark.asyncio
@@ -196,7 +164,7 @@ async def test_card_parser_fail(mocker):
 async def test_card_parser_data_fail(mocker):
     mocker.patch(
         "mikan.html_parser.aiohttp.ClientSession.get",
-        return_value=awaitable_res(test.mocks.mock_card_response_data_error),
+        return_value=awaitable_res(test.mocks.mock_card_response_error),
     )
     async with Parser(mikan.html_parser.CardParser()) as parser:
         with pytest.raises(mikan.html_parser.ItemParsingException) as ex:

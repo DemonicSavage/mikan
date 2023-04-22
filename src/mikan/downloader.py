@@ -23,19 +23,20 @@ from tqdm.asyncio import tqdm
 
 import mikan.html_parser as parser
 from mikan import json_utils
-from mikan.classes import Card, Item, SIFCard
+from mikan.classes import Item, SIFCard
 
 
 class Downloader:
     def __init__(self, path: Path, img_type: type[Item]):
-        self.path = path.expanduser()
-        self.objs: dict[int, Item] = {}
+        self.base_path = path.expanduser()
+        self.path = self.base_path / img_type.results_dir
+        self.objs: dict[int, list[str]] = {}
 
         self.img_type = img_type
 
         self.session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=None))
 
-        json_utils.load_cards(self.path, self.objs, self.img_type)
+        json_utils.load_cards(self.base_path, self.objs, self.img_type)
 
         self.list_parser: parser.ListParser | parser.SIFListParser = (
             parser.ListParser(self.img_type)
@@ -43,8 +44,6 @@ class Downloader:
             else parser.SIFListParser()
         )
         self.item_parser = getattr(parser, f"{img_type.__name__}Parser")()
-
-        self.updateables: list[int] = []
 
     async def __aenter__(self) -> Downloader:
         self.list_parser.set_session(self.session)
@@ -55,39 +54,22 @@ class Downloader:
     async def __aexit__(self, ext_type: None, value: None, trace: None) -> None:
         await self.session.close()
 
-    async def request_from_server(self, dest: Path, url: str) -> None:
-        res = await self.session.get(f"https:{url}")
-
-        if res.status == 200:
-            res_data = await res.read()
-            dest.parent.mkdir(exist_ok=True, parents=True)
-
-            with open(dest, "wb") as file:
-                file.write(res_data)
-
-    async def download_file(self, path: Path, item: Item, i: int) -> None:
+    async def download_file(self, item: str) -> None:
         try:
-            await self.request_from_server(path, item.get_urls()[i])
+            res = await self.session.get(f"https:{item}")
+            if res.status == 200:
+                res_data = await res.read()
+                self.path.mkdir(exist_ok=True, parents=True)
 
-            message = f"Downloaded item {item.key}"
-            if isinstance(item, Card):
-                message += f", {'idolized' if i == 1 else 'normal'}"
-            message += "."
+                with open(self.path / self.get_card_image_name(item), "wb") as file:
+                    file.write(res_data)
+
+                message = f"Downloaded item {self.get_card_image_name(item)}."
 
         except aiohttp.ClientError as e:
-            message = f"Couldn't download item {item.key}: {e}"
+            message = f"Couldn't download item {item}: {e}"
 
         tqdm.write(message)
-
-    async def update_if_needed(self, item: Item) -> None:
-        if item.needs_update():
-            _, updated_item = await self.item_parser.get_item(item.key)
-
-            if item.get_urls()[0] != updated_item.get_urls()[0]:
-                self.updateables.append(item.key)
-
-            for i in range(len(item.get_urls())):
-                item.set_url(i, updated_item.get_urls()[i])
 
     async def add_item_to_object_list(self, item: int) -> None:
         i, obj = await self.item_parser.get_item(item)
@@ -116,16 +98,18 @@ class Downloader:
 
             current_num += 1
 
+    def get_card_image_name(self, url: str) -> str:
+        return url.split("/")[-1]
+
     async def get(self) -> None:
         tasks: list[Coroutine[Any, Any, None]] = []
 
         for _, item in self.objs.items():
-            paths = item.get_paths(self.path)
             tasks.extend(
                 [
-                    self.download_file(path, item, i)
-                    for i, path in enumerate(paths)
-                    if not path.exists() or item.key in self.updateables
+                    self.download_file(card)
+                    for card in item
+                    if not (self.path / self.get_card_image_name(card)).exists()
                 ]
             )
 
@@ -135,13 +119,11 @@ class Downloader:
         print("Searching for new or missing items...")
         await self.get_cards_from_parser()
 
-        print("Checking if items can be updated to better resolution...")
-        for _, item in self.objs.items():
-            await self.update_if_needed(item)
-
         self.update_json_file()
         print("Updated items database.")
 
     def update_json_file(self) -> None:
         self.objs = dict(sorted(self.objs.items(), reverse=True))
-        json_utils.dump_to_file(json_utils.to_json(self.objs), self.path, self.img_type)
+        json_utils.dump_to_file(
+            json_utils.to_json(self.objs), self.base_path, self.img_type
+        )
