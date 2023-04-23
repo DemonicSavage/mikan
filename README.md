@@ -37,7 +37,7 @@ You can find this file in `$XDG_CONFIG_HOME/mikan` on Linux, `%APPDATA%\Local\mi
 
 ## Usage
 
-This is a command line script. It first creates (or updates) metadata files about the available cards (`cards.json`/`stills.json`/`sif.json`), and then downloads the image files themselves.
+This is a command line script. It first creates (or updates) a metadata file about the available cards (`items.json`), and then downloads the image files themselves.
 
 By default, running `mikan` without any arguments will create metadata and then download SIFAS cards. Using the `--stills` argument will download SIFAS stills instead, and `--sif` will download SIF cards.
 
