@@ -101,7 +101,7 @@ async def test_sif_card_parser(mocker):
         return_value=awaitable_res(test.mocks.mock_sif_card_response),
     )
     async with Parser(mikan.html_parser.SIFCardParser()) as parser:
-        assert await parser.parser.get_item(98) == (98, ["Normal", "Idolized"])
+        assert await parser.parser.get_item(98) == ("98", ["Normal", "Idolized"])
 
 
 @pytest.mark.asyncio
@@ -111,7 +111,7 @@ async def test_card_parser(mocker):
         return_value=awaitable_res(test.mocks.mock_card_response),
     )
     async with Parser(mikan.html_parser.CardParser()) as parser:
-        assert await parser.parser.get_item(98) == (98, ["Normal", "Idolized"])
+        assert await parser.parser.get_item(98) == ("98", ["Normal", "Idolized"])
 
 
 @pytest.mark.asyncio
@@ -121,7 +121,7 @@ async def test_still_parser(mocker):
         return_value=awaitable_res(test.mocks.mock_still_response),
     )
     async with Parser(mikan.html_parser.StillParser()) as parser:
-        assert await parser.parser.get_item(98) == (98, ["URL"])
+        assert await parser.parser.get_item(98) == ("98", ["URL"])
 
 
 @pytest.mark.asyncio

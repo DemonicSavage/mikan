@@ -15,37 +15,27 @@
 import json
 from pathlib import Path
 
-from mikan.classes import Item
 
-
-def to_json(cards: dict[int, list[str]]) -> str:
+def to_json(cards: dict[str, dict[str, list[str]]]) -> str:
     return json.dumps(
-        {key: [card for card in value] for (key, value) in cards.items()},
+        cards,
         ensure_ascii=False,
         indent=4,
     )
 
 
-def dump_to_file(json_obj: str, path: Path, img_type: type[Item]) -> None:
-    card_path = path / img_type.json_filename
-    card_path.parent.mkdir(exist_ok=True, parents=True)
-    with open(card_path, "w", encoding="utf-8") as file:
-        file.write(json_obj)
+def dump_to_file(cards: dict[str, dict[str, list[str]]], path: Path) -> None:
+    json_path = path / "items.json"
+    json_path.parent.mkdir(exist_ok=True, parents=True)
+    with open(json_path, "w", encoding="utf-8") as file:
+        file.write(to_json(cards))
 
 
-def read_json_file(
-    path: Path, cards: dict[int, list[str]], img_type: type[Item]
-) -> None:
-    card_path = path / img_type.json_filename
-    with open(card_path, "r", encoding="utf-8") as file:
-        data = file.read()
-    card_data = json.loads(data)
-
-    for key, item in card_data.items():
-        cards[int(key)] = [card for card in item]
-
-
-def load_cards(path: Path, cards: dict[int, list[str]], img_type: type[Item]) -> None:
-    card_path = path / img_type.json_filename
-    if card_path.is_file():
-        read_json_file(path, cards, img_type)
+def load_cards(cards: dict[str, dict[str, list[str]]], path: Path) -> None:
+    json_path = path / "items.json"
+    if json_path.is_file():
+        with open(json_path, "r", encoding="utf-8") as file:
+            data = file.read()
+            new_cards = json.loads(data)
+            for key, value in new_cards.items():
+                cards[key] = value

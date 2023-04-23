@@ -53,11 +53,13 @@ async def run(
         raise InvalidPathException(
             "The specified directory is not valid (is a regular file)."
         )
-    await card_searcher(data_dir, img_type)
+    await card_searcher(data_dir, path, img_type)
 
 
-async def card_searcher(path: Path, img_type: type[Item]) -> None:
-    async with Downloader(path, img_type) as downloader:
+async def card_searcher(
+    data_path: Path, config_path: Path, img_type: type[Item]
+) -> None:
+    async with Downloader(data_path, config_path, img_type) as downloader:
         await downloader.update()
         await downloader.get()
 

@@ -35,7 +35,9 @@ def check_files(path, answer):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_cards(mocker, cleanup):
-    downloader = mikan.downloader.Downloader(Path("test/temp"), mikan.classes.Card)
+    downloader = mikan.downloader.Downloader(
+        Path("test/temp"), Path("test/temp"), mikan.classes.Card
+    )
 
     mocker.patch(
         "mikan.html_parser.ListParser.get_num_pages",
@@ -57,8 +59,9 @@ async def test_downloader_cards(mocker, cleanup):
         await downloader.update()
         await downloader.get()
 
-    assert json.loads(Path("test/temp/sifas_cards.json").open().read()) == json.loads(
-        test.mocks.cards_json
+    assert (
+        json.loads(Path("test/temp/items.json").open().read())["SIFAS_Cards"]
+        == json.loads(test.mocks.cards_json)["SIFAS_Cards"]
     )
     assert check_files("test/temp/SIFAS_Cards", test.mocks.card_files)
 
@@ -66,7 +69,9 @@ async def test_downloader_cards(mocker, cleanup):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_sif_cards(mocker, cleanup):
-    downloader = mikan.downloader.Downloader(Path("test/temp"), mikan.classes.SIFCard)
+    downloader = mikan.downloader.Downloader(
+        Path("test/temp"), Path("test/temp"), mikan.classes.SIFCard
+    )
 
     mocker.patch(
         "mikan.html_parser.SIFListParser.get_num_pages",
@@ -88,8 +93,9 @@ async def test_downloader_sif_cards(mocker, cleanup):
         await downloader.update()
         await downloader.get()
 
-    assert json.loads(Path("test/temp/sif_cards.json").open().read()) == json.loads(
-        test.mocks.cards_json
+    assert (
+        json.loads(Path("test/temp/items.json").open().read())["SIF_Cards"]
+        == json.loads(test.mocks.cards_json)["SIF_Cards"]
     )
     assert check_files("test/temp/SIF_Cards", test.mocks.card_files)
 
@@ -97,7 +103,9 @@ async def test_downloader_sif_cards(mocker, cleanup):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_stills(mocker):
-    downloader = mikan.downloader.Downloader(Path("test/temp"), mikan.classes.Still)
+    downloader = mikan.downloader.Downloader(
+        Path("test/temp"), Path("test/temp"), mikan.classes.Still
+    )
 
     mocker.patch(
         "mikan.html_parser.ListParser.get_num_pages",
@@ -119,8 +127,9 @@ async def test_downloader_stills(mocker):
         await downloader.update()
         await downloader.get()
 
-    assert json.loads(Path("test/temp/sifas_stills.json").open().read()) == json.loads(
-        test.mocks.stills_json
+    assert (
+        json.loads(Path("test/temp/items.json").open().read())["SIFAS_Stills"]
+        == json.loads(test.mocks.cards_json)["SIFAS_Stills"]
     )
     assert check_files("test/temp/SIFAS_Stills", test.mocks.still_files)
 
@@ -128,7 +137,9 @@ async def test_downloader_stills(mocker):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_fail(mocker):
-    downloader = mikan.downloader.Downloader(Path("test/temp"), mikan.classes.Card)
+    downloader = mikan.downloader.Downloader(
+        Path("test/temp"), Path("test/temp"), mikan.classes.Card
+    )
 
     mocker.patch(
         "mikan.html_parser.ListParser.get_num_pages",
@@ -156,7 +167,7 @@ async def test_downloader_fail(mocker):
 async def test_downloader_card_load(mocker):
     directory = Path("test/temp")
     directory.mkdir(parents=True)
-    with open(directory / "sifas_cards.json", "w") as file:
+    with open(directory / "items.json", "w") as file:
         file.write(test.mocks.pre_json)
-    downloader = mikan.downloader.Downloader(directory, mikan.classes.Card)
-    assert list(downloader.objs.keys()) == [4]
+    downloader = mikan.downloader.Downloader(directory, directory, mikan.classes.Card)
+    assert set(downloader.objs.keys()) == set(["SIFAS_Cards"])

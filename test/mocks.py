@@ -15,26 +15,32 @@
 import json
 from test.utils import MockResponse
 
-import mikan.classes
-
 cards_json = """{
-    "6": ["//normal6.png", "//idolized6.png"],
-    "5": ["//normal5.png", "//idolized5.png"],
-    "4": ["//normal4.png", "//idolized4.png"],
-    "3": ["//normal3.png", "//idolized3.png"],
-    "2": ["//normal2.png", "//idolized2.png"],
-    "1": ["//normal1.png", "//idolized1.png"]
+    "SIFAS_Cards": {
+        "6": ["//normal6.png", "//idolized6.png"],
+        "5": ["//normal5.png", "//idolized5.png"],
+        "4": ["//normal4.png", "//idolized4.png"],
+        "3": ["//normal3.png", "//idolized3.png"],
+        "2": ["//normal2.png", "//idolized2.png"],
+        "1": ["//normal1.png", "//idolized1.png"]
+    },
+    "SIFAS_Stills": {
+        "6": ["//url6.png"],
+        "5": ["//url5.png"],
+        "4": ["//url4.png"],
+        "3": ["//url3.png"],
+        "2": ["//url2.png"],
+        "1": ["//url1.png"]
+    },
+    "SIF_Cards": {
+        "6": ["//normal6.png", "//idolized6.png"],
+        "5": ["//normal5.png", "//idolized5.png"],
+        "4": ["//normal4.png", "//idolized4.png"],
+        "3": ["//normal3.png", "//idolized3.png"],
+        "2": ["//normal2.png", "//idolized2.png"],
+        "1": ["//normal1.png", "//idolized1.png"]
+    }
 }"""
-
-stills_json = """{
-    "6": ["//url6.png"],
-    "5": ["//url5.png"],
-    "4": ["//url4.png"],
-    "3": ["//url3.png"],
-    "2": ["//url2.png"],
-    "1": ["//url1.png"]
-}"""
-
 
 card_files = [
     "idolized1.png",
@@ -187,15 +193,7 @@ mock_card_response_data_error = MockResponse(
 )
 
 pre_json = """{
-        "4": {
-        "key": 4,
-        "idol": "Name4",
-        "rarity": "Rarity4",
-        "attribute": "Attribute4",
-        "unit": "Unit4",
-        "subunit": "Subunit4",
-        "year": "Year4",
-        "normal_url": "//normal4.png",
-        "idolized_url": "//idolized4.png"
-        }
+    "SIFAS_Cards": {
+        "4": ["//normal4.png", "//idolized4.png"]
+    }
     }"""

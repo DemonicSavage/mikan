@@ -21,7 +21,6 @@ class Card:
     results_dir: ClassVar = "SIFAS_Cards"
     list_url_template: ClassVar = "https://idol.st/ajax/allstars/cards/?page="
     url_template: ClassVar = "https://idol.st/ajax/allstars/card/"
-    json_filename: ClassVar = "sifas_cards.json"
 
 
 @dataclass
@@ -29,7 +28,6 @@ class Still:
     results_dir: ClassVar = "SIFAS_Stills"
     list_url_template: ClassVar = "https://idol.st/ajax/allstars/stills/?page="
     url_template: ClassVar = "https://idol.st/ajax/allstars/still/"
-    json_filename: ClassVar = "sifas_stills.json"
 
 
 @dataclass
@@ -37,7 +35,6 @@ class SIFCard:
     results_dir: ClassVar = "SIF_Cards"
     list_url_template: ClassVar = ""
     url_template: ClassVar = ""
-    json_filename: ClassVar = "sif_cards.json"
 
 
 Item: TypeAlias = Card | Still | SIFCard

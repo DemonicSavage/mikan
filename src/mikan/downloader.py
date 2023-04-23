@@ -27,16 +27,19 @@ from mikan.classes import Item, SIFCard
 
 
 class Downloader:
-    def __init__(self, path: Path, img_type: type[Item]):
-        self.base_path = path.expanduser()
+    def __init__(self, data_path: Path, config_path: Path, img_type: type[Item]):
+        self.base_path = data_path.expanduser()
         self.path = self.base_path / img_type.results_dir
-        self.objs: dict[int, list[str]] = {}
+        self.objs: dict[str, dict[str, list[str]]] = {}
+
+        self.config_path = config_path
 
         self.img_type = img_type
+        self.objs[self.img_type.results_dir] = {}
 
         self.session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=None))
 
-        json_utils.load_cards(self.base_path, self.objs, self.img_type)
+        json_utils.load_cards(self.objs, self.config_path)
 
         self.list_parser: parser.ListParser | parser.SIFListParser = (
             parser.ListParser(self.img_type)
@@ -73,7 +76,7 @@ class Downloader:
 
     async def add_item_to_object_list(self, item: int) -> None:
         i, obj = await self.item_parser.get_item(item)
-        self.objs[i] = obj
+        self.objs[self.img_type.results_dir][i] = obj
         print(f"Getting item {i}.")
 
     async def get_page(self, idx: int) -> list[None]:
@@ -81,7 +84,7 @@ class Downloader:
         page = await self.list_parser.get_page(idx)
 
         for item in page:
-            if item not in self.objs:
+            if str(item) not in self.objs[self.img_type.results_dir]:
                 tasks.append(self.add_item_to_object_list(item))
 
         res: list[None] = await asyncio.gather(*tasks, return_exceptions=False)
@@ -104,7 +107,7 @@ class Downloader:
     async def get(self) -> None:
         tasks: list[Coroutine[Any, Any, None]] = []
 
-        for _, item in self.objs.items():
+        for _, item in self.objs[self.img_type.results_dir].items():
             tasks.extend(
                 [
                     self.download_file(card)
@@ -123,7 +126,7 @@ class Downloader:
         print("Updated items database.")
 
     def update_json_file(self) -> None:
-        self.objs = dict(sorted(self.objs.items(), reverse=True))
-        json_utils.dump_to_file(
-            json_utils.to_json(self.objs), self.base_path, self.img_type
+        self.objs[self.img_type.results_dir] = dict(
+            sorted(self.objs[self.img_type.results_dir].items(), reverse=True)
         )
+        json_utils.dump_to_file(self.objs, self.config_path)
