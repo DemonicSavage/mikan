@@ -133,7 +133,7 @@ class ListParser:
         if nums:
             return sorted(nums, reverse=True)
 
-        raise ListParsingException()
+        raise ListParsingException("An error occured while getting a page.")
 
     async def get_num_pages(self, data: aiohttp.ClientResponse) -> int:
         pattern = re.compile(r"=(\d+)")
@@ -146,7 +146,7 @@ class ListParser:
             if match := pattern.search(string):
                 return int(match.group(1))
 
-        raise ListParsingException()
+        raise ListParsingException("An error occured while getting number of pages.")
 
 
 class CardParser:
@@ -162,7 +162,7 @@ class CardParser:
             if match := pattern.search(first.split("/")[-1]):
                 return match.group(1), [first, second]
 
-        raise ItemParsingException()
+        raise ItemParsingException("An error occured while getting a card.")
 
 
 class StillParser:
@@ -177,4 +177,4 @@ class StillParser:
             if match := pattern.search(url.split("/")[-1]):
                 return match.group(1), [url]
 
-        raise ItemParsingException()
+        raise ItemParsingException("An error occured while getting a still.")

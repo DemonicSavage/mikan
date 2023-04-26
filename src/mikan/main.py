@@ -67,8 +67,10 @@ async def card_searcher(
 def main() -> None:  # pragma: no cover
     if sys.platform.startswith("win"):
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
-    asyncio.run(run())
+    try:
+        asyncio.run(run())
+    except Exception as e:
+        print(f"Error: {e}")
 
 
 if __name__ == "__main__":  # pragma: no cover
