@@ -161,8 +161,6 @@ class CardParser:
 
             if match := pattern.search(first.split("/")[-1]):
                 return match.group(1), [first, second]
-            else:
-                print(first.split("/")[-1])
 
         raise ItemParsingException()
 
