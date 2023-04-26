@@ -77,14 +77,6 @@ async def mock_get_items(self):
 mock_objs = json.loads(cards_json)
 
 
-async def mock_card(self, _):
-    return n, [f"//normal{n}.png", f"//idolized{n}.png"]
-
-
-async def mock_still(self, _):
-    return n, [f"//url{n}.png"]
-
-
 mock_file = MockResponse(
     bytes(0x2A),
     200,
