@@ -42,7 +42,7 @@ card_types = [
 @pytest.mark.parametrize("card_class, card_key, card_mock", card_types)
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
-async def test_downloader_cards(mocker, cleanup, card_class, card_key, card_mock):
+async def test_downloader_cards(mocker, card_class, card_key, card_mock):
     downloader = mikan.downloader.Downloader(
         Path("test/temp"), Path("test/temp"), card_class
     )
@@ -89,7 +89,7 @@ async def test_downloader_fail(mocker):
 
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
-async def test_downloader_card_load(mocker):
+async def test_downloader_card_load():
     directory = Path("test/temp")
     directory.mkdir(parents=True)
     with open(directory / "items.json", "w") as file:

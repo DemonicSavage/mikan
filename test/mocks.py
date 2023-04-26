@@ -70,7 +70,7 @@ still_files = [
 mock_num_pages = 3
 
 
-async def mock_get_items(self):
+async def mock_get_items(self, _=None):
     pass
 
 
