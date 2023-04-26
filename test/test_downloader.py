@@ -32,106 +32,38 @@ def check_files(path, answer):
     return set(files) == set(answer)
 
 
+card_types = [
+    (mikan.classes.Card, "SIFAS_Cards", test.mocks.card_files),
+    (mikan.classes.SIFCard, "SIF_Cards", test.mocks.card_files),
+    (mikan.classes.Still, "SIFAS_Stills", test.mocks.still_files),
+]
+
+
+@pytest.mark.parametrize("card_class, card_key, card_mock", card_types)
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
-async def test_downloader_cards(mocker, cleanup):
+async def test_downloader_cards(mocker, cleanup, card_class, card_key, card_mock):
     downloader = mikan.downloader.Downloader(
-        Path("test/temp"), Path("test/temp"), mikan.classes.Card
-    )
-
-    mocker.patch(
-        "mikan.html_parser.ListParser.get_num_pages",
-        return_value=test.mocks.mock_num_pages,
+        Path("test/temp"), Path("test/temp"), card_class
     )
     mocker.patch(
-        "mikan.html_parser.ListParser.get_page",
-        test.mocks.mock_page,
-    )
-    mocker.patch(
-        "mikan.html_parser.CardParser.get_item",
-        test.mocks.mock_card,
+        "mikan.html_parser.Parser.get_cards_from_pages",
+        test.mocks.mock_get_items,
     )
     mocker.patch(
         "aiohttp.ClientSession.get", return_value=awaitable_res(test.mocks.mock_file)
     )
 
     async with downloader as downloader:
+        downloader.objs = test.mocks.mock_objs
         await downloader.update()
         await downloader.get()
 
     assert (
-        json.loads(Path("test/temp/items.json").open().read())["SIFAS_Cards"]
-        == json.loads(test.mocks.cards_json)["SIFAS_Cards"]
+        json.loads(Path("test/temp/items.json").open().read())[card_key]
+        == json.loads(test.mocks.cards_json)[card_key]
     )
-    assert check_files("test/temp/SIFAS_Cards", test.mocks.card_files)
-
-
-@pytest.mark.usefixtures("cleanup")
-@pytest.mark.asyncio
-async def test_downloader_sif_cards(mocker, cleanup):
-    downloader = mikan.downloader.Downloader(
-        Path("test/temp"), Path("test/temp"), mikan.classes.SIFCard
-    )
-
-    mocker.patch(
-        "mikan.html_parser.SIFListParser.get_num_pages",
-        return_value=test.mocks.mock_num_pages,
-    )
-    mocker.patch(
-        "mikan.html_parser.SIFListParser.get_page",
-        test.mocks.mock_page,
-    )
-    mocker.patch(
-        "mikan.html_parser.SIFCardParser.get_item",
-        test.mocks.mock_card,
-    )
-    mocker.patch(
-        "aiohttp.ClientSession.get", return_value=awaitable_res(test.mocks.mock_file)
-    )
-
-    async with downloader as downloader:
-        await downloader.update()
-        await downloader.get()
-
-    assert (
-        json.loads(Path("test/temp/items.json").open().read())["SIF_Cards"]
-        == json.loads(test.mocks.cards_json)["SIF_Cards"]
-    )
-    assert check_files("test/temp/SIF_Cards", test.mocks.card_files)
-
-
-@pytest.mark.usefixtures("cleanup")
-@pytest.mark.asyncio
-async def test_downloader_stills(mocker):
-    downloader = mikan.downloader.Downloader(
-        Path("test/temp"), Path("test/temp"), mikan.classes.Still
-    )
-
-    mocker.patch(
-        "mikan.html_parser.ListParser.get_num_pages",
-        return_value=test.mocks.mock_num_pages,
-    )
-    mocker.patch(
-        "mikan.html_parser.ListParser.get_page",
-        test.mocks.mock_page,
-    )
-    mocker.patch(
-        "mikan.html_parser.StillParser.get_item",
-        test.mocks.mock_still,
-    )
-    mocker.patch(
-        "aiohttp.ClientSession.get", return_value=awaitable_res(test.mocks.mock_file)
-    )
-
-    async with downloader as downloader:
-        await downloader.update()
-        await downloader.get()
-
-    assert (
-        json.loads(Path("test/temp/items.json").open().read())["SIFAS_Stills"]
-        == json.loads(test.mocks.cards_json)["SIFAS_Stills"]
-    )
-    assert check_files("test/temp/SIFAS_Stills", test.mocks.still_files)
+    assert check_files(f"test/temp/{card_key}", card_mock)
 
 
 @pytest.mark.usefixtures("cleanup")
@@ -142,20 +74,13 @@ async def test_downloader_fail(mocker):
     )
 
     mocker.patch(
-        "mikan.html_parser.ListParser.get_num_pages",
-        return_value=test.mocks.mock_num_pages,
-    )
-    mocker.patch(
-        "mikan.html_parser.ListParser.get_page",
-        test.mocks.mock_page,
-    )
-    mocker.patch(
-        "mikan.html_parser.CardParser.get_item",
-        test.mocks.mock_card,
+        "mikan.html_parser.Parser.get_cards_from_pages",
+        test.mocks.mock_get_items,
     )
     mocker.patch("aiohttp.ClientSession.get", side_effect=aiohttp.ClientError("Err"))
 
     async with downloader as downloader:
+        downloader.objs = test.mocks.mock_objs
         await downloader.update()
         await downloader.get()
 

@@ -70,15 +70,18 @@ still_files = [
 mock_num_pages = 3
 
 
-async def mock_page(self, n):
-    return [[1, 2, 3], [4, 5, 6], []][n - 1]
+async def mock_get_items(self):
+    pass
 
 
-async def mock_card(self, n):
+mock_objs = json.loads(cards_json)
+
+
+async def mock_card(self, _):
     return n, [f"//normal{n}.png", f"//idolized{n}.png"]
 
 
-async def mock_still(self, n):
+async def mock_still(self, _):
     return n, [f"//url{n}.png"]
 
 
@@ -140,8 +143,8 @@ mock_num_pages_response = MockResponse(
 mock_card_response = MockResponse(
     """
     <div class="top-item">
-    <a href="Normal"></a>
-    <a href="Idolized"></a>
+    <a href="98Normal"></a>
+    <a href="98Idolized"></a>
     </div>
 
     <div>
@@ -170,7 +173,7 @@ mock_card_response = MockResponse(
 mock_still_response = MockResponse(
     """
     <div class='top-item'>
-        <a href='URL'></a>
+        <a href='98URL'></a>
     </div>
     """,
     200,

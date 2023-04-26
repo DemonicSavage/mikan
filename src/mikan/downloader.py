@@ -14,7 +14,6 @@
 
 from __future__ import annotations
 
-import asyncio
 from pathlib import Path
 from typing import Any, Coroutine
 
@@ -23,7 +22,7 @@ from tqdm.asyncio import tqdm
 
 import mikan.html_parser as parser
 from mikan import json_utils
-from mikan.classes import Item, SIFCard
+from mikan.classes import Item
 
 
 class Downloader:
@@ -41,17 +40,9 @@ class Downloader:
 
         json_utils.load_cards(self.objs, self.config_path)
 
-        self.list_parser: parser.ListParser | parser.SIFListParser = (
-            parser.ListParser(self.img_type)
-            if self.img_type != SIFCard
-            else parser.SIFListParser()
-        )
-        self.item_parser = getattr(parser, f"{img_type.__name__}Parser")()
+        self.parser = parser.Parser(self.objs, self.img_type, self.session)
 
     async def __aenter__(self) -> Downloader:
-        self.list_parser.set_session(self.session)
-        self.item_parser.set_session(self.session)
-
         return self
 
     async def __aexit__(self, ext_type: None, value: None, trace: None) -> None:
@@ -74,33 +65,6 @@ class Downloader:
 
         tqdm.write(message)
 
-    async def add_item_to_object_list(self, item: int) -> None:
-        i, obj = await self.item_parser.get_item(item)
-        self.objs[self.img_type.results_dir][i] = obj
-        print(f"Getting item {i}.")
-
-    async def get_page(self, idx: int) -> list[None]:
-        tasks: list[Coroutine[Any, Any, None]] = []
-        page = await self.list_parser.get_page(idx)
-
-        for item in page:
-            if str(item) not in self.objs[self.img_type.results_dir]:
-                tasks.append(self.add_item_to_object_list(item))
-
-        res: list[None] = await asyncio.gather(*tasks, return_exceptions=False)
-
-        return res
-
-    async def get_cards_from_parser(self) -> None:
-        num_pages = await self.list_parser.get_num_pages() + 1
-        current_num = 1
-        for _ in range(1, num_pages):
-            current_page = await self.get_page(current_num)
-            if not current_page and self.img_type != SIFCard:
-                break
-
-            current_num += 1
-
     def get_card_image_name(self, url: str) -> str:
         return url.split("/")[-1]
 
@@ -120,7 +84,7 @@ class Downloader:
 
     async def update(self) -> None:
         print("Searching for new or missing items...")
-        await self.get_cards_from_parser()
+        await self.parser.get_cards_from_pages()
 
         self.update_json_file()
         print("Updated items database.")

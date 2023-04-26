@@ -33,8 +33,8 @@ class Still:
 @dataclass
 class SIFCard:
     results_dir: ClassVar = "SIF_Cards"
-    list_url_template: ClassVar = ""
-    url_template: ClassVar = ""
+    list_url_template: ClassVar = "https://schoolido.lu/api/cardids/"
+    url_template: ClassVar = "https://schoolido.lu/api/cards/"
 
 
 Item: TypeAlias = Card | Still | SIFCard
