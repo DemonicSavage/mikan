@@ -38,3 +38,12 @@ to (leave empty to default to ~/Idol_Cards): """
 
     cfg.read(cfg_file)
     return Path(cfg["Paths"]["data_dir"])
+
+
+def get_cookie(path: Path) -> str:
+    cfg_file = path / "config.cfg"
+    try:
+        cfg.read(cfg_file)
+        return cfg["Other"]["cookie"]
+    except KeyError:
+        return ""

@@ -37,4 +37,11 @@ class SIFCard:
     url_template: ClassVar = "https://schoolido.lu/api/cards/"
 
 
-Item: TypeAlias = Card | Still | SIFCard
+@dataclass
+class SIF2Card:
+    results_dir: ClassVar = "SIF2_Cards"
+    list_url_template: ClassVar = "https://idol.st/ajax/SIF2/cards/?page="
+    url_template: ClassVar = "https://idol.st/ajax/SIF2/card/"
+
+
+Item: TypeAlias = Card | Still | SIFCard | SIF2Card

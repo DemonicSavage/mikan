@@ -26,7 +26,9 @@ from mikan.classes import Item
 
 
 class Downloader:
-    def __init__(self, data_path: Path, config_path: Path, img_type: type[Item]):
+    def __init__(
+        self, data_path: Path, config_path: Path, img_type: type[Item], cookie: str = ""
+    ):
         self.base_path = data_path.expanduser()
         self.path = self.base_path / img_type.results_dir
         self.objs: dict[str, dict[str, list[str]]] = {}
@@ -36,7 +38,9 @@ class Downloader:
         self.img_type = img_type
         self.objs[self.img_type.results_dir] = {}
 
-        self.session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=None))
+        self.session = aiohttp.ClientSession(
+            timeout=aiohttp.ClientTimeout(total=None), cookies={"sessionid": cookie}
+        )
 
         json_utils.load_cards(self.objs, self.config_path)
 
