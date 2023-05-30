@@ -91,8 +91,8 @@ class Parser:
         i, obj = await self.item_parser.create_item(
             await self.request_url_data(f"{self.img_type.url_template}{item}")
         )
-        self.objs[self.img_type.results_dir][i] = obj
-        print(f"Getting item {i}.")
+        self.objs[self.img_type.results_dir][str(item)] = obj
+        print(f"Getting item {item}.")
 
 
 class SIFListParser:
