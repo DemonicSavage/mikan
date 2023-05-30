@@ -165,7 +165,7 @@ mock_card_response = MockResponse(
 mock_still_response = MockResponse(
     """
     <div class='top-item'>
-        <a href='98URL'></a>
+        <a href='98Still'></a>
     </div>
     """,
     200,

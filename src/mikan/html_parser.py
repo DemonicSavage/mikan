@@ -168,7 +168,7 @@ class CardParser:
 class StillParser:
     async def create_item(self, data: aiohttp.ClientResponse) -> tuple[str, list[str]]:
         page = bs4.BeautifulSoup(await data.text(), features="lxml")
-        pattern = re.compile(r"(\d+)")
+        pattern = re.compile(r"(.+)Still")
 
         if isinstance(top_item := page.find(class_="top-item"), bs4.Tag):
             links = top_item.find_all("a")

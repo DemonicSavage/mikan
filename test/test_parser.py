@@ -55,7 +55,11 @@ card_types = [
         test.mocks.mock_sif_card_response,
         ("98", ["Normal", "Idolized"]),
     ),
-    (mikan.html_parser.StillParser, test.mocks.mock_still_response, ("98", ["98URL"])),
+    (
+        mikan.html_parser.StillParser,
+        test.mocks.mock_still_response,
+        ("98", ["98Still"]),
+    ),
 ]
 
 card_error_types = [
