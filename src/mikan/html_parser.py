@@ -88,7 +88,7 @@ class Parser:
             current_num += 1
 
     async def add_item_to_object_list(self, item: int) -> None:
-        i, obj = await self.item_parser.create_item(
+        obj = await self.item_parser.create_item(
             await self.request_url_data(f"{self.img_type.url_template}{item}")
         )
         self.objs[self.img_type.results_dir][str(item)] = obj
@@ -109,9 +109,9 @@ class SIFListParser:
 
 
 class SIFCardParser:
-    async def create_item(self, data: aiohttp.ClientResponse) -> tuple[str, list[str]]:
+    async def create_item(self, data: aiohttp.ClientResponse) -> list[str]:
         json = await data.json()
-        return str(json["id"]), [
+        return [
             card for card in [json["card_image"], json["card_idolized_image"]] if card
         ]
 
@@ -150,31 +150,27 @@ class ListParser:
 
 
 class CardParser:
-    async def create_item(self, data: aiohttp.ClientResponse) -> tuple[str, list[str]]:
+    async def create_item(self, data: aiohttp.ClientResponse) -> list[str]:
         page = bs4.BeautifulSoup(await data.text(), features="lxml")
-        pattern = re.compile(r"(\d+)")
 
         if isinstance(top_item := page.find(class_="top-item"), bs4.Tag):
             links = top_item.find_all("a")
             first: str = links[0].get("href")
             second: str = links[1].get("href")
 
-            if match := pattern.search(first.split("/")[-1]):
-                return match.group(1), [first, second]
+            return [first, second]
 
         raise ItemParsingException("An error occured while getting a card.")
 
 
 class StillParser:
-    async def create_item(self, data: aiohttp.ClientResponse) -> tuple[str, list[str]]:
+    async def create_item(self, data: aiohttp.ClientResponse) -> list[str]:
         page = bs4.BeautifulSoup(await data.text(), features="lxml")
-        pattern = re.compile(r"(.+)Still")
 
         if isinstance(top_item := page.find(class_="top-item"), bs4.Tag):
             links = top_item.find_all("a")
             url: str = links[0].get("href")
 
-            if match := pattern.search(url.split("/")[-1]):
-                return match.group(1), [url]
+            return [url]
 
         raise ItemParsingException("An error occured while getting a still.")

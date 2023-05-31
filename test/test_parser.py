@@ -48,17 +48,17 @@ card_types = [
     (
         mikan.html_parser.CardParser,
         test.mocks.mock_card_response,
-        ("98", ["98Normal", "98Idolized"]),
+        ["98Normal", "98Idolized"],
     ),
     (
         mikan.html_parser.SIFCardParser,
         test.mocks.mock_sif_card_response,
-        ("98", ["Normal", "Idolized"]),
+        ["Normal", "Idolized"],
     ),
     (
         mikan.html_parser.StillParser,
         test.mocks.mock_still_response,
-        ("98", ["98Still"]),
+        ["98Still"],
     ),
 ]
 
@@ -75,7 +75,7 @@ async def test_parser(mocker):
     )
     mocker.patch(
         "mikan.html_parser.CardParser.create_item",
-        return_value=("1", ["//normal1.png", "//idolized1.png"]),
+        return_value=["//normal1.png", "//idolized1.png"],
     )
     mocker.patch("mikan.html_parser.ListParser.get_num_pages", return_value=2),
     mocker.patch("mikan.html_parser.ListParser.get_page", return_value=[1]),
