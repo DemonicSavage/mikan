@@ -38,9 +38,6 @@ class MockContent:
     def __init__(self, text):
         self._text = text
 
-    def __anext__(self):
-        return None
-
     def __aiter__(self):
         return Huh(self._text)
 
