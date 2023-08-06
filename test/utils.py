@@ -15,7 +15,7 @@
 import asyncio
 
 
-class Lmao:
+class MockIterator:
     def __init__(self, text):
         self._text = text
 
@@ -23,15 +23,7 @@ class Lmao:
         raise StopAsyncIteration
 
     def __aiter__(self):
-        return self._text
-
-
-class Huh:
-    def __init__(self, text):
-        self._text = text
-
-    def __aiter__(self):
-        return Lmao(self._text)
+        return MockIterator(self._text)
 
 
 class MockContent:
@@ -39,7 +31,7 @@ class MockContent:
         self._text = text
 
     def iter_any(self):
-        return Huh(self._text)
+        return MockIterator(self._text)
 
 
 class MockResponse:
