@@ -56,11 +56,12 @@ class Downloader:
         try:
             res = await self.session.get(f"https:{item}")
             if res.status == 200:
-                res_data = await res.read()
+                # res_data = await res.read()
                 self.path.mkdir(exist_ok=True, parents=True)
 
                 with open(self.path / self.get_card_image_name(item), "wb") as file:
-                    file.write(res_data)
+                    async for chunk in res.content.iter_any():
+                        file.write(chunk)
 
                 message = f"Downloaded item {self.get_card_image_name(item)}."
 

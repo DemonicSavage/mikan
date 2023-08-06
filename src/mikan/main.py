@@ -25,6 +25,8 @@ from mikan import config
 from mikan.classes import Card, Item, SIF2Card, SIFCard, Still
 from mikan.downloader import Downloader
 
+MIKAN_PATH = Path(platformdirs.user_config_dir("mikan", ensure_exists=True))
+
 
 class UnrecognizedArgumentException(Exception):
     pass
@@ -34,9 +36,7 @@ class InvalidPathException(Exception):
     pass
 
 
-async def run(
-    path: Path = Path(platformdirs.user_config_dir("mikan", ensure_exists=True))
-) -> None:
+async def run(path: Path = MIKAN_PATH) -> None:
     img_type: Type[Card | Still | SIFCard | SIF2Card] = Card
     if len(sys.argv) > 1:
         if sys.argv[1] == "--stills":

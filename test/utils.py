@@ -15,15 +15,52 @@
 import asyncio
 
 
+class Lmao:
+    def __init__(self, text):
+        self._text = text
+
+    def __anext__(self):
+        raise StopAsyncIteration
+
+    def __aiter__(self):
+        return self._text
+
+    def iter_any(self):
+        return self.__aiter__()
+
+
+class Huh:
+    def __init__(self, text):
+        self._text = text
+
+    def __anext__(self):
+        return None
+
+    def __aiter__(self):
+        return Lmao(self._text)
+
+
+class MockContent:
+    def __init__(self, text):
+        self._text = text
+
+    def __anext__(self):
+        return None
+
+    def __aiter__(self):
+        return Huh(self._text)
+
+    def iter_any(self):
+        return Huh(self._text)
+
+
 class MockResponse:
     def __init__(self, text, status):
         self._text = text
         self.status = status
+        self.content = MockContent(self._text)
 
     async def text(self):
-        return self._text
-
-    async def read(self):
         return self._text
 
     async def __aexit__(self, exc_type, exc, tb):
