@@ -15,22 +15,21 @@
 import asyncio
 
 
-class MockIterator:
-    def __init__(self, text):
-        self._text = text
-
-    def __anext__(self):
-        raise StopAsyncIteration
-
-    def __aiter__(self):
-        return MockIterator(self._text)
-
-
 class MockContent:
     def __init__(self, text):
         self._text = text
 
     def iter_any(self):
+        class MockIterator:
+            def __init__(self, text):
+                self._text = text
+
+            def __anext__(self):
+                raise StopAsyncIteration
+
+            def __aiter__(self):
+                return MockIterator(self._text)
+
         return MockIterator(self._text)
 
 
