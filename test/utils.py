@@ -25,9 +25,6 @@ class Lmao:
     def __aiter__(self):
         return self._text
 
-    def iter_any(self):
-        return self.__aiter__()
-
 
 class Huh:
     def __init__(self, text):
