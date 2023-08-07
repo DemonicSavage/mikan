@@ -23,12 +23,17 @@ class MockContent:
         class MockIterator:
             def __init__(self, text):
                 self._text = text
+                self.i = 0
 
-            def __anext__(self):
-                raise StopAsyncIteration
+            async def __anext__(self):
+                if self.i == 0:
+                    self.i += 1
+                    return self._text
+                else:
+                    raise StopAsyncIteration
 
             def __aiter__(self):
-                return MockIterator(self._text)
+                return self
 
         return MockIterator(self._text)
 
