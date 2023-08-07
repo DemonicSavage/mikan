@@ -39,7 +39,9 @@ class Downloader:
         self.objs[self.img_type.results_dir] = {}
 
         self.session = aiohttp.ClientSession(
-            timeout=aiohttp.ClientTimeout(total=None), cookies={"sessionid": cookie}
+            connector=aiohttp.TCPConnector(limit=8),
+            timeout=aiohttp.ClientTimeout(total=None),
+            cookies={"sessionid": cookie},
         )
 
         json_utils.load_cards(self.objs, self.config_path)
