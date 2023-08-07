@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import asyncio
 import re
-from typing import Any, Coroutine
+from typing import Any
 
 import aiohttp
 import bs4
@@ -56,7 +56,6 @@ class Parser:
         return await self.session.get(url)
 
     async def get_page(self, idx: int) -> list[None]:
-        tasks: list[Coroutine[Any, Any, None]] = []
         data = (
             await self.request_url_data(f"{self.img_type.list_url_template}{idx}")
             if self.img_type != SIFCard
