@@ -64,9 +64,11 @@ class Parser:
         )
         page = await self.list_parser.get_page(data)
 
-        for item in page:
-            if str(item) not in self.objs[self.img_type.results_dir]:
-                tasks.append(self.add_item_to_object_list(item))
+        tasks = [
+            self.add_item_to_object_list(item)
+            for item in page
+            if str(item) not in self.objs[self.img_type.results_dir]
+        ]
 
         res: list[None] = await asyncio.gather(*tasks, return_exceptions=False)
 

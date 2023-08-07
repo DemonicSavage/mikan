@@ -75,7 +75,7 @@ class Downloader:
     async def get(self) -> None:
         tasks: list[Coroutine[Any, Any, None]] = []
 
-        for _, item in self.objs[self.img_type.results_dir].items():
+        for item in self.objs[self.img_type.results_dir].values():
             tasks.extend(
                 [
                     self.download_file(card)
