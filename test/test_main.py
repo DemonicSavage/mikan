@@ -63,11 +63,11 @@ async def test_main_sif_cards(mocker, tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_main_sif2_cards(mocker, tmp_path):
+async def test_main_sifas_cards(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     mocker.patch.object(builtins, "input", lambda _: "test_dir")
-    mocker.patch("mikan.main.sys.argv", ["ex", "--sif2"])
+    mocker.patch("mikan.main.sys.argv", ["ex", "--sifas"])
     await run(tmp_path)
     update.assert_called()
     get.assert_called()

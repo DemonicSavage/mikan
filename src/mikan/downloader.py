@@ -21,13 +21,17 @@ import aiohttp
 from tqdm.asyncio import tqdm
 
 import mikan.html_parser as parser
-from mikan import json_utils
+from mikan import config, json_utils
 from mikan.classes import Item
 
 
 class Downloader:
     def __init__(
-        self, data_path: Path, config_path: Path, img_type: type[Item], cookie: str = ""
+        self,
+        data_path: Path,
+        config_path: Path,
+        img_type: type[Item],
+        cfg: config.Config,
     ):
         self.base_path = data_path.expanduser()
         self.path = self.base_path / img_type.results_dir
@@ -39,9 +43,11 @@ class Downloader:
         self.objs[self.img_type.results_dir] = {}
 
         self.session = aiohttp.ClientSession(
-            connector=aiohttp.TCPConnector(limit=10, limit_per_host=10),
+            connector=aiohttp.TCPConnector(
+                limit=cfg.max_conn, limit_per_host=cfg.max_conn
+            ),
             timeout=aiohttp.ClientTimeout(total=None),
-            cookies={"sessionid": cookie},
+            cookies={"sessionid": cfg.cookie},
         )
 
         json_utils.load_cards(self.objs, self.config_path)

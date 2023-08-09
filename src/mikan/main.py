@@ -37,33 +37,34 @@ class InvalidPathException(Exception):
 
 
 async def run(path: Path = MIKAN_PATH) -> None:
-    img_type: Type[Card | Still | SIFCard | SIF2Card] = Card
+    img_type: Type[Card | Still | SIFCard | SIF2Card] = SIF2Card
     if len(sys.argv) > 1:
         if sys.argv[1] == "--stills":
             img_type = Still
         elif sys.argv[1] == "--sif":
             img_type = SIFCard
-        elif sys.argv[1] == "--sif2":
-            img_type = SIF2Card
+        elif sys.argv[1] == "--sifas":
+            img_type = Card
         else:
             raise UnrecognizedArgumentException(
-                "Only recognized arguments are --stills, --sif and --sif2."
+                "Only recognized arguments are --stills, --sif and --sifas."
             )
 
-    data_dir = config.get_data_dir(path)
+    cfg = config.Config(path)
+
+    data_dir = cfg.data_dir
     if data_dir.exists() and not data_dir.is_dir():  # pragma: no cover
         raise InvalidPathException(
             "The specified directory is not valid (is a regular file)."
         )
 
-    cookie = config.get_cookie(path)
-    await card_searcher(data_dir, path, img_type, cookie)
+    await card_searcher(data_dir, path, img_type, cfg)
 
 
 async def card_searcher(
-    data_path: Path, config_path: Path, img_type: type[Item], cookie: str
+    data_path: Path, config_path: Path, img_type: type[Item], cfg: config.Config
 ) -> None:
-    async with Downloader(data_path, config_path, img_type, cookie) as downloader:
+    async with Downloader(data_path, config_path, img_type, cfg) as downloader:
         await downloader.update()
         await downloader.get()
 

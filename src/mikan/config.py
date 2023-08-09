@@ -13,17 +13,26 @@
 # You should have received a copy of the GNU General Public License
 
 import configparser
-import os
 from pathlib import Path
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-cfg = configparser.ConfigParser()
 
+class Config:
+    def __init__(self, path: Path):
+        self._cfg_parser = configparser.ConfigParser()
+        self._cfg_file = path / "config.cfg"
 
-def get_data_dir(path: Path) -> Path:
-    cfg_file = path / "config.cfg"
-    if not cfg_file.exists():
-        cfg["Paths"] = {}
+        if not self._cfg_file.exists():
+            self._create_initial_config()
+
+        self._cfg_parser.read(self._cfg_file)
+
+        self.data_dir = Path(self._cfg_parser.get("Paths", "data_dir"))
+        self.cookie = self._cfg_parser.get("Other", "cookie", fallback="")
+        self.max_conn = self._cfg_parser.getint("Other", "max_connections", fallback=10)
+
+    def _create_initial_config(self) -> None:
+        self._cfg_parser.add_section("Paths")
+        # self._cfg_parser.add_section("Other")
 
         selected_dir = input(
             """Please enter the directory cards should be downloaded \
@@ -32,18 +41,8 @@ to (leave empty to default to ~/Idol_Cards): """
         if selected_dir.strip() == "":
             selected_dir = "~/Idol_Cards"
 
-        cfg["Paths"]["data_dir"] = str(Path(selected_dir).expanduser().resolve())
-        with open(cfg_file, "w") as file:
-            cfg.write(file)
-
-    cfg.read(cfg_file)
-    return Path(cfg["Paths"]["data_dir"])
-
-
-def get_cookie(path: Path) -> str:
-    cfg_file = path / "config.cfg"
-    try:
-        cfg.read(cfg_file)
-        return cfg["Other"]["cookie"]
-    except KeyError:
-        return ""
+        self._cfg_parser["Paths"]["data_dir"] = str(
+            Path(selected_dir).expanduser().resolve()
+        )
+        with open(self._cfg_file, "w") as file:
+            self._cfg_parser.write(file)

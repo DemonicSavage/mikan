@@ -32,6 +32,12 @@ def check_files(path, answer):
     return set(files) == set(answer)
 
 
+class MockConfig:
+    cookie = ""
+    data_dir = ""
+    max_conn = 1
+
+
 card_types = [
     (mikan.classes.Card, "SIFAS_Cards", test.mocks.card_files),
     (mikan.classes.SIFCard, "SIF_Cards", test.mocks.card_files),
@@ -44,7 +50,7 @@ card_types = [
 @pytest.mark.asyncio
 async def test_downloader_cards(mocker, card_class, card_key, card_mock):
     downloader = mikan.downloader.Downloader(
-        Path("test/temp"), Path("test/temp"), card_class
+        Path("test/temp"), Path("test/temp"), card_class, MockConfig()
     )
     mocker.patch(
         "mikan.html_parser.Parser.get_cards_from_pages",
@@ -70,7 +76,7 @@ async def test_downloader_cards(mocker, card_class, card_key, card_mock):
 @pytest.mark.asyncio
 async def test_downloader_fail(mocker):
     downloader = mikan.downloader.Downloader(
-        Path("test/temp"), Path("test/temp"), mikan.classes.Card
+        Path("test/temp"), Path("test/temp"), mikan.classes.Card, MockConfig()
     )
 
     mocker.patch(
@@ -94,5 +100,7 @@ async def test_downloader_card_load():
     directory.mkdir(parents=True)
     with open(directory / "items.json", "w") as file:
         file.write(test.mocks.pre_json)
-    downloader = mikan.downloader.Downloader(directory, directory, mikan.classes.Card)
+    downloader = mikan.downloader.Downloader(
+        directory, directory, mikan.classes.Card, MockConfig()
+    )
     assert set(downloader.objs.keys()) == set(["SIFAS_Cards"])
