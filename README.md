@@ -39,9 +39,12 @@ The configuration file currently has the following options:
 [Paths]
 data_dir = ~/Idol_Cards
 
-# sessionid cookie (required only for SIF2 support, optional otherwise)
+# Other options
 [Other]
+# Formerly needed for SIF2 support
 cookie = your_sessionid_cookie
+# Maximum concurrent connections, default is 10
+max_connections = 10
 ```
 
 You can find this file in `$XDG_CONFIG_HOME/mikan` on Linux, `%APPDATA%\Local\mikan\mikan` on Windows, or `/Library/Application Support/mikan` on macOS.
@@ -50,9 +53,10 @@ You can find this file in `$XDG_CONFIG_HOME/mikan` on Linux, `%APPDATA%\Local\mi
 
 This is a command line script. It first creates (or updates) a metadata file about the available cards (`items.json`), and then downloads the image files themselves.
 
-By default, running `mikan` without any arguments will create metadata and then download SIFAS cards. Using the `--stills` argument will download SIFAS stills instead, and `--sif` and `--sif2` will download cards for SIF or SIF2 respectively.
+By default, running `mikan` without any arguments will create metadata and then download SIF2 cards. Using the `--stills` argument will download SIFAS stills instead, and `--sif` and `--sifas` will download cards from SIF or SIFAS respectively.
 
-Note that for now, you need a `sessionid` cookie for an Idol Story account with beta-testing enabled for SIF2 support.
+~~Note that for now, you need a `sessionid` cookie for an Idol Story account with beta-testing enabled for SIF2 support.~~
+This is no longer the case.
 
 Running it for the first time will prompt you for the directory cards and stills should be downloaded to.
 
