@@ -20,7 +20,7 @@ SIF cards are downloaded from [School Idol Tomodachi](https://schoolido.lu/).
 
 ## Installation
 
-To install Mikan, just `pip install mikan-card-downloader`.
+To install Mikan, just run `pip install mikan-card-downloader`.
 
 ## Building by source
 
