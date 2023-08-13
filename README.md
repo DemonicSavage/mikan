@@ -12,7 +12,7 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DemonicSavage_sifas_card_downloader&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=DemonicSavage_sifas_card_downloader)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DemonicSavage_sifas_card_downloader&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=DemonicSavage_sifas_card_downloader)
 
-Mikan automatically downloads cards from the games Love Live! School Idol Festival 2 (SIF2), and Love Live! School Idol Festival (SIF), and Love Live! School Idol Festival ALL STARS (SIFAS).
+Mikan automatically downloads cards from the games Love Live! School Idol Festival 2 (SIF2), Love Live! School Idol Festival (SIF), and Love Live! School Idol Festival ALL STARS (SIFAS).
 
 SIF2 cards, SIFAS cards and SIFAS stills are downloaded from [Idol Story](https://idol.st/).
 
