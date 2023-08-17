@@ -28,9 +28,7 @@ Still = CardType(
     "https://idol.st/ajax/allstars/still/",
 )
 
-SIFCard = CardType(
-    "SIF_Cards", "https://schoolido.lu/api/cardids/", "https://schoolido.lu/api/cards/"
-)
+SIFCard = CardType("SIF_Cards", "https://schoolido.lu/api/cardids/", "https://schoolido.lu/api/cards/")
 
 SIF2Card = CardType(
     "SIF2_Cards",

@@ -57,16 +57,12 @@ class Parser:
 
     async def get_page(self, idx: int) -> list[None]:
         data = (
-            await self.request_url_data(f"{self.img_type.list_url_template}{idx}")
-            if self.img_type != SIFCard
-            else idx
+            await self.request_url_data(f"{self.img_type.list_url_template}{idx}") if self.img_type != SIFCard else idx
         )
         page = await self.list_parser.get_page(data)
 
         tasks = [
-            self.add_item_to_object_list(item)
-            for item in page
-            if str(item) not in self.objs[self.img_type.results_dir]
+            self.add_item_to_object_list(item) for item in page if str(item) not in self.objs[self.img_type.results_dir]
         ]
 
         res: list[None] = await asyncio.gather(*tasks, return_exceptions=False)
@@ -75,10 +71,7 @@ class Parser:
 
     async def get_cards_from_pages(self) -> None:
         num_pages = (
-            await self.list_parser.get_num_pages(
-                await self.request_url_data(self.img_type.list_url_template)
-            )
-            + 1
+            await self.list_parser.get_num_pages(await self.request_url_data(self.img_type.list_url_template)) + 1
         )
         current_num = 1
         for _ in range(1, num_pages):
@@ -89,9 +82,7 @@ class Parser:
             current_num += 1
 
     async def add_item_to_object_list(self, item: int) -> None:
-        obj = await self.item_parser.create_item(
-            await self.request_url_data(f"{self.img_type.url_template}{item}")
-        )
+        obj = await self.item_parser.create_item(await self.request_url_data(f"{self.img_type.url_template}{item}"))
         self.objs[self.img_type.results_dir][str(item)] = obj
         print(f"Getting item {item}.")
 
@@ -112,9 +103,7 @@ class SIFListParser:
 class SIFCardParser:
     async def create_item(self, data: aiohttp.ClientResponse) -> list[str]:
         json = await data.json()
-        return [
-            card for card in [json["card_image"], json["card_idolized_image"]] if card
-        ]
+        return [card for card in [json["card_image"], json["card_idolized_image"]] if card]
 
 
 class ListParser:

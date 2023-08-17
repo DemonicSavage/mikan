@@ -171,21 +171,11 @@ mock_still_response = MockResponse(
     200,
 )
 
-mock_still_response_error = MockResponse(
-    mock_still_response._text.replace("top-item", "top-tem"), 200
-)
-mock_card_response_error = MockResponse(
-    mock_card_response._text.replace("top-item", "top-tem"), 200
-)
-mock_list_response_error = MockResponse(
-    mock_list_response._text.replace("top-item", "top-tem"), 200
-)
-mock_num_pages_response_error = MockResponse(
-    mock_list_response._text.replace("pagination", "paginaion"), 200
-)
-mock_card_response_data_error = MockResponse(
-    mock_card_response._text.replace("idol", "idl"), 200
-)
+mock_still_response_error = MockResponse(mock_still_response._text.replace("top-item", "top-tem"), 200)
+mock_card_response_error = MockResponse(mock_card_response._text.replace("top-item", "top-tem"), 200)
+mock_list_response_error = MockResponse(mock_list_response._text.replace("top-item", "top-tem"), 200)
+mock_num_pages_response_error = MockResponse(mock_list_response._text.replace("pagination", "paginaion"), 200)
+mock_card_response_data_error = MockResponse(mock_card_response._text.replace("idol", "idl"), 200)
 
 pre_json = """{
     "SIFAS_Cards": {

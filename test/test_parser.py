@@ -70,9 +70,7 @@ card_error_types = [
 
 @pytest.mark.asyncio
 async def test_parser(mocker):
-    parser = mikan.html_parser.Parser(
-        {"SIFAS_Cards": {}}, mikan.classes.Card, aiohttp.ClientSession()
-    )
+    parser = mikan.html_parser.Parser({"SIFAS_Cards": {}}, mikan.classes.Card, aiohttp.ClientSession())
     mocker.patch(
         "mikan.html_parser.CardParser.create_item",
         return_value=["//normal1.png", "//idolized1.png"],

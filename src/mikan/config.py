@@ -41,8 +41,6 @@ to (leave empty to default to ~/Idol_Cards): """
         if selected_dir.strip() == "":
             selected_dir = "~/Idol_Cards"
 
-        self._cfg_parser["Paths"]["data_dir"] = str(
-            Path(selected_dir).expanduser().resolve()
-        )
+        self._cfg_parser["Paths"]["data_dir"] = str(Path(selected_dir).expanduser().resolve())
         with open(self._cfg_file, "w") as file:
             self._cfg_parser.write(file)

@@ -43,9 +43,7 @@ class Downloader:
         self.objs[self.img_type.results_dir] = {}
 
         self.session = aiohttp.ClientSession(
-            connector=aiohttp.TCPConnector(
-                limit=cfg.max_conn, limit_per_host=cfg.max_conn
-            ),
+            connector=aiohttp.TCPConnector(limit=cfg.max_conn, limit_per_host=cfg.max_conn),
             timeout=aiohttp.ClientTimeout(total=None),
             cookies={"sessionid": cfg.cookie},
         )
@@ -85,11 +83,7 @@ class Downloader:
 
         for item in self.objs[self.img_type.results_dir].values():
             tasks.extend(
-                [
-                    self.download_file(card)
-                    for card in item
-                    if not (self.path / self.get_card_image_name(card)).exists()
-                ]
+                [self.download_file(card) for card in item if not (self.path / self.get_card_image_name(card)).exists()]
             )
 
         await tqdm.gather(*tasks, disable=len(tasks) == 0)
@@ -102,7 +96,5 @@ class Downloader:
         print("Updated items database.")
 
     def update_json_file(self) -> None:
-        self.objs[self.img_type.results_dir] = dict(
-            sorted(self.objs[self.img_type.results_dir].items(), reverse=True)
-        )
+        self.objs[self.img_type.results_dir] = dict(sorted(self.objs[self.img_type.results_dir].items(), reverse=True))
         json_utils.dump_to_file(self.objs, self.config_path)

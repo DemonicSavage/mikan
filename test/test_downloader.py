@@ -49,16 +49,12 @@ card_types = [
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_cards(mocker, card_class, card_key, card_mock):
-    downloader = mikan.downloader.Downloader(
-        Path("test/temp"), Path("test/temp"), card_class, MockConfig()
-    )
+    downloader = mikan.downloader.Downloader(Path("test/temp"), Path("test/temp"), card_class, MockConfig())
     mocker.patch(
         "mikan.html_parser.Parser.get_cards_from_pages",
         test.mocks.mock_get_items,
     )
-    mocker.patch(
-        "aiohttp.ClientSession.get", return_value=awaitable_res(test.mocks.mock_file)
-    )
+    mocker.patch("aiohttp.ClientSession.get", return_value=awaitable_res(test.mocks.mock_file))
 
     async with downloader as downloader:
         downloader.objs = test.mocks.mock_objs
@@ -66,8 +62,7 @@ async def test_downloader_cards(mocker, card_class, card_key, card_mock):
         await downloader.get()
 
     assert (
-        json.loads(Path("test/temp/items.json").open().read())[card_key]
-        == json.loads(test.mocks.cards_json)[card_key]
+        json.loads(Path("test/temp/items.json").open().read())[card_key] == json.loads(test.mocks.cards_json)[card_key]
     )
     assert check_files(f"test/temp/{card_key}", card_mock)
 
@@ -75,9 +70,7 @@ async def test_downloader_cards(mocker, card_class, card_key, card_mock):
 @pytest.mark.usefixtures("cleanup")
 @pytest.mark.asyncio
 async def test_downloader_fail(mocker):
-    downloader = mikan.downloader.Downloader(
-        Path("test/temp"), Path("test/temp"), mikan.classes.Card, MockConfig()
-    )
+    downloader = mikan.downloader.Downloader(Path("test/temp"), Path("test/temp"), mikan.classes.Card, MockConfig())
 
     mocker.patch(
         "mikan.html_parser.Parser.get_cards_from_pages",
@@ -100,7 +93,5 @@ async def test_downloader_card_load():
     directory.mkdir(parents=True)
     with open(directory / "items.json", "w") as file:
         file.write(test.mocks.pre_json)
-    downloader = mikan.downloader.Downloader(
-        directory, directory, mikan.classes.Card, MockConfig()
-    )
+    downloader = mikan.downloader.Downloader(directory, directory, mikan.classes.Card, MockConfig())
     assert set(downloader.objs.keys()) == set(["SIFAS_Cards"])

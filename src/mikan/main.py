@@ -45,24 +45,18 @@ async def run(path: Path = MIKAN_PATH) -> None:
         elif sys.argv[1] == "--sifas":
             img_type = Card
         else:
-            raise UnrecognizedArgumentException(
-                "Only recognized arguments are --stills, --sif and --sifas."
-            )
+            raise UnrecognizedArgumentException("Only recognized arguments are --stills, --sif and --sifas.")
 
     cfg = config.Config(path)
 
     data_dir = cfg.data_dir
     if data_dir.exists() and not data_dir.is_dir():  # pragma: no cover
-        raise InvalidPathException(
-            "The specified directory is not valid (is a regular file)."
-        )
+        raise InvalidPathException("The specified directory is not valid (is a regular file).")
 
     await card_searcher(data_dir, path, img_type, cfg)
 
 
-async def card_searcher(
-    data_path: Path, config_path: Path, img_type: CardType, cfg: config.Config
-) -> None:
+async def card_searcher(data_path: Path, config_path: Path, img_type: CardType, cfg: config.Config) -> None:
     async with Downloader(data_path, config_path, img_type, cfg) as downloader:
         await downloader.update()
         await downloader.get()
