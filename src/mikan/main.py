@@ -17,12 +17,11 @@
 import asyncio
 import sys
 from pathlib import Path
-from typing import Type
 
 import platformdirs
 
 from mikan import config
-from mikan.classes import Card, Item, SIF2Card, SIFCard, Still
+from mikan.classes import Card, CardType, SIF2Card, SIFCard, Still
 from mikan.downloader import Downloader
 
 MIKAN_PATH = Path(platformdirs.user_config_dir("mikan", ensure_exists=True))
@@ -37,7 +36,7 @@ class InvalidPathException(Exception):
 
 
 async def run(path: Path = MIKAN_PATH) -> None:
-    img_type: Type[Card | Still | SIFCard | SIF2Card] = SIF2Card
+    img_type: CardType = SIF2Card
     if len(sys.argv) > 1:
         if sys.argv[1] == "--stills":
             img_type = Still
@@ -62,7 +61,7 @@ async def run(path: Path = MIKAN_PATH) -> None:
 
 
 async def card_searcher(
-    data_path: Path, config_path: Path, img_type: type[Item], cfg: config.Config
+    data_path: Path, config_path: Path, img_type: CardType, cfg: config.Config
 ) -> None:
     async with Downloader(data_path, config_path, img_type, cfg) as downloader:
         await downloader.update()

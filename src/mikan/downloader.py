@@ -22,7 +22,7 @@ from tqdm.asyncio import tqdm
 
 import mikan.html_parser as parser
 from mikan import config, json_utils
-from mikan.classes import Item
+from mikan.classes import CardType
 
 
 class Downloader:
@@ -30,7 +30,7 @@ class Downloader:
         self,
         data_path: Path,
         config_path: Path,
-        img_type: type[Item],
+        img_type: CardType,
         cfg: config.Config,
     ):
         self.base_path = data_path.expanduser()

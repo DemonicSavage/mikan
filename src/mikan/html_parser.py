@@ -21,7 +21,7 @@ from typing import Any
 import aiohttp
 import bs4
 
-from mikan.classes import Item, SIFCard, Still
+from mikan.classes import CardType, SIFCard, Still
 
 
 class ListParsingException(Exception):
@@ -36,7 +36,7 @@ class Parser:
     def __init__(
         self,
         objs: dict[str, dict[str, list[str]]],
-        img_type: type[Item],
+        img_type: CardType,
         session: aiohttp.ClientSession,
     ) -> None:
         self.session: aiohttp.ClientSession = session

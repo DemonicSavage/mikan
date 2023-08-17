@@ -12,36 +12,28 @@
 
 # You should have received a copy of the GNU General Public License
 
-from dataclasses import dataclass
-from typing import ClassVar, TypeAlias
+from collections import namedtuple
 
+CardType = namedtuple("CardType", ["results_dir", "list_url_template", "url_template"])
 
-@dataclass
-class Card:
-    results_dir: ClassVar = "SIFAS_Cards"
-    list_url_template: ClassVar = "https://idol.st/ajax/allstars/cards/?page="
-    url_template: ClassVar = "https://idol.st/ajax/allstars/card/"
+Card = CardType(
+    "SIFAS_Cards",
+    "https://idol.st/ajax/allstars/cards/?page=",
+    "https://idol.st/ajax/allstars/card/",
+)
 
+Still = CardType(
+    "SIFAS_Stills",
+    "https://idol.st/ajax/allstars/stills/?page=",
+    "https://idol.st/ajax/allstars/still/",
+)
 
-@dataclass
-class Still:
-    results_dir: ClassVar = "SIFAS_Stills"
-    list_url_template: ClassVar = "https://idol.st/ajax/allstars/stills/?page="
-    url_template: ClassVar = "https://idol.st/ajax/allstars/still/"
+SIFCard = CardType(
+    "SIF_Cards", "https://schoolido.lu/api/cardids/", "https://schoolido.lu/api/cards/"
+)
 
-
-@dataclass
-class SIFCard:
-    results_dir: ClassVar = "SIF_Cards"
-    list_url_template: ClassVar = "https://schoolido.lu/api/cardids/"
-    url_template: ClassVar = "https://schoolido.lu/api/cards/"
-
-
-@dataclass
-class SIF2Card:
-    results_dir: ClassVar = "SIF2_Cards"
-    list_url_template: ClassVar = "https://idol.st/ajax/SIF2/cards/?page="
-    url_template: ClassVar = "https://idol.st/ajax/SIF2/card/"
-
-
-Item: TypeAlias = Card | Still | SIFCard | SIF2Card
+SIF2Card = CardType(
+    "SIF2_Cards",
+    "https://idol.st/ajax/SIF2/cards/?page=",
+    "https://idol.st/ajax/SIF2/card/",
+)
