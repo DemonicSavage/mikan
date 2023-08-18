@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mikan-card-downloader"
-version = "2.1.0"
+version = "2.1.1"
 description = "Downloads cards and stills from SIFAS and SIF."
 authors = ["DemonicSavage"]
 license = "GPLv3"
