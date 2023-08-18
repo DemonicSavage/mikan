@@ -12,8 +12,6 @@
 
 # You should have received a copy of the GNU General Public License
 
-from __future__ import annotations
-
 from pathlib import Path
 from typing import Any, Coroutine
 
@@ -46,7 +44,7 @@ class Downloader:
 
         self.parser = parser.Parser(self.objs, self.img_type, self.session)
 
-    async def __aenter__(self) -> Downloader:
+    async def __aenter__(self) -> "Downloader":
         return self
 
     async def __aexit__(self, ext_type: None, value: None, trace: None) -> None:
