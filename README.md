@@ -20,7 +20,11 @@ SIF cards are downloaded from [School Idol Tomodachi](https://schoolido.lu/).
 
 ## Installation
 
-To install Mikan, just run `pip install mikan-card-downloader`.
+To install Mikan, you need to install `pipx` ([see instructions](https://pypa.github.io/pipx/)) and then run `pipx install mikan-card-downloader`.
+
+To update it, run `pipx upgrade mikan-card-downoader`.
+
+Installing through `pip` is also possible, but not recommended, and since Python 3.11 requires the `--break-system-packages` flag.
 
 ## Building by source
 
