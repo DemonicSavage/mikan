@@ -34,7 +34,10 @@ class InvalidPathException(Exception):
 
 
 def parse_arguments(args: list[str]) -> argparse.Namespace:
-    arg_parser = argparse.ArgumentParser(description="Downloads cards from idol.st and schoolido.lu.")
+    arg_parser = argparse.ArgumentParser(
+        description="Downloads cards from idol.st and schoolido.lu. By default "
+        "(with no arguments passed), it downloads SIF 2 cards."
+    )
     arg_parser.set_defaults(type=SIF2Card)
 
     group = arg_parser.add_mutually_exclusive_group()
