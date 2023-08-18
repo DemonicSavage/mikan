@@ -32,7 +32,6 @@ class Config:
 
     def _create_initial_config(self) -> None:
         self._cfg_parser.add_section("Paths")
-        # self._cfg_parser.add_section("Other")
 
         selected_dir = input(
             """Please enter the directory cards should be downloaded \
