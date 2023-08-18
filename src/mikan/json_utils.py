@@ -17,11 +17,7 @@ from pathlib import Path
 
 
 def to_json(cards: dict[str, dict[str, list[str]]]) -> str:
-    return json.dumps(
-        cards,
-        ensure_ascii=False,
-        indent=4,
-    )
+    return json.dumps(cards, ensure_ascii=False, indent=4)
 
 
 def dump_to_file(cards: dict[str, dict[str, list[str]]], path: Path) -> None:

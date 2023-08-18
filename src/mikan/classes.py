@@ -16,22 +16,7 @@ from collections import namedtuple
 
 CardType = namedtuple("CardType", ["results_dir", "list_url_template", "url_template"])
 
-Card = CardType(
-    "SIFAS_Cards",
-    "https://idol.st/ajax/allstars/cards/?page=",
-    "https://idol.st/ajax/allstars/card/",
-)
-
-Still = CardType(
-    "SIFAS_Stills",
-    "https://idol.st/ajax/allstars/stills/?page=",
-    "https://idol.st/ajax/allstars/still/",
-)
-
+Card = CardType("SIFAS_Cards", "https://idol.st/ajax/allstars/cards/?page=", "https://idol.st/ajax/allstars/card/")
+Still = CardType("SIFAS_Stills", "https://idol.st/ajax/allstars/stills/?page=", "https://idol.st/ajax/allstars/still/")
 SIFCard = CardType("SIF_Cards", "https://schoolido.lu/api/cardids/", "https://schoolido.lu/api/cards/")
-
-SIF2Card = CardType(
-    "SIF2_Cards",
-    "https://idol.st/ajax/SIF2/cards/?page=",
-    "https://idol.st/ajax/SIF2/card/",
-)
+SIF2Card = CardType("SIF2_Cards", "https://idol.st/ajax/SIF2/cards/?page=", "https://idol.st/ajax/SIF2/card/")

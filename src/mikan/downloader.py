@@ -26,13 +26,7 @@ from mikan.classes import CardType
 
 
 class Downloader:
-    def __init__(
-        self,
-        data_path: Path,
-        config_path: Path,
-        img_type: CardType,
-        cfg: config.Config,
-    ):
+    def __init__(self, data_path: Path, config_path: Path, img_type: CardType, cfg: config.Config):
         self.base_path = data_path.expanduser()
         self.path = self.base_path / img_type.results_dir
         self.objs: dict[str, dict[str, list[str]]] = {}

@@ -34,10 +34,7 @@ class ItemParsingException(Exception):
 
 class Parser:
     def __init__(
-        self,
-        objs: dict[str, dict[str, list[str]]],
-        img_type: CardType,
-        session: aiohttp.ClientSession,
+        self, objs: dict[str, dict[str, list[str]]], img_type: CardType, session: aiohttp.ClientSession
     ) -> None:
         self.session: aiohttp.ClientSession = session
         self.img_type = img_type
