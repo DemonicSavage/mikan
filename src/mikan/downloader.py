@@ -56,27 +56,25 @@ class Downloader:
             if res.status == 200:
                 self.path.mkdir(exist_ok=True, parents=True)
 
-                with open(self.path / self.get_card_image_name(item), "wb") as file:
+                with open(self.path / self.get_name(item), "wb") as file:
                     async for chunk in res.content.iter_any():
                         file.write(chunk)
 
-                message = f"Downloaded item {self.get_card_image_name(item)}."
+                message = f"Downloaded item {self.get_name(item)}."
 
         except aiohttp.ClientError as e:
             message = f"Couldn't download item {item}: {e}"
 
         tqdm.write(message)
 
-    def get_card_image_name(self, url: str) -> str:
+    def get_name(self, url: str) -> str:
         return url.split("/")[-1]
 
     async def get(self) -> None:
         tasks: list[Coroutine[Any, Any, None]] = []
 
         for item in self.objs[self.img_type.results_dir].values():
-            tasks.extend(
-                [self.download_file(card) for card in item if not (self.path / self.get_card_image_name(card)).exists()]
-            )
+            tasks.extend([self.download_file(card) for card in item if not (self.path / self.get_name(card)).exists()])
 
         await tqdm.gather(*tasks, disable=len(tasks) == 0)
 
