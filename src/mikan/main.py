@@ -42,12 +42,12 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
 
     group = arg_parser.add_mutually_exclusive_group()
 
+    arg_parser.add_argument(
+        "-v", "--version", action="version", version=f"Mikan {importlib.metadata.version(MIKAN_PACKAGE)}"
+    )
     group.add_argument("--sifas", action="store_const", help="Downloads SIFAS cards.", dest="type", const=Card)
     group.add_argument("--stills", action="store_const", help="Downloads SIFAS stills.", dest="type", const=Still)
     group.add_argument("--sif", action="store_const", help="Downloads SIF cards.", dest="type", const=SIFCard)
-    group.add_argument(
-        "-v", "--version", action="version", version=f"Mikan {importlib.metadata.version(MIKAN_PACKAGE)}"
-    )
 
     return arg_parser.parse_args(args)
 
@@ -57,7 +57,7 @@ async def run(arguments: argparse.Namespace, path: Path = MIKAN_PATH) -> None:
 
     data_dir = cfg.data_dir
     if data_dir.exists() and not data_dir.is_dir():  # pragma: no cover
-        raise InvalidPathException("The specified directory is not valid (is a regular file).")
+        raise InvalidPathException("The specified directory is not valid (it's a regular file).")
 
     await card_searcher(data_dir, path, arguments.type, cfg)
 
