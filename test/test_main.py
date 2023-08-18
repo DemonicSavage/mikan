@@ -12,10 +12,12 @@
 
 # You should have received a copy of the GNU General Public License
 
+import argparse
 import pytest
 import builtins
 
-from mikan.main import Downloader, UnrecognizedArgumentException, run
+from mikan.main import Downloader, run, parse_arguments
+from mikan.classes import Card, SIF2Card, SIFCard, Still
 
 
 @pytest.mark.asyncio
@@ -23,10 +25,14 @@ async def test_main(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     mocker.patch.object(builtins, "input", lambda _: "test_dir")
-    mocker.patch("mikan.main.sys.argv", [])
-    await run(tmp_path)
+    await run(argparse.Namespace(type=SIF2Card), tmp_path)
     update.assert_called()
     get.assert_called()
+
+
+def test_argparser():
+    args = parse_arguments([])
+    assert args.type == SIF2Card
 
 
 @pytest.mark.asyncio
@@ -34,8 +40,7 @@ async def test_main_default_dir(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     mocker.patch.object(builtins, "input", lambda _: "\n")
-    mocker.patch("mikan.main.sys.argv", [])
-    await run(tmp_path)
+    await run(argparse.Namespace(type=SIF2Card), tmp_path)
     update.assert_called()
     get.assert_called()
 
@@ -45,8 +50,7 @@ async def test_main_stills(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     mocker.patch.object(builtins, "input", lambda _: "test_dir")
-    mocker.patch("mikan.main.sys.argv", ["ex", "--stills"])
-    await run(tmp_path)
+    await run(argparse.Namespace(type=Still), tmp_path)
     update.assert_called()
     get.assert_called()
 
@@ -56,8 +60,7 @@ async def test_main_sif_cards(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     mocker.patch.object(builtins, "input", lambda _: "test_dir")
-    mocker.patch("mikan.main.sys.argv", ["ex", "--sif"])
-    await run(tmp_path)
+    await run(argparse.Namespace(type=SIFCard), tmp_path)
     update.assert_called()
     get.assert_called()
 
@@ -67,12 +70,12 @@ async def test_main_sifas_cards(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     mocker.patch.object(builtins, "input", lambda _: "test_dir")
-    mocker.patch("mikan.main.sys.argv", ["ex", "--sifas"])
-    await run(tmp_path)
+    await run(argparse.Namespace(type=Card), tmp_path)
     update.assert_called()
     get.assert_called()
 
 
+"""
 @pytest.mark.asyncio
 async def test_main_fail(mocker, tmp_path):
     mocker.patch.object(Downloader, "update")
@@ -82,3 +85,4 @@ async def test_main_fail(mocker, tmp_path):
     with pytest.raises(UnrecognizedArgumentException) as ex:
         await run(tmp_path)
     assert ex.type == UnrecognizedArgumentException
+"""
