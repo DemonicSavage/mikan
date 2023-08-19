@@ -12,8 +12,6 @@
 
 # You should have received a copy of the GNU General Public License
 
-from __future__ import annotations
-
 import asyncio
 import re
 from typing import Any
