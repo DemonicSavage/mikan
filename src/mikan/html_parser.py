@@ -12,12 +12,14 @@
 
 # You should have received a copy of the GNU General Public License
 
+from __future__ import annotations
+
 import asyncio
 import re
 from typing import Any
 
-import aiohttp
 import bs4
+from aiohttp import ClientResponse, ClientSession
 
 from mikan.classes import CardType, SIFCard, Still
 
@@ -31,10 +33,8 @@ class ItemParsingException(Exception):
 
 
 class Parser:
-    def __init__(
-        self, objs: dict[str, dict[str, list[str]]], img_type: CardType, session: aiohttp.ClientSession
-    ) -> None:
-        self.session: aiohttp.ClientSession = session
+    def __init__(self, objs: dict[str, dict[str, list[str]]], img_type: CardType, session: ClientSession) -> None:
+        self.session: ClientSession = session
         self.img_type = img_type
         self.objs = objs
 
@@ -47,21 +47,27 @@ class Parser:
         elif self.img_type == Still:
             self.item_parser = StillParser()
 
-    async def from_url(self, url: str) -> aiohttp.ClientResponse:
+    async def request_url_data(self, url: str) -> ClientResponse:
         return await self.session.get(url)
 
     async def get_page(self, idx: int) -> list[None]:
-        data = await self.from_url(f"{self.img_type.list_url_template}{idx}") if self.img_type != SIFCard else idx
+        data = (
+            await self.request_url_data(f"{self.img_type.list_url_template}{idx}") if self.img_type != SIFCard else idx
+        )
         page = await self.list_parser.get_page(data)
 
-        tasks = [self.add_to_objs(item) for item in page if str(item) not in self.objs[self.img_type.results_dir]]
+        tasks = [
+            self.add_item_to_object_list(item) for item in page if str(item) not in self.objs[self.img_type.results_dir]
+        ]
 
         res: list[None] = await asyncio.gather(*tasks, return_exceptions=False)
 
         return res
 
     async def get_cards_from_pages(self) -> None:
-        num_pages = await self.list_parser.get_num_pages(await self.from_url(self.img_type.list_url_template)) + 1
+        num_pages = (
+            await self.list_parser.get_num_pages(await self.request_url_data(self.img_type.list_url_template)) + 1
+        )
         current_num = 1
         for _ in range(1, num_pages):
             current_page = await self.get_page(current_num)
@@ -70,8 +76,8 @@ class Parser:
 
             current_num += 1
 
-    async def add_to_objs(self, item: int) -> None:
-        obj = await self.item_parser.create_item(await self.from_url(f"{self.img_type.url_template}{item}"))
+    async def add_item_to_object_list(self, item: int) -> None:
+        obj = await self.item_parser.create_item(await self.request_url_data(f"{self.img_type.url_template}{item}"))
         self.objs[self.img_type.results_dir][str(item)] = obj
         print(f"Getting item {item}.")
 
@@ -83,14 +89,14 @@ class SIFListParser:
     async def get_page(self, num: Any) -> list[int]:
         return self.items[num - 1]
 
-    async def get_num_pages(self, data: aiohttp.ClientResponse) -> int:
+    async def get_num_pages(self, data: ClientResponse) -> int:
         json = await data.json()
         self.items = [json[i : i + 10] for i in range(0, len(json), 10)]  # noqa
         return len(self.items)
 
 
 class SIFCardParser:
-    async def create_item(self, data: aiohttp.ClientResponse) -> list[str]:
+    async def create_item(self, data: ClientResponse) -> list[str]:
         json = await data.json()
         return [card for card in [json["card_image"], json["card_idolized_image"]] if card]
 
@@ -114,7 +120,7 @@ class ListParser:
 
         raise ListParsingException("An error occured while getting a page.")
 
-    async def get_num_pages(self, data: aiohttp.ClientResponse) -> int:
+    async def get_num_pages(self, data: ClientResponse) -> int:
         pattern = re.compile(r"=(\d+)")
         page = bs4.BeautifulSoup(await data.text(), features="lxml")
 
@@ -129,7 +135,7 @@ class ListParser:
 
 
 class CardParser:
-    async def create_item(self, data: aiohttp.ClientResponse) -> list[str]:
+    async def create_item(self, data: ClientResponse) -> list[str]:
         page = bs4.BeautifulSoup(await data.text(), features="lxml")
 
         if isinstance(top_item := page.find(class_="top-item"), bs4.Tag):
@@ -143,7 +149,7 @@ class CardParser:
 
 
 class StillParser:
-    async def create_item(self, data: aiohttp.ClientResponse) -> list[str]:
+    async def create_item(self, data: ClientResponse) -> list[str]:
         page = bs4.BeautifulSoup(await data.text(), features="lxml")
 
         if isinstance(top_item := page.find(class_="top-item"), bs4.Tag):
