@@ -12,6 +12,7 @@
 
 # You should have received a copy of the GNU General Public License
 
+
 import asyncio
 import re
 from typing import Any
@@ -45,27 +46,21 @@ class Parser:
         elif self.img_type == Still:
             self.item_parser = StillParser()
 
-    async def request_url_data(self, url: str) -> ClientResponse:
+    async def get(self, url: str) -> ClientResponse:
         return await self.session.get(url)
 
     async def get_page(self, idx: int) -> list[None]:
-        data = (
-            await self.request_url_data(f"{self.img_type.list_url_template}{idx}") if self.img_type != SIFCard else idx
-        )
+        data = await self.get(f"{self.img_type.list_url_template}{idx}") if self.img_type != SIFCard else idx
         page = await self.list_parser.get_page(data)
 
-        tasks = [
-            self.add_item_to_object_list(item) for item in page if str(item) not in self.objs[self.img_type.results_dir]
-        ]
+        tasks = [self.add_to_objs(item) for item in page if str(item) not in self.objs[self.img_type.results_dir]]
 
         res: list[None] = await asyncio.gather(*tasks, return_exceptions=False)
 
         return res
 
-    async def get_cards_from_pages(self) -> None:
-        num_pages = (
-            await self.list_parser.get_num_pages(await self.request_url_data(self.img_type.list_url_template)) + 1
-        )
+    async def get_items(self) -> None:
+        num_pages = await self.list_parser.get_num_pages(await self.get(self.img_type.list_url_template)) + 1
         current_num = 1
         for _ in range(1, num_pages):
             current_page = await self.get_page(current_num)
@@ -74,8 +69,8 @@ class Parser:
 
             current_num += 1
 
-    async def add_item_to_object_list(self, item: int) -> None:
-        obj = await self.item_parser.create_item(await self.request_url_data(f"{self.img_type.url_template}{item}"))
+    async def add_to_objs(self, item: int) -> None:
+        obj = await self.item_parser.create_item(await self.get(f"{self.img_type.url_template}{item}"))
         self.objs[self.img_type.results_dir][str(item)] = obj
         print(f"Getting item {item}.")
 

@@ -80,7 +80,7 @@ class Downloader:
 
     async def update(self) -> None:
         print("Searching for new or missing items...")
-        await self.parser.get_cards_from_pages()
+        await self.parser.get_items()
 
         self.update_json_file()
         print("Updated items database.")

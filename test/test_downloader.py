@@ -51,7 +51,7 @@ card_types = [
 async def test_downloader_cards(mocker, card_class, card_key, card_mock):
     downloader = mikan.downloader.Downloader(Path("test/temp"), Path("test/temp"), card_class, MockConfig())
     mocker.patch(
-        "mikan.html_parser.Parser.get_cards_from_pages",
+        "mikan.html_parser.Parser.get_items",
         test.mocks.mock_get_items,
     )
     mocker.patch("aiohttp.ClientSession.get", return_value=awaitable_res(test.mocks.mock_file))
@@ -73,7 +73,7 @@ async def test_downloader_fail(mocker):
     downloader = mikan.downloader.Downloader(Path("test/temp"), Path("test/temp"), mikan.classes.Card, MockConfig())
 
     mocker.patch(
-        "mikan.html_parser.Parser.get_cards_from_pages",
+        "mikan.html_parser.Parser.get_items",
         test.mocks.mock_get_items,
     )
     mocker.patch("aiohttp.ClientSession.get", side_effect=aiohttp.ClientError("Err"))

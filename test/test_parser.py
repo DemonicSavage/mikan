@@ -79,7 +79,7 @@ async def test_parser(mocker):
     mocker.patch("mikan.html_parser.ListParser.get_page", return_value=[1]),
     mocker.patch("aiohttp.ClientSession.get", test.mocks.mock_get_items)
 
-    await parser.get_cards_from_pages()
+    await parser.get_items()
     await parser.session.close()
     assert parser.objs["SIFAS_Cards"] == {"1": ["//normal1.png", "//idolized1.png"]}
 
