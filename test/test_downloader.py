@@ -15,7 +15,6 @@
 import json
 import test.mocks
 from pathlib import Path
-from test.utils import awaitable_res
 
 import aiohttp
 import pytest

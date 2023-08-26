@@ -27,11 +27,13 @@ def dump_to_file(cards: dict[str, dict[str, list[str]]], path: Path) -> None:
         file.write(to_json(cards))
 
 
-def load_cards(cards: dict[str, dict[str, list[str]]], path: Path) -> None:
+def load_cards(path: Path) -> dict[str, dict[str, list[str]]]:
     json_path = path / "items.json"
+    cards: dict[str, dict[str, list[str]]] = {}
     if json_path.is_file():
         with open(json_path, "r", encoding="utf-8") as file:
             data = file.read()
             new_cards = json.loads(data)
             for key, value in new_cards.items():
                 cards[key] = value
+    return cards
