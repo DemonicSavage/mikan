@@ -19,36 +19,24 @@ import aiohttp
 from tqdm.asyncio import tqdm
 
 import mikan.html_parser as parser
-from mikan import config, json_utils
+from mikan import json_utils
 from mikan.classes import CardType
 
 
 class Downloader:
-    def __init__(self, data_path: Path, config_path: Path, img_type: CardType, cfg: config.Config):
-        self.base_path = data_path.expanduser()
-        self.path = self.base_path / img_type.results_dir
+    def __init__(self, data_path: Path, config_path: Path, img_type: CardType, session: aiohttp.ClientSession):
+        base_path = data_path.expanduser()
+        self.path = base_path / img_type.results_dir
         self.objs: dict[str, dict[str, list[str]]] = {}
 
         self.config_path = config_path
 
         self.img_type = img_type
         self.objs[self.img_type.results_dir] = {}
-
-        self.session = aiohttp.ClientSession(
-            connector=aiohttp.TCPConnector(limit=cfg.max_conn, limit_per_host=cfg.max_conn),
-            timeout=aiohttp.ClientTimeout(total=None),
-            cookies={"sessionid": cfg.cookie},
-        )
-
-        json_utils.load_cards(self.objs, self.config_path)
-
+        self.session = session
         self.parser = parser.Parser(self.objs, self.img_type, self.session)
 
-    async def __aenter__(self) -> "Downloader":
-        return self
-
-    async def __aexit__(self, ext_type: None, value: None, trace: None) -> None:
-        await self.session.close()
+        json_utils.load_cards(self.objs, self.config_path)
 
     async def download_file(self, item: str) -> None:
         try:

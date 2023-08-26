@@ -19,6 +19,7 @@ import sys
 from importlib.metadata import version
 from pathlib import Path
 
+import aiohttp
 import platformdirs
 
 from mikan import config
@@ -61,7 +62,13 @@ async def run(arguments: argparse.Namespace, path: Path = MIKAN_PATH) -> None:
 
 
 async def card_searcher(data_path: Path, config_path: Path, img_type: CardType, cfg: config.Config) -> None:
-    async with Downloader(data_path, config_path, img_type, cfg) as downloader:
+    http_session = aiohttp.ClientSession(
+        connector=aiohttp.TCPConnector(limit=cfg.max_conn, limit_per_host=cfg.max_conn),
+        timeout=aiohttp.ClientTimeout(total=None),
+        cookies={"sessionid": cfg.cookie},
+    )
+    async with http_session as session:
+        downloader = Downloader(data_path, config_path, img_type, session)
         await downloader.update()
         await downloader.get()
 
