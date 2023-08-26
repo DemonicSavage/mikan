@@ -16,15 +16,11 @@ import json
 from pathlib import Path
 
 
-def to_json(cards: dict[str, dict[str, list[str]]]) -> str:
-    return json.dumps(cards, ensure_ascii=False, indent=4)
-
-
 def dump_to_file(cards: dict[str, dict[str, list[str]]], path: Path) -> None:
     json_path = path / "items.json"
     json_path.parent.mkdir(exist_ok=True, parents=True)
     with open(json_path, "w", encoding="utf-8") as file:
-        file.write(to_json(cards))
+        file.write(json.dumps(cards, ensure_ascii=False, indent=4))
 
 
 def load_cards(path: Path) -> dict[str, dict[str, list[str]]]:
