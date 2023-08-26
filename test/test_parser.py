@@ -114,23 +114,23 @@ async def test_sif_card_parser(card_parser, card_mock, card_res):
 @pytest.mark.asyncio
 async def test_list_parser_fail():
     async with Parser(mikan.html_parser.ListParser()) as parser:
-        with pytest.raises(mikan.html_parser.ListParsingException) as ex:
+        with pytest.raises(mikan.html_parser.ParsingException) as ex:
             await parser.parser.get_page(test.mocks.mock_list_response_error)
-        assert ex.type == mikan.html_parser.ListParsingException
+        assert ex.type == mikan.html_parser.ParsingException
 
 
 @pytest.mark.asyncio
 async def test_num_pages_parser_fail():
     async with Parser(mikan.html_parser.ListParser()) as parser:
-        with pytest.raises(mikan.html_parser.ListParsingException) as ex:
+        with pytest.raises(mikan.html_parser.ParsingException) as ex:
             await parser.parser.get_num_pages(test.mocks.mock_num_pages_response_error)
-        assert ex.type == mikan.html_parser.ListParsingException
+        assert ex.type == mikan.html_parser.ParsingException
 
 
 @pytest.mark.parametrize("card_parser, card_mock", card_error_types)
 @pytest.mark.asyncio
 async def test_card_parser_fail(card_parser, card_mock):
     async with Parser(card_parser()) as parser:
-        with pytest.raises(mikan.html_parser.ItemParsingException) as ex:
+        with pytest.raises(mikan.html_parser.ParsingException) as ex:
             await parser.parser.create_item(card_mock)
-    assert ex.type == mikan.html_parser.ItemParsingException
+    assert ex.type == mikan.html_parser.ParsingException
