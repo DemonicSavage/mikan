@@ -37,8 +37,7 @@ class Parser:
         self.item_parser: CardParser | StillParser | SIFCardParser = CardParser()
 
         if self.img_type == SIFCard:
-            self.list_parser = SIFListParser()
-            self.item_parser = SIFCardParser()
+            self.list_parser, self.item_parser = SIFListParser(), SIFCardParser()
         elif self.img_type == Still:
             self.item_parser = StillParser()
 
