@@ -67,6 +67,7 @@ async def card_searcher(data_path: Path, config_path: Path, img_type: CardType, 
         timeout=aiohttp.ClientTimeout(total=None),
         cookies={"sessionid": cfg.cookie},
     )
+
     async with http_session as session:
         downloader = Downloader(data_path, config_path, img_type, session)
         await downloader.update()
@@ -77,6 +78,7 @@ def main() -> None:  # pragma: no cover
     args = parse_arguments(sys.argv[1:])
     if sys.platform.startswith("win"):
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
     try:
         asyncio.run(run(args))
     except Exception as e:

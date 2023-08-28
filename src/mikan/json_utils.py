@@ -32,4 +32,5 @@ def load_cards(path: Path) -> dict[str, dict[str, list[str]]]:
             new_cards = json.loads(data)
             for key, value in new_cards.items():
                 cards[key] = value
+
     return cards
