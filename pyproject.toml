@@ -48,13 +48,6 @@ select = [
 [tool.black]
 line-length = 120
 
-[tool.isort]
-profile = "black"
-skip = ["test"]
-
-[tool.bandit]
-exclude = ["test"]
-
 [tool.pytest.ini_options]
 pythonpath = [".", "src"]
 
