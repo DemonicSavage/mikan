@@ -30,7 +30,7 @@ MIKAN_PACKAGE = "mikan_card_downloader"
 MIKAN_PATH = Path(platformdirs.user_config_dir("mikan", ensure_exists=True))
 
 
-class InvalidPathException(Exception):
+class InvalidPathError(Exception):
     pass
 
 
@@ -56,7 +56,7 @@ async def run(arguments: argparse.Namespace, path: Path = MIKAN_PATH) -> None:
 
     data_dir = cfg.data_dir
     if data_dir.exists() and not data_dir.is_dir():  # pragma: no cover
-        raise InvalidPathException("The specified directory is not valid (it's a regular file).")
+        raise InvalidPathError("The specified directory is not valid (it's a regular file).")
 
     await card_searcher(data_dir, path, arguments.type, cfg)
 

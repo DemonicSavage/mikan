@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any, Coroutine
 
 import aiohttp
+import aiohttp.web
 from tqdm.asyncio import tqdm
 
 import mikan.html_parser as parser
@@ -37,7 +38,7 @@ class Downloader:
     async def download_file(self, item: str) -> None:
         try:
             res = await self.session.get(f"https:{item}")
-            if res.status == 200:
+            if res.status == aiohttp.web.HTTPOk.status_code:
                 self.path.mkdir(exist_ok=True, parents=True)
 
                 with open(self.path / self.get_name(item), "wb") as file:

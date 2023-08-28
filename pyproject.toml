@@ -40,9 +40,7 @@ exclude = ["test"]
 ignore = []
 line-length = 120
 select = [
-    "E",
-    "F",
-    "W",
+    "E","F","W","I","N","C90","S","PL","B","A","C4","SIM","ARG"
 ]
 
 [tool.black]

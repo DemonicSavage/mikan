@@ -23,7 +23,7 @@ from aiohttp import ClientResponse, ClientSession
 from mikan.classes import CardType, SIFCard, Still
 
 
-class ParsingException(Exception):
+class ParsingError(Exception):
     pass
 
 
@@ -106,7 +106,7 @@ class ListParser:
         if nums:
             return sorted(nums, reverse=True)
 
-        raise ParsingException("An error occured while getting a page.")
+        raise ParsingError("An error occured while getting a page.")
 
     async def get_num_pages(self, data: ClientResponse) -> int:
         pattern = re.compile(r"=(\d+)")
@@ -119,7 +119,7 @@ class ListParser:
             if match := pattern.search(string):
                 return int(match.group(1))
 
-        raise ParsingException("An error occured while getting number of pages.")
+        raise ParsingError("An error occured while getting number of pages.")
 
 
 class CardParser:
@@ -133,7 +133,7 @@ class CardParser:
 
             return [first, second]
 
-        raise ParsingException("An error occured while getting a card.")
+        raise ParsingError("An error occured while getting a card.")
 
 
 class StillParser:
@@ -146,4 +146,4 @@ class StillParser:
 
             return [url]
 
-        raise ParsingException("An error occured while getting a still.")
+        raise ParsingError("An error occured while getting a still.")
