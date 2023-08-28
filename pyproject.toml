@@ -11,7 +11,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.10"
 beautifulsoup4 = "^4.11.1"
-aiohttp = "^3.8.4"
+aiohttp = {extras = ["speedups"], version = "^3.8.5"}
 lxml = "^4.9.1"
 tqdm = "^4.64.0"
 platformdirs = "^3.2.0"

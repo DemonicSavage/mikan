@@ -46,7 +46,7 @@ repos:
           - bs4
           - pytest-asyncio
           - pytest-mock
-          - aiohttp
+          - aiohttp[speedups]
           - lxml
           - tqdm
           - platformdirs
