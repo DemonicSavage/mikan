@@ -79,7 +79,7 @@ class SIFListParser:
 
     async def get_num_pages(self, data: ClientResponse) -> int:
         json = await data.json()
-        self.items = [json[i : i + 10] for i in range(0, len(json), 10)]  # noqa
+        self.items = [json[i : i + 10] for i in range(0, len(json), 10)]
         return len(self.items)
 
 
