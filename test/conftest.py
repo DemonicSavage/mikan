@@ -18,6 +18,6 @@ import pytest
 
 
 @pytest.fixture(autouse=True)
-def cleanup():
+def _cleanup():
     yield
     shutil.rmtree("test/temp", ignore_errors=True)

@@ -17,10 +17,9 @@ import test.mocks
 from pathlib import Path
 
 import aiohttp
-import pytest
-
 import mikan.classes
 import mikan.downloader
+import pytest
 
 
 def check_files(path, answer):
@@ -46,9 +45,9 @@ card_types = [
 ]
 
 
-@pytest.mark.parametrize("card_class, card_key, card_mock", card_types)
-@pytest.mark.usefixtures("cleanup")
-@pytest.mark.asyncio
+@pytest.mark.parametrize(("card_class", "card_key", "card_mock"), card_types)
+@pytest.mark.usefixtures("_cleanup")
+@pytest.mark.asyncio()
 async def test_downloader_cards(mocker, card_class, card_key, card_mock):
     downloader = mikan.downloader.Downloader(
         Path("test/temp"), Path("test/temp"), card_class, MockSession(test.mocks.mock_file)
@@ -62,14 +61,13 @@ async def test_downloader_cards(mocker, card_class, card_key, card_mock):
     await downloader.update()
     await downloader.get()
 
-    assert (
-        json.loads(Path("test/temp/items.json").open().read())[card_key] == json.loads(test.mocks.cards_json)[card_key]
-    )
+    with Path("test/temp/items.json").open() as file:
+        assert json.loads(file.read())[card_key] == json.loads(test.mocks.cards_json)[card_key]
     assert check_files(f"test/temp/{card_key}", card_mock)
 
 
-@pytest.mark.usefixtures("cleanup")
-@pytest.mark.asyncio
+@pytest.mark.usefixtures("_cleanup")
+@pytest.mark.asyncio()
 async def test_downloader_fail(mocker):
     downloader = mikan.downloader.Downloader(
         Path("test/temp"), Path("test/temp"), mikan.classes.Card, MockSession(test.mocks.mock_file)
@@ -88,8 +86,8 @@ async def test_downloader_fail(mocker):
     assert not Path("test/temp/SIFAS_Cards").exists()
 
 
-@pytest.mark.usefixtures("cleanup")
-@pytest.mark.asyncio
+@pytest.mark.usefixtures("_cleanup")
+@pytest.mark.asyncio()
 async def test_downloader_card_load():
     directory = Path("test/temp")
     directory.mkdir(parents=True)

@@ -15,10 +15,9 @@
 import test.mocks
 
 import aiohttp
-import pytest
-
 import mikan.classes
 import mikan.html_parser
+import pytest
 
 
 class Parser:
@@ -68,7 +67,7 @@ card_error_types = [
 ]
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_parser(mocker):
     parser = mikan.html_parser.Parser({"SIFAS_Cards": {}}, mikan.classes.Card, aiohttp.ClientSession())
     mocker.patch(
@@ -84,34 +83,34 @@ async def test_parser(mocker):
     assert parser.objs["SIFAS_Cards"] == {"1": ["//normal1.png", "//idolized1.png"]}
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_list_parser():
     async with Parser(mikan.html_parser.ListParser()) as parser:
         assert await parser.parser.get_page(test.mocks.mock_list_response) == [123]
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_sif_list_parser():
     async with Parser(mikan.html_parser.SIFListParser()) as parser:
         await parser.parser.get_num_pages(test.mocks.mock_sif_list_response)
         assert await parser.parser.get_page(1) == [123]
 
 
-@pytest.mark.parametrize("list_parser, list_mock, list_res", list_num_pages_types)
-@pytest.mark.asyncio
+@pytest.mark.parametrize(("list_parser", "list_mock", "list_res"), list_num_pages_types)
+@pytest.mark.asyncio()
 async def test_num_pages_parser(list_parser, list_mock, list_res):
     async with Parser(list_parser()) as parser:
         assert await parser.parser.get_num_pages(list_mock) == list_res
 
 
-@pytest.mark.parametrize("card_parser, card_mock, card_res", card_types)
-@pytest.mark.asyncio
+@pytest.mark.parametrize(("card_parser", "card_mock", "card_res"), card_types)
+@pytest.mark.asyncio()
 async def test_sif_card_parser(card_parser, card_mock, card_res):
     async with Parser(card_parser()) as parser:
         assert await parser.parser.create_item(card_mock) == card_res
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_list_parser_fail():
     async with Parser(mikan.html_parser.ListParser()) as parser:
         with pytest.raises(mikan.html_parser.ParsingError) as ex:
@@ -119,7 +118,7 @@ async def test_list_parser_fail():
         assert ex.type == mikan.html_parser.ParsingError
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_num_pages_parser_fail():
     async with Parser(mikan.html_parser.ListParser()) as parser:
         with pytest.raises(mikan.html_parser.ParsingError) as ex:
@@ -127,8 +126,8 @@ async def test_num_pages_parser_fail():
         assert ex.type == mikan.html_parser.ParsingError
 
 
-@pytest.mark.parametrize("card_parser, card_mock", card_error_types)
-@pytest.mark.asyncio
+@pytest.mark.parametrize(("card_parser", "card_mock"), card_error_types)
+@pytest.mark.asyncio()
 async def test_card_parser_fail(card_parser, card_mock):
     async with Parser(card_parser()) as parser:
         with pytest.raises(mikan.html_parser.ParsingError) as ex:
