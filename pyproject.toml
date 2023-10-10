@@ -26,7 +26,7 @@ mypy = "^1.0.0"
 types-beautifulsoup4 = "^4.11.4"
 types-tqdm = "^4.65.0"
 pytest-cov = "^4.0.0"
-ruff = "^0.0.287"
+ruff = "^0.0.292"
 
 [tool.poetry.scripts]
 mikan = "mikan.main:main"
