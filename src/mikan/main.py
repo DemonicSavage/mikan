@@ -37,8 +37,8 @@ class InvalidPathError(Exception):
 def parse_arguments(args: list[str]) -> argparse.Namespace:
     arg_parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description="Downloads cards from idol.st and schoolido.lu. By default "
-        "(with no arguments passed), it downloads SIF 2 cards.",
+        description="downloads cards from idol.st and schoolido.lu. by default "
+        "(with no arguments passed), it downloads SIF 2 cards",
     )
     arg_parser.set_defaults(type=SIF2Card)
 
@@ -47,9 +47,9 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
     arg_parser.add_argument(
         "-v", "--version", action="version", version=f"Mikan {version(MIKAN_PACKAGE)}\nPython {sys.version}"
     )
-    group.add_argument("--sifas", action="store_const", help="Downloads SIFAS cards.", dest="type", const=Card)
-    group.add_argument("--stills", action="store_const", help="Downloads SIFAS stills.", dest="type", const=Still)
-    group.add_argument("--sif", action="store_const", help="Downloads SIF cards.", dest="type", const=SIFCard)
+    group.add_argument("--sifas", action="store_const", help="downloads SIFAS cards", dest="type", const=Card)
+    group.add_argument("--stills", action="store_const", help="downloads SIFAS stills", dest="type", const=Still)
+    group.add_argument("--sif", action="store_const", help="downloads SIF cards", dest="type", const=SIFCard)
 
     return arg_parser.parse_args(args)
 
