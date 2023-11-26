@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mikan-card-downloader"
-version = "2.1.5"
+version = "2.1.6"
 description = "Downloads cards and stills from SIFAS and SIF."
 authors = ["DemonicSavage"]
 license = "GPLv3"
@@ -11,7 +11,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.10"
 beautifulsoup4 = "^4.11.1"
-aiohttp = {version = "^3.8.5", extras = ["speedups"]}
+aiohttp = {version = "^3.9.0", extras = ["speedups"]}
 lxml = "^4.9.1"
 tqdm = "^4.64.0"
 platformdirs = "^4.0.0"
