@@ -47,9 +47,9 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
     arg_parser.add_argument(
         "-v", "--version", action="version", version=f"Mikan {version(MIKAN_PACKAGE)}\nPython {sys.version}"
     )
-    group.add_argument("--sifas", action="store_const", help="Downloads SIFAS cards.", dest="type", const=Card)
-    group.add_argument("--stills", action="store_const", help="Downloads SIFAS stills.", dest="type", const=Still)
-    group.add_argument("--sif", action="store_const", help="Downloads SIF cards.", dest="type", const=SIFCard)
+    group.add_argument("--sifas", action="store_const", help="download SIFAS cards", dest="type", const=Card)
+    group.add_argument("--stills", action="store_const", help="download SIFAS stills", dest="type", const=Still)
+    group.add_argument("--sif", action="store_const", help="download SIF cards", dest="type", const=SIFCard)
 
     return arg_parser.parse_args(args)
 

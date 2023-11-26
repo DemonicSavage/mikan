@@ -14,7 +14,7 @@ beautifulsoup4 = "^4.11.1"
 aiohttp = {version = "^3.9.0", extras = ["speedups"]}
 lxml = "^4.9.1"
 tqdm = "^4.64.0"
-platformdirs = "^3.2.0"
+platformdirs = "^4.0.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.0.0"
