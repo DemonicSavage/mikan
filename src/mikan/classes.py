@@ -21,3 +21,6 @@ Still = CardType("SIFAS_Stills", "https://idol.st/ajax/allstars/stills/?page=", 
 SIFCard = CardType("SIF_Cards", "https://schoolido.lu/api/cardids/", "https://schoolido.lu/api/cards/")
 SIF2Card = CardType("SIF2_Cards", "https://idol.st/ajax/SIF2/cards/?page=", "https://idol.st/ajax/SIF2/card/")
 BandoriCard = CardType("Bandori_Cards", "https://bandori.party/ajax/cards/?page=", "https://bandori.party/ajax/card/")
+RevueCard = CardType(
+    "Revue_Cards", "https://starlight.academy/ajax/cards/?page=", "https://starlight.academy/ajax/card/"
+)

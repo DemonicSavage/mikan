@@ -23,7 +23,7 @@ import aiohttp
 import platformdirs
 
 from mikan import config
-from mikan.classes import BandoriCard, Card, CardType, SIF2Card, SIFCard, Still
+from mikan.classes import BandoriCard, Card, CardType, RevueCard, SIF2Card, SIFCard, Still
 from mikan.downloader import Downloader
 
 MIKAN_PACKAGE = "mikan_card_downloader"
@@ -51,6 +51,9 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
     group.add_argument("--stills", action="store_const", help="download SIFAS stills", dest="type", const=Still)
     group.add_argument("--sif", action="store_const", help="download SIF cards", dest="type", const=SIFCard)
     group.add_argument("--bandori", action="store_const", help="download Bandori cards", dest="type", const=BandoriCard)
+    group.add_argument(
+        "--revue", action="store_const", help="download Revue Starlight cards", dest="type", const=RevueCard
+    )
 
     return arg_parser.parse_args(args)
 
@@ -83,10 +86,12 @@ def main() -> None:  # pragma: no cover
     if sys.platform.startswith("win"):
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-    try:
-        asyncio.run(run(args))
-    except Exception as e:
-        print(f"Error: {e}")
+    # try:
+    #     asyncio.run(run(args))
+    # except Exception as e:
+    #     print(f"Error: {e}")
+
+    asyncio.run(run(args))
 
 
 if __name__ == "__main__":  # pragma: no cover

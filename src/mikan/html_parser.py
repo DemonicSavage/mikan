@@ -20,7 +20,7 @@ from typing import Any
 import bs4
 from aiohttp import ClientResponse, ClientSession
 
-from mikan.classes import BandoriCard, CardType, SIFCard, Still
+from mikan.classes import BandoriCard, CardType, RevueCard, SIFCard, Still
 
 
 class ParsingError(Exception):
@@ -34,7 +34,7 @@ class Parser:
         self.objs = objs
 
         self.list_parser: ListParser | SIFListParser = ListParser()
-        self.item_parser: CardParser | StillParser | SIFCardParser | BandoriCardParser = CardParser()
+        self.item_parser: CardParser | StillParser | SIFCardParser | BandoriCardParser | RevueCardParser = CardParser()
 
         if self.img_type == SIFCard:
             self.list_parser, self.item_parser = SIFListParser(), SIFCardParser()
@@ -42,6 +42,8 @@ class Parser:
             self.item_parser = StillParser()
         elif self.img_type == BandoriCard:
             self.item_parser = BandoriCardParser()
+        elif self.img_type == RevueCard:
+            self.item_parser = RevueCardParser()
 
     async def get(self, url: str) -> ClientResponse:
         return await self.session.get(url)
@@ -101,6 +103,17 @@ class BandoriCardParser:
         if isinstance(top_item := page.find(attrs={"data-field": "arts"}), bs4.Tag):
             links = top_item.find_all("a")
             return [href for link in links if "/transparent/" not in (href := link.get("href"))]
+
+        raise ParsingError("An error occured while getting a card.")
+
+
+class RevueCardParser:
+    async def create_item(self, data: ClientResponse) -> list[str]:
+        page = bs4.BeautifulSoup(await data.text(), features="lxml")
+
+        if isinstance(top_item := page.find(attrs={"data-field": "art"}), bs4.Tag):
+            links = top_item.find_all("a")
+            return [link.get("href") for link in links]
 
         raise ParsingError("An error occured while getting a card.")
 
