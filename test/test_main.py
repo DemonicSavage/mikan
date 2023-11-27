@@ -16,6 +16,7 @@ import argparse
 import builtins
 
 import pytest
+
 from mikan.classes import Card, SIF2Card, SIFCard, Still
 from mikan.main import Downloader, parse_arguments, run
 

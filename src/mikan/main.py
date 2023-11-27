@@ -23,7 +23,7 @@ import aiohttp
 import platformdirs
 
 from mikan import config
-from mikan.classes import Card, CardType, SIF2Card, SIFCard, Still
+from mikan.classes import BandoriCard, Card, CardType, SIF2Card, SIFCard, Still
 from mikan.downloader import Downloader
 
 MIKAN_PACKAGE = "mikan_card_downloader"
@@ -50,6 +50,7 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
     group.add_argument("--sifas", action="store_const", help="download SIFAS cards", dest="type", const=Card)
     group.add_argument("--stills", action="store_const", help="download SIFAS stills", dest="type", const=Still)
     group.add_argument("--sif", action="store_const", help="download SIF cards", dest="type", const=SIFCard)
+    group.add_argument("--bandori", action="store_const", help="download Bandori cards", dest="type", const=BandoriCard)
 
     return arg_parser.parse_args(args)
 

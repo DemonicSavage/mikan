@@ -20,7 +20,7 @@ from typing import Any
 import bs4
 from aiohttp import ClientResponse, ClientSession
 
-from mikan.classes import CardType, SIFCard, Still
+from mikan.classes import BandoriCard, CardType, SIFCard, Still
 
 
 class ParsingError(Exception):
@@ -34,12 +34,14 @@ class Parser:
         self.objs = objs
 
         self.list_parser: ListParser | SIFListParser = ListParser()
-        self.item_parser: CardParser | StillParser | SIFCardParser = CardParser()
+        self.item_parser: CardParser | StillParser | SIFCardParser | BandoriCardParser = CardParser()
 
         if self.img_type == SIFCard:
             self.list_parser, self.item_parser = SIFListParser(), SIFCardParser()
         elif self.img_type == Still:
             self.item_parser = StillParser()
+        elif self.img_type == BandoriCard:
+            self.item_parser = BandoriCardParser()
 
     async def get(self, url: str) -> ClientResponse:
         return await self.session.get(url)
@@ -47,6 +49,9 @@ class Parser:
     async def get_page(self, idx: int) -> list[None]:
         data = await self.get(f"{self.img_type.list_url_template}{idx}") if self.img_type != SIFCard else idx
         page = await self.list_parser.get_page(data)
+
+        if self.img_type.results_dir not in self.objs:
+            self.objs[self.img_type.results_dir] = {}
 
         tasks = [self.add_to_objs(item) for item in page if str(item) not in self.objs[self.img_type.results_dir]]
 
@@ -89,6 +94,17 @@ class SIFCardParser:
         return [card for card in [json["card_image"], json["card_idolized_image"]] if card]
 
 
+class BandoriCardParser:
+    async def create_item(self, data: ClientResponse) -> list[str]:
+        page = bs4.BeautifulSoup(await data.text(), features="lxml")
+
+        if isinstance(top_item := page.find(attrs={"data-field": "arts"}), bs4.Tag):
+            links = top_item.find_all("a")
+            return [href for link in links if "/transparent/" not in (href := link.get("href"))]
+
+        raise ParsingError("An error occured while getting a card.")
+
+
 class ListParser:
     async def get_page(self, data: Any) -> list[int]:
         nums: list[int] = []
@@ -96,6 +112,7 @@ class ListParser:
 
         page = bs4.BeautifulSoup(await data.text(), features="lxml")
         items = page.find_all(class_="top-item")
+        items.extend(page.find_all(class_="card-wrapper"))
 
         for item in items:
             string = item.find("a").get("href")

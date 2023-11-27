@@ -17,9 +17,10 @@ import test.mocks
 from pathlib import Path
 
 import aiohttp
+import pytest
+
 import mikan.classes
 import mikan.downloader
-import pytest
 
 
 def check_files(path, answer):

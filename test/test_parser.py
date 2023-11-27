@@ -15,9 +15,10 @@
 import test.mocks
 
 import aiohttp
+import pytest
+
 import mikan.classes
 import mikan.html_parser
-import pytest
 
 
 class Parser:
