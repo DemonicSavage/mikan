@@ -23,6 +23,7 @@ class SIF2(DefaultPlugin):
             page = bs4.BeautifulSoup(await data.text(), features="lxml")
             items = page.find_all(class_="top-item")
             items.extend(page.find_all(class_="card-wrapper"))
+            items.extend(page.find_all(class_="card-buttons"))
 
             for item in items:
                 string = item.find("a").get("href")
