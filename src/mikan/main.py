@@ -93,12 +93,10 @@ def main() -> None:  # pragma: no cover
     if sys.platform.startswith("win"):
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-    # try:
-    #     asyncio.run(run(args))
-    # except Exception as e:
-    #     print(f"Error: {e}")
-
-    asyncio.run(run(args))
+    try:
+        asyncio.run(run(args))
+    except Exception as e:
+        print(f"Error: {e}")
 
 
 if __name__ == "__main__":  # pragma: no cover
