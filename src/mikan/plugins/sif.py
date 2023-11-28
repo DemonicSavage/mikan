@@ -2,10 +2,10 @@ from typing import Any
 
 from aiohttp import ClientResponse
 
-from mikan.plugins.base import Plugin
+from mikan.plugins.default import DefaultPlugin
 
 
-class SIF(Plugin):
+class SIF(DefaultPlugin):
     card_dir = "SIF_Cards"
     url = "https://schoolido.lu/api/cards/"
     list_url = "https://schoolido.lu/api/cardids/"

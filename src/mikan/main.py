@@ -25,7 +25,7 @@ import platformdirs
 
 from mikan import config
 from mikan.downloader import Downloader
-from mikan.plugins.base import registry
+from mikan.plugins import registry
 
 MIKAN_PACKAGE = "mikan_card_downloader"
 MIKAN_PATH = Path(platformdirs.user_config_dir("mikan", ensure_exists=True))
@@ -84,7 +84,7 @@ async def card_searcher(data_path: Path, config_path: Path, img_type: str, cfg: 
 
 def discover_plugins() -> None:
     for file in (Path(__file__).parent.resolve() / "plugins").iterdir():
-        if file.stem != "base":
+        if file.stem != "default":
             importlib.import_module(f"mikan.plugins.{file.stem}")
 
 
@@ -93,10 +93,12 @@ def main() -> None:  # pragma: no cover
     if sys.platform.startswith("win"):
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-    try:
-        asyncio.run(run(args))
-    except Exception as e:
-        print(f"Error: {e}")
+    # try:
+    #     asyncio.run(run(args))
+    # except Exception as e:
+    #     print(f"Error: {e}")
+
+    asyncio.run(run(args))
 
 
 if __name__ == "__main__":  # pragma: no cover

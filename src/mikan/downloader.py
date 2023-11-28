@@ -20,13 +20,13 @@ import aiohttp.web
 from tqdm.asyncio import tqdm
 
 import mikan.html_parser as parser
-import mikan.plugins.base
+import mikan.plugins
 from mikan import json_utils
 
 
 class Downloader:
     def __init__(self, data_path: Path, config_path: Path, img_type: str, session: aiohttp.ClientSession):
-        self.card_type = mikan.plugins.base.registry[img_type]
+        self.card_type = mikan.plugins.registry[img_type]
 
         self.path = data_path.expanduser() / self.card_type.card_dir
         self.config_path = config_path
@@ -42,25 +42,30 @@ class Downloader:
             if res.status == aiohttp.web.HTTPOk.status_code:
                 self.path.mkdir(exist_ok=True, parents=True)
 
-                with open(self.path / self.get_name(item), "wb") as file:
+                item_name = self.card_type.item_renamer_fn(item)
+
+                with open(self.path / item_name, "wb") as file:
                     async for chunk in res.content.iter_any():
                         file.write(chunk)
 
-                message = f"Downloaded item {self.get_name(item)}."
+                message = f"Downloaded item {item_name}."
 
         except aiohttp.ClientError as e:
             message = f"Couldn't download item {item}: {e}"
 
         tqdm.write(message)
 
-    def get_name(self, url: str) -> str:
-        return url.split("/")[-1]
-
     async def get(self) -> None:
         tasks: list[Coroutine[Any, Any, None]] = []
 
         for item in self.objs[self.card_type.card_dir].values():
-            tasks.extend([self.download_file(card) for card in item if not (self.path / self.get_name(card)).exists()])
+            tasks.extend(
+                [
+                    self.download_file(card)
+                    for card in item
+                    if not (self.path / self.card_type.item_renamer_fn(card)).exists()
+                ]
+            )
 
         await tqdm.gather(*tasks, disable=len(tasks) == 0)
 

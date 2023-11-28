@@ -8,12 +8,21 @@ from mikan.html_parser import ParsingError
 from mikan.plugins.default import DefaultPlugin
 
 
-class SIF2(DefaultPlugin):
-    card_dir = "SIF2_Cards"
-    url = "https://idol.st/ajax/SIF2/card/"
-    list_url = "https://idol.st/ajax/SIF2/cards/?page="
-    cli_arg = "sif2"
-    desc = "SIF2 cards"
+class Idolmaster(DefaultPlugin):
+    card_dir = "Idolmaster_Cards"
+    url = "https://cinderella.pro/ajax/card/"
+    list_url = "https://cinderella.pro/ajax/cards/?page="
+    cli_arg = "idolmaster"
+    desc = "Idolmaster Cinderella Girls cards"
+
+    @staticmethod
+    def item_renamer_fn(url: str) -> str:
+        if "/a/" in url:
+            name = url.split("/")[-1]
+            stem = name.split(".")[-2]
+            suffix = name.split(".")[-1]
+            return f"{stem}_a.{suffix}"
+        return url.split("/")[-1]
 
     class ListParser:
         async def get_page(self, data: Any) -> list[int]:
@@ -21,8 +30,7 @@ class SIF2(DefaultPlugin):
             pattern = re.compile(r"/(\d+)/")
 
             page = bs4.BeautifulSoup(await data.text(), features="lxml")
-            items = page.find_all(class_="top-item")
-            items.extend(page.find_all(class_="card-wrapper"))
+            items = page.find_all(class_="card-buttons")
 
             for item in items:
                 string = item.find("a").get("href")
@@ -52,11 +60,11 @@ class SIF2(DefaultPlugin):
         async def create_item(self, data: ClientResponse) -> list[str]:
             page = bs4.BeautifulSoup(await data.text(), features="lxml")
 
-            if isinstance(top_item := page.find(class_="top-item"), bs4.Tag):
-                links = top_item.find_all("a")
-                first: str = links[0].get("href")
-                second: str = links[1].get("href")
+            items = page.find_all(class_="btn-sm")
+            urls = []
+            for item in items:
+                href = item.get("href")
+                if "/art/" in href or "/art_hd/" in href:
+                    urls.append(href)
 
-                return [first, second]
-
-            raise ParsingError("An error occured while getting a card.")
+            return urls

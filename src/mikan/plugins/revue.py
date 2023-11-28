@@ -2,11 +2,11 @@ import bs4
 from aiohttp import ClientResponse
 
 from mikan.html_parser import ParsingError
-from mikan.plugins.base import Plugin
+from mikan.plugins.default import DefaultPlugin
 from mikan.plugins.sif2 import SIF2
 
 
-class Revue(SIF2, Plugin):
+class Revue(SIF2, DefaultPlugin):
     card_dir = "Revue_Cards"
     url = "https://starlight.academy/ajax/card/"
     list_url = "https://starlight.academy/ajax/cards/?page="

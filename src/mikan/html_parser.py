@@ -17,7 +17,7 @@ import asyncio
 
 from aiohttp import ClientResponse, ClientSession
 
-import mikan.plugins.base
+import mikan.plugins
 
 
 class ParsingError(Exception):
@@ -28,7 +28,7 @@ class Parser:
     def __init__(self, objs: dict[str, dict[str, list[str]]], img_type: str, session: ClientSession) -> None:
         self.session: ClientSession = session
         self.objs = objs
-        self.card_type = mikan.plugins.base.registry[img_type]
+        self.card_type = mikan.plugins.registry[img_type]
 
         self.list_parser, self.item_parser = self.card_type.ListParser(), self.card_type.ItemParser()
 
@@ -59,6 +59,8 @@ class Parser:
             current_num += 1
 
     async def add_to_objs(self, item: int) -> None:
+        print(self.card_type.url)
+        print(item)
         obj = await self.item_parser.create_item(await self.get(f"{self.card_type.url}{item}"))
         self.objs[self.card_type.card_dir][str(item)] = obj
         print(f"Getting item {item}.")

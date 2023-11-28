@@ -2,11 +2,11 @@ import bs4
 from aiohttp import ClientResponse
 
 from mikan.html_parser import ParsingError
-from mikan.plugins.base import Plugin
+from mikan.plugins.default import DefaultPlugin
 from mikan.plugins.sif2 import SIF2
 
 
-class SIFASStills(SIF2, Plugin):
+class SIFASStills(SIF2, DefaultPlugin):
     card_dir = "SIFAS_Stills"
     url = "https://idol.st/ajax/allstars/still/"
     list_url = "https://idol.st/ajax/allstars/stills/?page="
