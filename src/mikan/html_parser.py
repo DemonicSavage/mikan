@@ -36,7 +36,7 @@ class Parser:
         return await self.session.get(url)
 
     async def get_page(self, idx: int) -> list[None]:
-        data = await self.get(f"{self.card_type.list_url}{idx}") if self.card_type.card_dir != "SIF_Cards" else idx
+        data = await self.get(f"{self.card_type.list_url}{idx}") if not self.card_type.is_api else idx
         page = await self.list_parser.get_page(data)
 
         if self.card_type.card_dir not in self.objs:
@@ -53,7 +53,7 @@ class Parser:
         current_num = 1
         for _ in range(1, num_pages):
             current_page = await self.get_page(current_num)
-            if not current_page and self.card_type.card_dir != "SIF_Cards":
+            if not current_page and not self.card_type.is_api:
                 break
 
             current_num += 1

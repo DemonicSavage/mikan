@@ -11,6 +11,7 @@ class SIF(Plugin):
     list_url = "https://schoolido.lu/api/cardids/"
     cli_arg = "sif"
     desc = "SIF cards"
+    is_api = True
 
     class ListParser:
         def __init__(self) -> None:

@@ -11,6 +11,7 @@ class Plugin:
     list_url = ""
     cli_arg = ""
     desc = ""
+    is_api = False
 
     def __init_subclass__(cls) -> None:
         super().__init_subclass__()
