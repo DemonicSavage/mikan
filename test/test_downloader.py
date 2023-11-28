@@ -1,17 +1,3 @@
-# Copyright (C) 2022-2023 DemonicSavage
-# This file is part of Mikan.
-
-# Mikan is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, version 3 of the License.
-
-# Mikan is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-
 import json
 import test.mocks
 from pathlib import Path
@@ -19,7 +5,6 @@ from pathlib import Path
 import aiohttp
 import pytest
 
-import mikan.classes
 import mikan.downloader
 
 
@@ -40,9 +25,9 @@ class MockSession:
 
 
 card_types = [
-    (mikan.classes.Card, "SIFAS_Cards", test.mocks.card_files),
-    (mikan.classes.SIFCard, "SIF_Cards", test.mocks.card_files),
-    (mikan.classes.Still, "SIFAS_Stills", test.mocks.still_files),
+    ("SIFAS", "SIFAS_Cards", test.mocks.card_files),
+    ("SIF", "SIF_Cards", test.mocks.card_files),
+    ("SIFASStills", "SIFAS_Stills", test.mocks.still_files),
 ]
 
 
@@ -71,7 +56,7 @@ async def test_downloader_cards(mocker, card_class, card_key, card_mock):
 @pytest.mark.asyncio()
 async def test_downloader_fail(mocker):
     downloader = mikan.downloader.Downloader(
-        Path("test/temp"), Path("test/temp"), mikan.classes.Card, MockSession(test.mocks.mock_file)
+        Path("test/temp"), Path("test/temp"), "SIFAS", MockSession(test.mocks.mock_file)
     )
 
     mocker.patch(
@@ -94,7 +79,5 @@ async def test_downloader_card_load():
     directory.mkdir(parents=True)
     with open(directory / "items.json", "w") as file:
         file.write(test.mocks.pre_json)
-    downloader = mikan.downloader.Downloader(
-        directory, directory, mikan.classes.Card, MockSession(test.mocks.mock_file)
-    )
+    downloader = mikan.downloader.Downloader(directory, directory, "SIFAS", MockSession(test.mocks.mock_file))
     assert set(downloader.objs.keys()) == set(["SIFAS_Cards"])

@@ -17,23 +17,23 @@ import builtins
 
 import pytest
 
-from mikan.classes import Card, SIF2Card, SIFCard, Still
-from mikan.main import Downloader, parse_arguments, run
+from mikan.main import Downloader, parse_arguments, run, discover_plugins
 
 
 @pytest.mark.asyncio()
 async def test_main(mocker, tmp_path):
+    discover_plugins()
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     mocker.patch.object(builtins, "input", return_value="test_dir")
-    await run(argparse.Namespace(type=SIF2Card), tmp_path)
+    await run(argparse.Namespace(type="SIF2"), tmp_path)
     update.assert_called()
     get.assert_called()
 
 
 def test_argparser():
     args = parse_arguments([])
-    assert args.type == SIF2Card
+    assert args.type == "SIF2"
 
 
 @pytest.mark.asyncio()
@@ -41,7 +41,7 @@ async def test_main_default_dir(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     mocker.patch.object(builtins, "input", return_value="\n")
-    await run(argparse.Namespace(type=SIF2Card), tmp_path)
+    await run(argparse.Namespace(type="SIF2"), tmp_path)
     update.assert_called()
     get.assert_called()
 
@@ -51,7 +51,7 @@ async def test_main_stills(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     mocker.patch.object(builtins, "input", return_value="test_dir")
-    await run(argparse.Namespace(type=Still), tmp_path)
+    await run(argparse.Namespace(type="SIFASStills"), tmp_path)
     update.assert_called()
     get.assert_called()
 
@@ -61,7 +61,7 @@ async def test_main_sif_cards(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     mocker.patch.object(builtins, "input", return_value="test_dir")
-    await run(argparse.Namespace(type=SIFCard), tmp_path)
+    await run(argparse.Namespace(type="SIF"), tmp_path)
     update.assert_called()
     get.assert_called()
 
@@ -71,6 +71,6 @@ async def test_main_sifas_cards(mocker, tmp_path):
     update = mocker.patch.object(Downloader, "update")
     get = mocker.patch.object(Downloader, "get")
     mocker.patch.object(builtins, "input", return_value="test_dir")
-    await run(argparse.Namespace(type=Card), tmp_path)
+    await run(argparse.Namespace(type="SIFAS"), tmp_path)
     update.assert_called()
     get.assert_called()

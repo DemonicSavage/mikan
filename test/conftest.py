@@ -16,8 +16,11 @@ import shutil
 
 import pytest
 
+from mikan.main import discover_plugins
+
 
 @pytest.fixture(autouse=True)
 def _cleanup():
+    discover_plugins()
     yield
     shutil.rmtree("test/temp", ignore_errors=True)

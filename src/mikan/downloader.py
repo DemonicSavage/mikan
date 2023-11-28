@@ -20,20 +20,21 @@ import aiohttp.web
 from tqdm.asyncio import tqdm
 
 import mikan.html_parser as parser
+import mikan.plugins.base
 from mikan import json_utils
-from mikan.classes import CardType
 
 
 class Downloader:
-    def __init__(self, data_path: Path, config_path: Path, img_type: CardType, session: aiohttp.ClientSession):
-        self.path = data_path.expanduser() / img_type.results_dir
+    def __init__(self, data_path: Path, config_path: Path, img_type: str, session: aiohttp.ClientSession):
+        self.card_type = mikan.plugins.base.registry[img_type]
+
+        self.path = data_path.expanduser() / self.card_type.card_dir
         self.config_path = config_path
 
-        self.img_type = img_type
         self.session = session
 
         self.objs = json_utils.load_cards(self.config_path)
-        self.parser = parser.Parser(self.objs, self.img_type, self.session)
+        self.parser = parser.Parser(self.objs, img_type, self.session)
 
     async def download_file(self, item: str) -> None:
         try:
@@ -58,7 +59,7 @@ class Downloader:
     async def get(self) -> None:
         tasks: list[Coroutine[Any, Any, None]] = []
 
-        for item in self.objs[self.img_type.results_dir].values():
+        for item in self.objs[self.card_type.card_dir].values():
             tasks.extend([self.download_file(card) for card in item if not (self.path / self.get_name(card)).exists()])
 
         await tqdm.gather(*tasks, disable=len(tasks) == 0)
@@ -71,5 +72,5 @@ class Downloader:
         print("Updated items database.")
 
     def update_json_file(self) -> None:
-        self.objs[self.img_type.results_dir] = dict(sorted(self.objs[self.img_type.results_dir].items(), reverse=True))
+        self.objs[self.card_type.card_dir] = dict(sorted(self.objs[self.card_type.card_dir].items(), reverse=True))
         json_utils.dump_to_file(self.objs, self.config_path)

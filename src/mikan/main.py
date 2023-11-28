@@ -15,6 +15,7 @@
 
 import argparse
 import asyncio
+import importlib
 import sys
 from importlib.metadata import version
 from pathlib import Path
@@ -23,8 +24,8 @@ import aiohttp
 import platformdirs
 
 from mikan import config
-from mikan.classes import BandoriCard, Card, CardType, RevueCard, SIF2Card, SIFCard, Still
 from mikan.downloader import Downloader
+from mikan.plugins.base import registry
 
 MIKAN_PACKAGE = "mikan_card_downloader"
 MIKAN_PATH = Path(platformdirs.user_config_dir("mikan", ensure_exists=True))
@@ -40,20 +41,20 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
         description="Downloads cards from idol.st and schoolido.lu. By default "
         "(with no arguments passed), it downloads SIF 2 cards.",
     )
-    arg_parser.set_defaults(type=SIF2Card)
+    arg_parser.set_defaults(type="SIF2")
 
     group = arg_parser.add_mutually_exclusive_group()
 
     arg_parser.add_argument(
         "-v", "--version", action="version", version=f"Mikan {version(MIKAN_PACKAGE)}\nPython {sys.version}"
     )
-    group.add_argument("--sifas", action="store_const", help="download SIFAS cards", dest="type", const=Card)
-    group.add_argument("--stills", action="store_const", help="download SIFAS stills", dest="type", const=Still)
-    group.add_argument("--sif", action="store_const", help="download SIF cards", dest="type", const=SIFCard)
-    group.add_argument("--bandori", action="store_const", help="download Bandori cards", dest="type", const=BandoriCard)
-    group.add_argument(
-        "--revue", action="store_const", help="download Revue Starlight cards", dest="type", const=RevueCard
-    )
+
+    discover_plugins()
+
+    for name, plugin in registry.items():
+        group.add_argument(
+            f"--{plugin.cli_arg}", action="store_const", help=f"download {plugin.desc}", dest="type", const=name
+        )
 
     return arg_parser.parse_args(args)
 
@@ -68,7 +69,7 @@ async def run(arguments: argparse.Namespace, path: Path = MIKAN_PATH) -> None:
     await card_searcher(data_dir, path, arguments.type, cfg)
 
 
-async def card_searcher(data_path: Path, config_path: Path, img_type: CardType, cfg: config.Config) -> None:
+async def card_searcher(data_path: Path, config_path: Path, img_type: str, cfg: config.Config) -> None:
     http_session = aiohttp.ClientSession(
         connector=aiohttp.TCPConnector(limit=cfg.max_conn, limit_per_host=cfg.max_conn),
         timeout=aiohttp.ClientTimeout(total=None),
@@ -79,6 +80,12 @@ async def card_searcher(data_path: Path, config_path: Path, img_type: CardType, 
         downloader = Downloader(data_path, config_path, img_type, session)
         await downloader.update()
         await downloader.get()
+
+
+def discover_plugins() -> None:
+    for file in (Path(__file__).parent.resolve() / "plugins").iterdir():
+        if file.stem != "base":
+            importlib.import_module(f"mikan.plugins.{file.stem}")
 
 
 def main() -> None:  # pragma: no cover
