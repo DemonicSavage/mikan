@@ -1,5 +1,6 @@
 import base64
 import json
+from sys import api_version
 from test.mocks import mock_empty_response
 from vcr import VCR
 
@@ -12,7 +13,8 @@ from mikan.plugins import registry
 
 discover_plugins()
 
-plugins = [plugin for _, plugin in registry.items()]
+api_plugins = [plugin for _, plugin in registry.items() if plugin.is_api]
+scraper_plugins = [plugin for _, plugin in registry.items() if not plugin.is_api]
 
 
 class B64Serializer:
@@ -25,7 +27,7 @@ class B64Serializer:
         return encoded.decode("utf8")
 
 
-@pytest.mark.parametrize("plugin", plugins)
+@pytest.mark.parametrize("plugin", api_plugins + scraper_plugins)
 @pytest.fixture()
 def vcr_cassette_name(plugin):
     return f"cassette_{plugin.cli_arg}"
@@ -44,10 +46,10 @@ async def get_test_data(url):
             return resp
 
 
-@pytest.mark.parametrize("plugin", plugins)
 @pytest.mark.vcr(serializer="b64")
 @pytest.mark.asyncio()
 class TestPlugins:
+    @pytest.mark.parametrize("plugin", scraper_plugins + api_plugins)
     async def test_plugin(self, vcr, plugin, vcr_cassette_name):
         first_page = await get_test_data(f"{plugin.list_url}{'' if plugin.is_api else '2'}")
         list_parser = plugin.ListParser()
@@ -59,6 +61,7 @@ class TestPlugins:
         data = await get_test_data(f"{plugin.url}{items[0]}")
         await plugin.ItemParser().create_item(data)
 
+    @pytest.mark.parametrize("plugin", scraper_plugins)
     async def test_plugin_fail(self, mocker, plugin, vcr_cassette_name):
         if not plugin.is_api:
             with pytest.raises(ParsingError):

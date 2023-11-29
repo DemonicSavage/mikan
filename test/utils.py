@@ -52,9 +52,3 @@ class MockResponse:
 
     async def __aenter__(self):
         return self
-
-
-def awaitable_res(res):
-    f = asyncio.Future()
-    f.set_result(res)
-    return f
