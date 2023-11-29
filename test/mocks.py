@@ -16,14 +16,6 @@ import json
 from test.utils import MockResponse
 
 cards_json = """{
-    "SIFAS_Cards": {
-        "6": ["//normal6.png", "//idolized6.png"],
-        "5": ["//normal5.png", "//idolized5.png"],
-        "4": ["//normal4.png", "//idolized4.png"],
-        "3": ["//normal3.png", "//idolized3.png"],
-        "2": ["//normal2.png", "//idolized2.png"],
-        "1": ["//normal1.png", "//idolized1.png"]
-    },
     "SIFAS_Stills": {
         "6": ["//url6.png"],
         "5": ["//url5.png"],
@@ -31,31 +23,8 @@ cards_json = """{
         "3": ["//url3.png"],
         "2": ["//url2.png"],
         "1": ["//url1.png"]
-    },
-    "SIF_Cards": {
-        "6": ["//normal6.png", "//idolized6.png"],
-        "5": ["//normal5.png", "//idolized5.png"],
-        "4": ["//normal4.png", "//idolized4.png"],
-        "3": ["//normal3.png", "//idolized3.png"],
-        "2": ["//normal2.png", "//idolized2.png"],
-        "1": ["//normal1.png", "//idolized1.png"]
     }
 }"""
-
-card_files = [
-    "idolized1.png",
-    "normal1.png",
-    "idolized2.png",
-    "normal2.png",
-    "idolized3.png",
-    "normal3.png",
-    "idolized4.png",
-    "normal4.png",
-    "idolized5.png",
-    "normal5.png",
-    "idolized6.png",
-    "normal6.png",
-]
 
 still_files = [
     "url1.png",
@@ -85,7 +54,7 @@ mock_file = MockResponse(
 mock_empty_response = MockResponse("", 200)
 
 pre_json = """{
-    "SIFAS_Cards": {
-        "4": ["//normal4.png", "//idolized4.png"]
+    "SIFAS_Stills": {
+        "4": ["//url4.png"]
     }
     }"""
