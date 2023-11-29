@@ -33,6 +33,7 @@ repos:
           - bs4
           - pytest-asyncio
           - pytest-mock
+          - pytest-vcr
           - aiohttp[speedups]
           - lxml
           - tqdm
