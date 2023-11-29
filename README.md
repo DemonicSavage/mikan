@@ -12,11 +12,16 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DemonicSavage_sifas_card_downloader&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=DemonicSavage_sifas_card_downloader)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DemonicSavage_sifas_card_downloader&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=DemonicSavage_sifas_card_downloader)
 
-Mikan automatically downloads cards from the games Love Live! School Idol Festival 2 (SIF2), Love Live! School Idol Festival (SIF), and Love Live! School Idol Festival ALL STARS (SIFAS).
+Mikan automatically downloads cards from various idol or idol-adjacent gacha mobile games.
 
-SIF2 cards, SIFAS cards and SIFAS stills are downloaded from [Idol Story](https://idol.st/).
+The following games are currently supported:
 
-SIF cards are downloaded from [School Idol Tomodachi](https://schoolido.lu/).
+- Love Live! School Idol Festival (via [School Idol Tomodachi](https://schoolido.lu/))
+- Love Live! School Idol Festival ALL STARS (via [Idol Story](https://idol.st/))
+- Love Live! School Idol Festival 2 (via [Idol Story](https://idol.st/))
+- BanG Dream! Girls Band Party! (via [Bandori Party](https://bandori.party/))
+- Revue Starlight -Re LIVE- (via [Starlight Academy](https://starlight.academy/))
+- IDOLM@STER Cinderella Girls Starlight Stage (via [Cinderella Producers](https://cinderella.pro/))
 
 ## Installation
 
@@ -57,7 +62,9 @@ You can find this file in `$XDG_CONFIG_HOME/mikan` on Linux, `%APPDATA%\Local\mi
 
 This is a command line script. It first creates (or updates) a metadata file about the available cards (`items.json`), and then downloads the image files themselves.
 
-By default, running `mikan` without any arguments will create metadata and then download SIF2 cards. Using the `--sif` argument will download SIF cards instead, and `--sifas` and `--stills` will download cards and stills from SIFAS respectively.
+By default, running `mikan` without any arguments will create metadata and then download SIF2 cards.
+
+Arguments can be passed to `mikan` to download cards from other games. Run `mikan --help` to see what arguments are available.
 
 ~~Note that for now, you need a `sessionid` cookie for an Idol Story account with beta-testing enabled for SIF2 support.~~
 This is no longer the case.
