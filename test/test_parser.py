@@ -18,7 +18,6 @@ import aiohttp
 import pytest
 
 import mikan.html_parser
-
 from mikan.main import discover_plugins
 
 discover_plugins()
@@ -81,7 +80,7 @@ async def test_parser(mocker):
     mocker.patch("mikan.plugins.sifas.SIFAS.ListParser.get_num_pages", return_value=2),
     mocker.patch("mikan.plugins.sifas.SIFAS.ListParser.get_page", return_value=[1]),
     mocker.patch("aiohttp.ClientSession.get", test.mocks.mock_get_items)
-
+    parser.objs = {}
     await parser.get_items()
     await parser.session.close()
     assert parser.objs["SIFAS_Cards"] == {"1": ["//normal1.png", "//idolized1.png"]}

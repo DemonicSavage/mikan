@@ -1,6 +1,7 @@
 import bs4
 from aiohttp import ClientResponse
 
+from mikan.html_parser import ParsingError
 from mikan.plugins.default import DefaultPlugin
 from mikan.plugins.sif2 import SIF2
 
@@ -13,7 +14,7 @@ class Idolmaster(SIF2, DefaultPlugin):
     desc = "Idolmaster Cinderella Girls cards"
 
     @staticmethod
-    def item_renamer_fn(url: str) -> str:
+    def item_renamer_fn(url: str) -> str:  # pragma: no cover
         if "/a/" in url:
             name = url.split("/")[-1]
             stem = name.split(".")[-2]
@@ -26,6 +27,10 @@ class Idolmaster(SIF2, DefaultPlugin):
             page = bs4.BeautifulSoup(await data.text(), features="lxml")
 
             items = page.find_all(class_="btn-sm")
+
+            if not items:
+                raise ParsingError("An error occured while getting a card.")
+
             urls = []
             for item in items:
                 href = item.get("href")

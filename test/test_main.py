@@ -17,7 +17,7 @@ import builtins
 
 import pytest
 
-from mikan.main import Downloader, parse_arguments, run, discover_plugins
+from mikan.main import Downloader, discover_plugins, parse_arguments, run
 
 
 @pytest.mark.asyncio()
