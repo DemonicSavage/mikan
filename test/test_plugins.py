@@ -59,7 +59,10 @@ class TestPlugins:
         else:
             items = await list_parser.get_page(first_page)
         data = await get_test_data(f"{plugin.url}{items[0]}")
-        await plugin.ItemParser().create_item(data)
+        urls = await plugin.ItemParser().create_item(data)
+        assert len(urls) == 0 or all(
+            "//" in url[:2] and (url.endswith(".png") or url.endswith(".jpg") or url.endswith(".jpeg")) for url in urls
+        )
 
     @pytest.mark.parametrize("plugin", scraper_plugins)
     async def test_plugin_fail(self, mocker, plugin, vcr_cassette_name):
