@@ -19,8 +19,6 @@ class SIFASStills(SIF2, DefaultPlugin):
 
             if isinstance(top_item := page.find(class_="top-item"), bs4.Tag):
                 links = top_item.find_all("a")
-                url: str = links[0].get("href")
-
-                return [url]
+                return [link.get("href") for link in links]
 
             raise ParsingError("An error occured while getting a still.")
