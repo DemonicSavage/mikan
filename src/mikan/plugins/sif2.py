@@ -55,9 +55,5 @@ class SIF2(DefaultPlugin):
 
             if isinstance(top_item := page.find(class_="top-item"), bs4.Tag):
                 links = top_item.find_all("a")
-                first: str = links[0].get("href")
-                second: str = links[1].get("href")
-
-                return [first, second]
-
+                return [link.get("href") for link in links]
             raise ParsingError("An error occured while getting a card.")
