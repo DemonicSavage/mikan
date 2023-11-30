@@ -12,7 +12,6 @@
 
 # You should have received a copy of the GNU General Public License
 
-
 import asyncio
 
 from aiohttp import ClientResponse, ClientSession
