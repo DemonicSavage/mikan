@@ -65,7 +65,7 @@ class TestPlugins:
         )
 
     @pytest.mark.parametrize("plugin", scraper_plugins)
-    async def test_plugin_fail(self, mocker, plugin, vcr_cassette_name):
+    async def test_plugin_fail(self, plugin):
         with pytest.raises(ParsingError):
             await plugin.ListParser().get_num_pages(mock_empty_response)
         with pytest.raises(ParsingError):
