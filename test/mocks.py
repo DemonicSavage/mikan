@@ -12,38 +12,47 @@
 
 # You should have received a copy of the GNU General Public License
 
-import json
 from test.utils import MockResponse
 
+from mikan.plugins.default import DefaultPlugin
+
 cards_json = """{
-    "SIFAS_Stills": {
-        "6": ["//url6.png"],
-        "5": ["//url5.png"],
-        "4": ["//url4.png"],
-        "3": ["//url3.png"],
-        "2": ["//url2.png"],
-        "1": ["//url1.png"]
+    "Mock": {
+        "1": ["//not_a_real_url/item/1/item.png"]
     }
 }"""
 
-still_files = [
-    "url1.png",
-    "url2.png",
-    "url3.png",
-    "url4.png",
-    "url5.png",
-    "url6.png",
+card_files = [
+    "item.png",
 ]
 
 
-mock_num_pages = 3
+class MockPlugin:
+    card_dir = "Mock"
+    url = "https://not_a_real_url/item/"
+    list_url = "https://not_a_real_url/items/?page="
+    cli_arg = "mock"
+    desc = "mocks"
+    is_api = False
+
+    @staticmethod
+    def item_renamer_fn(_):
+        return DefaultPlugin.item_renamer_fn(_)
+
+    class ListParser:
+        async def get_page(self, data) -> list[int]:
+            return [1]
+
+        async def get_num_pages(self, data) -> int:
+            return 3
+
+    class ItemParser:
+        async def create_item(self, data) -> list[str]:
+            return ["//not_a_real_url/item/1/item.png"]
 
 
 async def mock_get_items(*_):
     pass
-
-
-mock_objs = json.loads(cards_json)
 
 
 mock_file = MockResponse(
@@ -52,9 +61,3 @@ mock_file = MockResponse(
 )
 
 mock_empty_response = MockResponse("", 200)
-
-pre_json = """{
-    "SIFAS_Stills": {
-        "4": ["//url4.png"]
-    }
-    }"""

@@ -18,6 +18,7 @@ import aiohttp
 import pytest
 
 import mikan.html_parser
+from mikan.plugins import registry
 
 
 class Parser:
@@ -35,15 +36,10 @@ class Parser:
 
 @pytest.mark.asyncio()
 async def test_parser(mocker):
-    parser = mikan.html_parser.Parser({"SIFAS_Cards": {}}, "SIFAS", aiohttp.ClientSession())
-    mocker.patch(
-        "mikan.plugins.sifas.SIFAS.ItemParser.create_item",
-        return_value=["//normal1.png", "//idolized1.png"],
-    )
-    mocker.patch("mikan.plugins.sifas.SIFAS.ListParser.get_num_pages", return_value=2),
-    mocker.patch("mikan.plugins.sifas.SIFAS.ListParser.get_page", return_value=[1]),
+    registry["MockPlugin"] = test.mocks.MockPlugin()
+    parser = mikan.html_parser.Parser({"Mock": {}}, "MockPlugin", aiohttp.ClientSession())
     mocker.patch("aiohttp.ClientSession.get", test.mocks.mock_get_items)
     parser.objs = {}
     await parser.get_items()
     await parser.session.close()
-    assert parser.objs["SIFAS_Cards"] == {"1": ["//normal1.png", "//idolized1.png"]}
+    assert parser.objs["Mock"] == {"1": ["//not_a_real_url/item/1/item.png"]}
