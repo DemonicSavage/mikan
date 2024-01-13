@@ -41,14 +41,17 @@ class MockSession:
         return self.item
 
 
-@pytest.mark.usefixtures("_cleanup")
-@pytest.mark.asyncio()
-async def test_downloader_cards():
+@pytest.fixture()
+def downloader():
     registry["MockPlugin"] = test.mocks.MockPlugin()
-    downloader = mikan.downloader.Downloader(
+    return mikan.downloader.Downloader(
         Path("test/temp"), Path("test/temp"), "MockPlugin", MockSession(test.mocks.mock_file)
     )
 
+
+@pytest.mark.usefixtures("_cleanup")
+@pytest.mark.asyncio()
+async def test_downloader_cards(downloader):
     await downloader.update()
     await downloader.get()
 
@@ -59,12 +62,7 @@ async def test_downloader_cards():
 
 @pytest.mark.usefixtures("_cleanup")
 @pytest.mark.asyncio()
-async def test_downloader_fail(mocker):
-    registry["MockPlugin"] = test.mocks.MockPlugin()
-    downloader = mikan.downloader.Downloader(
-        Path("test/temp"), Path("test/temp"), "MockPlugin", MockSession(test.mocks.mock_file)
-    )
-
+async def test_downloader_fail(downloader, mocker):
     downloader.objs = json.loads(test.mocks.cards_json)
 
     mocker.patch("test.test_downloader.MockSession.get", side_effect=aiohttp.ClientError("Err"))
