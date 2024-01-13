@@ -28,7 +28,6 @@ class Parser:
         self.session: ClientSession = session
         self.objs = objs
         self.card_type = mikan.plugins.registry[img_type]
-
         self.list_parser, self.item_parser = self.card_type.ListParser(), self.card_type.ItemParser()
 
     async def get(self, url: str) -> ClientResponse:
@@ -38,8 +37,7 @@ class Parser:
         data = await self.get(f"{self.card_type.list_url}{idx}") if not self.card_type.is_api else idx
         page = await self.list_parser.get_page(data)
 
-        if self.card_type.card_dir not in self.objs:
-            self.objs[self.card_type.card_dir] = {}
+        self.objs.setdefault(self.card_type.card_dir, {})
 
         tasks = [self.add_to_objs(item) for item in page if str(item) not in self.objs[self.card_type.card_dir]]
 
@@ -49,13 +47,10 @@ class Parser:
 
     async def get_items(self) -> None:
         num_pages = await self.list_parser.get_num_pages(await self.get(self.card_type.list_url)) + 1
-        current_num = 1
-        for _ in range(1, num_pages):
+        for current_num in range(1, num_pages):
             current_page = await self.get_page(current_num)
             if not current_page and not self.card_type.is_api:
                 break
-
-            current_num += 1
 
     async def add_to_objs(self, item: int) -> None:
         obj = await self.item_parser.create_item(await self.get(f"{self.card_type.url}{item}"))

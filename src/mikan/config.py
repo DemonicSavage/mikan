@@ -31,14 +31,12 @@ class Config:
         self.max_conn = self._cfg_parser.getint("Other", "max_connections", fallback=10)
 
     def _create_initial_config(self) -> None:
-        self._cfg_parser.add_section("Paths")
+        self._cfg_parser["Paths"] = {}
 
         selected_dir = input(
-            """Please enter the directory cards should be downloaded \
-to (leave empty to default to ~/Idol_Cards): """
+            "Please enter the directory cards should be downloaded to (leave empty to default to ~/Idol_Cards): "
         )
-        if selected_dir.strip() == "":
-            selected_dir = "~/Idol_Cards"
+        selected_dir = selected_dir.strip() or "~/Idol_Cards"
 
         self._cfg_parser["Paths"]["data_dir"] = str(Path(selected_dir).expanduser().resolve())
         with open(self._cfg_file, "w") as file:
