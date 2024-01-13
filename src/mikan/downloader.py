@@ -56,16 +56,12 @@ class Downloader:
         tqdm.write(message)
 
     async def get(self) -> None:
-        tasks: list[Coroutine[Any, Any, None]] = []
-
-        for item in self.objs[self.card_type.card_dir].values():
-            tasks.extend(
-                [
-                    self.download_file(card)
-                    for card in item
-                    if not (self.path / self.card_type.item_renamer_fn(card)).exists()
-                ]
-            )
+        tasks: list[Coroutine[Any, Any, None]] = [
+            self.download_file(card)
+            for item in self.objs[self.card_type.card_dir].values()
+            for card in item
+            if not (self.path / self.card_type.item_renamer_fn(card)).exists()
+        ]
 
         await tqdm.gather(*tasks, disable=len(tasks) == 0)
 
