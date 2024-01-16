@@ -20,7 +20,7 @@ def dump_to_file(cards: dict[str, dict[str, list[str]]], path: Path) -> None:
     json_path = path / "items.json"
     json_path.parent.mkdir(exist_ok=True, parents=True)
     with open(json_path, "w", encoding="utf-8") as file:
-        file.write(json.dumps(cards, ensure_ascii=False, indent=4))
+        json.dump(cards, file, ensure_ascii=False, indent=4)
 
 
 def load_cards(path: Path) -> dict[str, dict[str, list[str]]]:
@@ -28,8 +28,7 @@ def load_cards(path: Path) -> dict[str, dict[str, list[str]]]:
     cards: dict[str, dict[str, list[str]]] = {}
     if json_path.is_file():
         with open(json_path, "r", encoding="utf-8") as file:
-            data = file.read()
-            new_cards = json.loads(data)
+            new_cards = json.load(file)
             for key, value in new_cards.items():
                 cards[key] = value
 

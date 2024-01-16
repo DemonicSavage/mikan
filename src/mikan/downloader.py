@@ -55,7 +55,7 @@ class Downloader:
 
         tqdm.write(message)
 
-    async def get(self) -> None:
+    async def get_missing_items(self) -> None:
         tasks: list[Coroutine[Any, Any, None]] = [
             self.download_file(card)
             for item in self.objs[self.card_type.card_dir].values()

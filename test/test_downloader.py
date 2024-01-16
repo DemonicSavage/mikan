@@ -53,7 +53,7 @@ def downloader():
 @pytest.mark.asyncio()
 async def test_downloader_cards(downloader):
     await downloader.update()
-    await downloader.get()
+    await downloader.get_missing_items()
 
     with Path("test/temp/items.json").open() as file:
         assert json.loads(file.read())["Mock"] == json.loads(test.mocks.cards_json)["Mock"]
@@ -70,7 +70,7 @@ async def test_downloader_fail(downloader, mocker):
     with pytest.raises(aiohttp.ClientError):
         await downloader.update()
 
-    await downloader.get()
+    await downloader.get_missing_items()
 
     assert not Path("test/temp/Mock").exists()
 

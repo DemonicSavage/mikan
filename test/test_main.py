@@ -29,7 +29,7 @@ def test_argparser():
 async def test_main(mocker, tmp_path):
     discover_plugins()
     update = mocker.patch.object(Downloader, "update")
-    get = mocker.patch.object(Downloader, "get")
+    get = mocker.patch.object(Downloader, "get_missing_items")
     mocker.patch.object(builtins, "input", return_value="\n")
     await run(argparse.Namespace(type="SIF2"), tmp_path)
     update.assert_called()

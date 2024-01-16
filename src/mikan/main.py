@@ -79,7 +79,7 @@ async def card_searcher(data_path: Path, config_path: Path, img_type: str, cfg: 
     async with http_session as session:
         downloader = Downloader(data_path, config_path, img_type, session)
         await downloader.update()
-        await downloader.get()
+        await downloader.get_missing_items()
 
 
 def discover_plugins() -> None:
