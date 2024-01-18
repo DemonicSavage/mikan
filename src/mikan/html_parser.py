@@ -53,6 +53,9 @@ class Parser:
                 break
 
     async def add_to_objs(self, item: int) -> None:
-        obj = await self.item_parser.create_item(await self.get(f"{self.card_type.url}{item}"))
-        self.objs[self.card_type.card_dir][str(item)] = obj
-        print(f"Getting item {item}.")
+        try:
+            obj = await self.item_parser.create_item(await self.get(f"{self.card_type.url}{item}"))
+            self.objs[self.card_type.card_dir][str(item)] = obj
+            print(f"Getting item {item}.")
+        except ParsingError:
+            print(f"Skipping item {item}, likely due to server error.")
