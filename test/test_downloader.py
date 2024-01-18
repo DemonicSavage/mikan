@@ -67,8 +67,7 @@ async def test_downloader_fail(downloader, mocker):
 
     mocker.patch("test.test_downloader.MockSession.get", side_effect=aiohttp.ClientError("Err"))
 
-    with pytest.raises(aiohttp.ClientError):
-        await downloader.update()
+    await downloader.update()
 
     await downloader.get_missing_items()
 

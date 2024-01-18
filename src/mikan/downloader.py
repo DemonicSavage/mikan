@@ -49,6 +49,8 @@ class Downloader:
                         file.write(chunk)
 
                 message = f"Downloaded item {item_name}."
+            else:
+                message = f"Failed to download item {item}: HTTP status {res.status}"
 
         except aiohttp.ClientError as e:
             message = f"Couldn't download item {item}: {e}"
@@ -66,12 +68,18 @@ class Downloader:
         await tqdm.gather(*tasks, disable=len(tasks) == 0)
 
     async def update(self) -> None:
-        print("Searching for new or missing items...")
-        await self.parser.get_items()
+        try:
+            print("Searching for new or missing items...")
+            await self.parser.get_items()
 
-        self.update_json_file()
-        print("Updated items database.")
+            self.update_json_file()
+            print("Updated items database.")
+        except Exception as e:
+            print(f"An error occurred while updating items: {e}")
 
     def update_json_file(self) -> None:
-        self.objs[self.card_type.card_dir] = dict(sorted(self.objs[self.card_type.card_dir].items(), reverse=True))
-        json_utils.dump_to_file(self.objs, self.config_path)
+        try:
+            self.objs[self.card_type.card_dir] = dict(sorted(self.objs[self.card_type.card_dir].items(), reverse=True))
+            json_utils.dump_to_file(self.objs, self.config_path)
+        except Exception as e:
+            print(f"An error occurred while updating the JSON file: {e}")

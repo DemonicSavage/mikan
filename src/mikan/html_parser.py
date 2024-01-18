@@ -34,23 +34,30 @@ class Parser:
         return await self.session.get(url)
 
     async def get_page(self, idx: int) -> list[None]:
-        data = await self.get(f"{self.card_type.list_url}{idx}") if not self.card_type.is_api else idx
-        page = await self.list_parser.get_page(data)
+        try:
+            data = await self.get(f"{self.card_type.list_url}{idx}") if not self.card_type.is_api else idx
+            page = await self.list_parser.get_page(data)
 
-        self.objs.setdefault(self.card_type.card_dir, {})
+            self.objs.setdefault(self.card_type.card_dir, {})
 
-        tasks = [self.add_to_objs(item) for item in page if str(item) not in self.objs[self.card_type.card_dir]]
+            tasks = [self.add_to_objs(item) for item in page if str(item) not in self.objs[self.card_type.card_dir]]
 
-        res: list[None] = await asyncio.gather(*tasks, return_exceptions=False)
+            res: list[None] = await asyncio.gather(*tasks, return_exceptions=False)
 
-        return res
+            return res
+        except ParsingError:
+            print(f"An error occured while getting page {idx}.")
+            return []
 
     async def get_items(self) -> None:
-        num_pages = await self.list_parser.get_num_pages(await self.get(self.card_type.list_url)) + 1
-        for current_num in range(1, num_pages):
-            current_page = await self.get_page(current_num)
-            if not current_page and not self.card_type.is_api:
-                break
+        try:
+            num_pages = await self.list_parser.get_num_pages(await self.get(self.card_type.list_url)) + 1
+            for current_num in range(1, num_pages):
+                current_page = await self.get_page(current_num)
+                if not current_page and not self.card_type.is_api:
+                    break
+        except ParsingError:
+            print("An error occured while getting pages.")
 
     async def add_to_objs(self, item: int) -> None:
         try:

@@ -21,23 +21,29 @@ class Config:
         self._cfg_parser = configparser.ConfigParser()
         self._cfg_file = path / "config.cfg"
 
-        if not self._cfg_file.exists():
-            self._create_initial_config()
+        try:
+            if not self._cfg_file.exists():
+                self._create_initial_config()
 
-        self._cfg_parser.read(self._cfg_file)
+            self._cfg_parser.read(self._cfg_file)
 
-        self.data_dir = Path(self._cfg_parser.get("Paths", "data_dir"))
-        self.cookie = self._cfg_parser.get("Other", "cookie", fallback="")
-        self.max_conn = self._cfg_parser.getint("Other", "max_connections", fallback=10)
+            self.data_dir = Path(self._cfg_parser.get("Paths", "data_dir"))
+            self.cookie = self._cfg_parser.get("Other", "cookie", fallback="")
+            self.max_conn = self._cfg_parser.getint("Other", "max_connections", fallback=10)
+        except (configparser.Error, ValueError) as e:
+            print(f"Error occurred while reading the configuration file: {e}")
 
     def _create_initial_config(self) -> None:
         self._cfg_parser["Paths"] = {}
 
-        selected_dir = input(
-            "Please enter the directory cards should be downloaded to (leave empty to default to ~/Idol_Cards): "
-        )
-        selected_dir = selected_dir.strip() or "~/Idol_Cards"
+        try:
+            selected_dir = input(
+                "Please enter the directory cards should be downloaded to (leave empty to default to ~/Idol_Cards): "
+            )
+            selected_dir = selected_dir.strip() or "~/Idol_Cards"
 
-        self._cfg_parser["Paths"]["data_dir"] = str(Path(selected_dir).expanduser().resolve())
-        with open(self._cfg_file, "w") as file:
-            self._cfg_parser.write(file)
+            self._cfg_parser["Paths"]["data_dir"] = str(Path(selected_dir).expanduser().resolve())
+            with open(self._cfg_file, "w") as file:
+                self._cfg_parser.write(file)
+        except (configparser.Error, ValueError) as e:
+            print(f"Error occurred while creating the initial configuration: {e}")
