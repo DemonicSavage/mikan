@@ -22,7 +22,29 @@ import aiohttp
 import pytest
 
 import mikan.downloader
+from test.utils import MockResponse
 from mikan.plugins import registry
+import pytest
+import aiohttp
+
+
+@pytest.mark.usefixtures("_cleanup")
+@pytest.mark.asyncio()
+async def test_downloader_download_file_error(downloader, mocker):
+    mocker.patch("test.test_downloader.MockSession.get", return_value=MockResponse("Error", 400))
+    await downloader.download_file("item.png")
+    assert not check_files("test/temp/Mock", test.mocks.card_files)
+
+
+@pytest.mark.usefixtures("_cleanup")
+@pytest.mark.asyncio()
+async def test_downloader_update_json_file_error(downloader, mocker):
+    mocker.patch("mikan.json_utils.dump_to_file", side_effect=IOError("Error"))
+
+    await downloader.update()
+    downloader.update_json_file()
+
+    assert not Path("test/temp/items.json").exists()
 
 
 def check_files(path, answer):
@@ -68,7 +90,6 @@ async def test_downloader_fail(downloader, mocker):
     mocker.patch("test.test_downloader.MockSession.get", side_effect=aiohttp.ClientError("Err"))
 
     await downloader.update()
-
     await downloader.get_missing_items()
 
     assert not Path("test/temp/Mock").exists()
