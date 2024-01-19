@@ -54,6 +54,6 @@ def test_config_initialization_with_invalid_file(config_file, capsys):
 
 def test_config_initialization_with_invalid_initial_config(config_file, capsys, mocker):
     mocker.patch("builtins.input", side_effect=ValueError())
-    config = Config(config_file)
+    Config(config_file)
     captured = capsys.readouterr()
     assert "Error occurred while creating the initial configuration" in captured.out
