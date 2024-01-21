@@ -73,4 +73,9 @@ Running it for the first time will prompt you for the directory cards and stills
 
 ## License
 
-This software is released under the GNU GPLv3, and its dependencies are released under their respective licenses.
+This software is released under the GNU GPLv3 license, and its dependencies are released under their respective licenses.
+
+# Links
+
+- [PyPI](https://pypi.org/project/mikan-card-downloader/)
+- [GitHub](https://github.com/DemonicSavage/mikan)
