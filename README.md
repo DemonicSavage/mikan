@@ -1,3 +1,4 @@
+<!--Software that automatically downloads cards from various idol or idol-adjacent gacha mobile games.-->
 # Mikan
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DemonicSavage_sifas_card_downloader&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=DemonicSavage_sifas_card_downloader)
