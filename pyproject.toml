@@ -7,6 +7,21 @@ license = "GPLv3"
 packages = [
     {include = "mikan", from = "src"}
 ]
+readme = "README.md"
+homepage = "https://www.demonicsavage.com/projects/mikan"
+repository = "https://github.com/demonicsavage/mikan"
+keywords = ["sif", "sifas", "lovelive", "mikan", "downloader", "bandori", "bangdream", "idolmaster", "revuestarlight", "imas"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Games/Entertainment",
+    "Topic :: Utilities"
+]
+
 
 [tool.poetry.dependencies]
 python = "^3.10"
