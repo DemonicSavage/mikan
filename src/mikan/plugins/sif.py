@@ -32,7 +32,7 @@ class SIF(DefaultPlugin):
         def __init__(self) -> None:
             self.items: list[list[int]] = []
 
-        async def get_page(self, num: Any) -> list[int]:  # noqa: The plugin interfaces requires it to be async
+        async def get_page(self, num: Any) -> list[int]:  # noqa: S7503 The plugin interfaces requires it to be async
             return self.items[num - 1]
 
         async def get_num_pages(self, data: ClientResponse) -> int:
