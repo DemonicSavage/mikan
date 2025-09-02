@@ -18,6 +18,7 @@ repos:
         additional_dependencies:
           - types-beautifulsoup4
           - types-tqdm
+          - types-aiofiles
           - aiohttp
           - platformdirs
 
@@ -39,3 +40,4 @@ repos:
           - tqdm
           - platformdirs
           - mikan-card-downloader
+          - aiofiles

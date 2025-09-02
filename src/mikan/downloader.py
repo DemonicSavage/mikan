@@ -15,6 +15,7 @@
 from pathlib import Path
 from typing import Any, Coroutine
 
+import aiofiles
 import aiohttp
 import aiohttp.web
 from tqdm.asyncio import tqdm
@@ -46,9 +47,9 @@ class Downloader:
 
                 item_name = self.card_type.item_renamer_fn(item)
 
-                with open(self.path / item_name, "wb") as file:
+                async with aiofiles.open(self.path / item_name, "wb") as file:
                     async for chunk in res.content.iter_any():
-                        file.write(chunk)
+                        await file.write(chunk)
 
                 message = f"Downloaded item {item_name}."
             else:
