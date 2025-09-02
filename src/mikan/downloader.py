@@ -38,7 +38,9 @@ class Downloader:
 
     async def download_file(self, item: str) -> None:
         try:
-            res = await self.session.get(f"https:{item}")
+            if not item.startswith("https"):
+                item = "https:" + item
+            res = await self.session.get(item)
             if res.status == aiohttp.web.HTTPOk.status_code:
                 self.path.mkdir(exist_ok=True, parents=True)
 
