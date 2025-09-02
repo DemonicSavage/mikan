@@ -1286,7 +1286,6 @@ testing = ["coverage", "pytest", "pytest-benchmark"]
 [[package]]
 name = "pre-commit"
 version = "3.8.0"
-version = "3.8.0"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 optional = false
 python-versions = ">=3.9"
