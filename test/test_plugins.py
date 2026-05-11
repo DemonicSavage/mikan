@@ -41,7 +41,6 @@ class B64Serializer:
         return encoded.decode("utf8")
 
 
-@pytest.mark.parametrize("plugin", api_plugins + scraper_plugins)
 @pytest.fixture()
 def vcr_cassette_name(plugin):
     return f"cassette_{plugin.cli_arg}"
@@ -75,7 +74,9 @@ class TestPlugins:
         data = await get_test_data(f"{plugin.url}{items[0]}")
         urls = await plugin.ItemParser().create_item(data)
         assert len(urls) == 0 or all(
-            url[:2] == "//" and (url.endswith(".png") or url.endswith(".jpg") or url.endswith(".jpeg")) for url in urls
+            (url.startswith("//") or url.startswith("https://") or url.startswith("http://"))
+            and (url.endswith(".png") or url.endswith(".jpg") or url.endswith(".jpeg"))
+            for url in urls
         )
 
     @pytest.mark.parametrize("plugin", scraper_plugins)

@@ -20,6 +20,7 @@ The following games are currently supported:
 - Love Live! School Idol Festival (via [School Idol Tomodachi](https://schoolido.lu/))
 - Love Live! School Idol Festival ALL STARS (via [Idol Story](https://idol.st/))
 - Love Live! School Idol Festival 2 (via [Idol Story](https://idol.st/))
+- Link! Like! Love Live! (via [Idol Story](https://idol.st/))
 - BanG Dream! Girls Band Party! (via [Bandori Party](https://bandori.party/))
 - Revue Starlight -Re LIVE- (via [Starlight Academy](https://starlight.academy/))
 - IDOLM@STER Cinderella Girls Starlight Stage (via [Cinderella Producers](https://cinderella.pro/))
