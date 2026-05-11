@@ -1592,12 +1592,12 @@ files = [
 ]
 
 [package.dependencies]
-coverage = {version = ">=7.5", extras = ["toml"]}
+coverage = {version = ">=7.10.6", extras = ["toml"]}
 pluggy = ">=1.2"
-pytest = ">=6.2.5"
+pytest = ">=7"
 
 [package.extras]
-testing = ["fields", "hunter", "process-tests", "pytest-xdist", "virtualenv"]
+testing = ["process-tests", "pytest-xdist", "virtualenv"]
 
 [[package]]
 name = "pytest-mock"
@@ -2209,4 +2209,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "b2ef0cb4bbb455e7285c0a4f883e574b5602a70a3ab28ea76d1c097803f75d32"
+content-hash = "cd1754e3c7e340d4f015b0f1c58851b77c59490be693ec221d1fc2111d3d10c8"
