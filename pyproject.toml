@@ -30,7 +30,7 @@ aiohttp = {version = "^3.9.0", extras = ["speedups"]}
 lxml = "^6.0.0"
 tqdm = "^4.64.0"
 platformdirs = "^4.0.0"
-aiofiles = "^24.1.0"
+aiofiles = "^25.0.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^25.0.0"
