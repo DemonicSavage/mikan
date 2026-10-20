@@ -1,5 +1,6 @@
-cachetools==7.1.1 \
-    --hash=sha256:0335cd7a0952d2b22327441fb0628139e234c565559eeb91a8a4ac7551c5353d
+cachetools==7.2.4 \
+    --hash=sha256:4cfbebf3eec4040d2073b19c460511ad47eef7b852dbf9a0d385099b4dafa31e \
+    --hash=sha256:e0203b04b75fe13e62098eeb5b2018c4eb1a14c04e2b5b450e70db3ee7e92ec5
 colorama==0.4.6 \
     --hash=sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6
 distlib==0.4.0 \
